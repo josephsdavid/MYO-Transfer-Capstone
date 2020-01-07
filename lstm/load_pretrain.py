@@ -44,9 +44,21 @@ def pad_along_axis(array: np.ndarray, target_length, axis=0):
 
 trials_padded = [pad_along_axis(x, maxlen, axis=0) for x in trials_all]
 
-[x.shape for x in trials_padded]
+def window_stack(a, stepsize=1, width=3):
+    n = a.shape[0]
+    return np.dstack( a[i:1+n+i-width:stepsize] for i in range(0,width) )
 
-# get the list into an array with format (samples, timesteps, features)
+# window size = 260 ms, as per the original paper
+# data collected at 200 hz, so roughly 5 seconds of data
+# stepsize = 5 seconds, as per original paper
+window_stack(trials_padded[0], stepsize = 5, width = int(260/5)).shape
+
+trials_rolled = [window_stack(x, 5, int(260/5)) for x in trials_padded]
+trainx = np.moveaxis(np.concatenate(trials_rolled, axis = 2), 2, 0)
+trainx.shape
+# (14560, 155, 8)
+
+
 # also update this to have labels
 # finally, we probably want to use keras generators, because its faster and
 # memory efficient, check out
