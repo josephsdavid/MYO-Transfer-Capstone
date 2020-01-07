@@ -17,6 +17,8 @@ overview goes here
 
 ### Other Resources
 
+Find some resources on LSTMs for classification!
+
 ## Project Structure
 
 organizational notes go here
