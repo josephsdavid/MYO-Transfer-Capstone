@@ -6,7 +6,16 @@ overview goes here
 
 ## Resources
 
-papers, lectures, resources go here
+### Papers
+
+* [Dataset description and transfer learning task discussion](https://arxiv.org/abs/1801.07756)
+
+
+### Lectures
+
+* [Mike Mahoney lecture on regularization/understanding if a model is properly trained](https://www.youtube.com/watch?v=ILV5Sc8WjPY)
+
+### Other Resources
 
 ## Project Structure
 
