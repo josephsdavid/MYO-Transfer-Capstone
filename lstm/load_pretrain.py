@@ -13,24 +13,30 @@ def read_file(path):
 
 def read_group_to_lists(path, n_classes = 7):
     # grab in all the male candidates
-    men = []
-    women = []
+    res = []
     labels = []
+    trials = range(n_classes*4)
     for candidate in range(12):
-        man = [read_file(path + '/Male' + str(candidate) + '/training0/classe_%d.dat' %i) for i in range(n_classes*4)]
+        man = [read_file(path + '/Male' + str(candidate) + '/training0/classe_%d.dat' %i) for i in trials]
         # list addition is my new favorite python thing
-        men += man
+        labs = [t % n_classes for t in trials]
+        res += man
+        labels += labs
 
     # and all the female candidates
     for candidate in range(7):
-        woman = [read_file(path + '/Female' + str(candidate) + '/training0/classe_%d.dat' %i) for i in range(n_classes*4)]
-        women += woman
+        woman = [read_file(path + '/Female' + str(candidate) + '/training0/classe_%d.dat' %i) for i in trials]
+        labs = [t % n_classes for t in trials]
+        res += woman
+        labels += labs
 
-    # combine and return!
-    res = men + women
-    return(res)
+    return res, labels
 
-trials_all = read_group_to_lists("../PreTrainingDataset")
+trials_all, labs  = read_group_to_lists("../PreTrainingDataset")
+
+len(labs)
+
+
 
 # longest run is 1038, so we will pad to that
 maxlen = max([x.shape[0] for x in trials_all])
@@ -54,6 +60,7 @@ def window_stack(a, stepsize=1, width=3):
     n = a.shape[0]
     return np.dstack( a[i:1+n+i-width:stepsize] for i in range(0,width) )
 
+
 # window size = 260 ms, as per the original paper
 # data collected at 200 hz, so roughly 5 seconds of data
 # stepsize = 5 seconds, as per original paper
@@ -61,13 +68,24 @@ window_stack(trials_padded[0], stepsize = 5, width = int(260/5)).shape
 
 trials_rolled = [window_stack(x, 5, int(260/5)) for x in trials_padded]
 
-trials_rolled[0].shape
 
 
+def roll_labels(x, y):
+    labs_rolled = []
+    for i in range(len(y)):
+        l = y[i]
+        n = x[i].shape[2]
+        labs_rolled.append(np.repeat(l,n))
+    return np.hstack(labs_rolled)
+
+trainy = roll_labels(trials_rolled, labs)
 trainx = np.moveaxis(np.concatenate(trials_rolled, axis = 2), 2, 0)
 
 trainx.shape
 #(27664, 198, 8)
+
+trainx.shape[0] - trainy.shape[0]
+# 0
 
 # also update this to have labels
 # finally, we probably want to use keras generators, because its faster and
