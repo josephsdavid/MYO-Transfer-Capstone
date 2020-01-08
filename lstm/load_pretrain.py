@@ -1,11 +1,6 @@
 import numpy as np
 
 # load up the first example first!
-
-trial = np.fromfile("../PreTrainingDataset/Male0/training0/classe_0.dat", dtype = np.int16)
-try2 = trial.reshape(int(trial.shape[0]/8),8)
-abs((np.vstack(np.split(trial, int(trial.shape[0]/8))) - try2)).sum()
-
 def read_file(path):
     f = np.array(np.fromfile(path, dtype = np.int16))
     return f.reshape(int(f.shape[0]/8),8)
@@ -32,16 +27,7 @@ def read_group_to_lists(path, n_classes = 7):
 
     return res, labels
 
-trials_all, labs  = read_group_to_lists("../PreTrainingDataset")
-
-len(labs)
-
-
-
 # longest run is 1038, so we will pad to that
-maxlen = max([x.shape[0] for x in trials_all])
-
-
 # pad around axis
 # thankful for stack overflow today!
 def pad_along_axis(array: np.ndarray, target_length, axis=0):
@@ -54,8 +40,6 @@ def pad_along_axis(array: np.ndarray, target_length, axis=0):
     b = np.pad(array, pad_width=npad, mode='constant', constant_values=0)
     return b
 
-trials_padded = [pad_along_axis(x, maxlen, axis=0) for x in trials_all]
-
 def window_stack(a, stepsize=1, width=3):
     n = a.shape[0]
     return np.dstack( a[i:1+n+i-width:stepsize] for i in range(0,width) )
@@ -64,11 +48,7 @@ def window_stack(a, stepsize=1, width=3):
 # window size = 260 ms, as per the original paper
 # data collected at 200 hz, so roughly 5 seconds of data
 # stepsize = 5 seconds, as per original paper
-window_stack(trials_padded[0], stepsize = 5, width = int(260/5)).shape
-
-trials_rolled = [window_stack(x, 5, int(260/5)) for x in trials_padded]
-
-
+# trials_rolled = [window_stack(x, 5, int(260/5)) for x in trials_padded]
 
 def roll_labels(x, y):
     labs_rolled = []
@@ -78,14 +58,23 @@ def roll_labels(x, y):
         labs_rolled.append(np.repeat(l,n))
     return np.hstack(labs_rolled)
 
-trainy = roll_labels(trials_rolled, labs)
-trainx = np.moveaxis(np.concatenate(trials_rolled, axis = 2), 2, 0)
 
-trainx.shape
-#(27664, 198, 8)
+def read_data(path, n_classes = 7):
+    # read in trials and label them
+    trials_all, labs  = read_group_to_lists(path, n_classes = n_classes)
+    # get maximum length for padding
+    maxlen = max([x.shape[0] for x in trials_all])
+    # pad data for the lstm
+    trials_padded = [pad_along_axis(x, maxlen, axis=0) for x in trials_all]
+    # sliding window trials
+    trials_rolled = [window_stack(x, 5, int(260/5)) for x in trials_padded]
+    # force into proper arrays
+    trainy = roll_labels(trials_rolled, labs)
+    trainx = np.moveaxis(np.concatenate(trials_rolled, axis = 2), 2, 0)
+    return trainx, trainy
 
-trainx.shape[0] - trainy.shape[0]
-# 0
+
+# X, y = read_data("../PreTrainingDataset")
 
 # also update this to have labels
 # finally, we probably want to use keras generators, because its faster and
