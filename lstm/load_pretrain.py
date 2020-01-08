@@ -1,4 +1,5 @@
 import numpy as np
+from sklearn.preprocessing import MinMaxScaler
 
 # load up the first example first!
 def read_file(path):
@@ -59,11 +60,13 @@ def roll_labels(x, y):
     return np.hstack(labs_rolled)
 
 
-def read_data(path, n_classes = 7):
+def read_data(path, n_classes = 7, scale = False):
     # read in trials and label them
     trials_all, labs  = read_group_to_lists(path, n_classes = n_classes)
     # get maximum length for padding
     maxlen = max([x.shape[0] for x in trials_all])
+    if (scale):
+        trials_all = [MinMaxScaler().fit_transform(x) for x in trials_all]
     # pad data for the lstm
     trials_padded = [pad_along_axis(x, maxlen, axis=0) for x in trials_all]
     # sliding window trials
@@ -73,6 +76,21 @@ def read_data(path, n_classes = 7):
     trainx = np.moveaxis(np.concatenate(trials_rolled, axis = 2), 2, 0)
     return trainx, trainy
 
+# for use with TimeSeries Generator
+def read_data_unrolled(path, n_classes = 7, scale = False):
+    # read in trials and label them
+    trials_all, labs  = read_group_to_lists(path, n_classes = n_classes)
+    if (scale):
+        trials_all = [MinMaxScaler().fit_transform(x) for x in trials_all]
+    # get maximum length for padding
+    maxlen = max([x.shape[0] for x in trials_all])
+    # pad data for the lstm
+    trials_padded = [pad_along_axis(x, maxlen, axis=0) for x in trials_all]
+    # sliding window trials
+    # force into proper arrays
+    trainx = np.moveaxis(np.dstack(trials_padded), 2, 0)
+    trainy = labs
+    return trainx, trainy
 
 # X, y = read_data("../PreTrainingDataset")
 
