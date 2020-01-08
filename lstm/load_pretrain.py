@@ -13,24 +13,30 @@ def read_file(path):
 
 def read_group_to_lists(path, n_classes = 7):
     # grab in all the male candidates
+    men = []
+    women = []
+    labels = []
     for candidate in range(12):
-        mens = [read_file(path + '/Male' + str(candidate) + '/training0/classe_%d.dat' %i) for i in range(n_classes*4)]
+        man = [read_file(path + '/Male' + str(candidate) + '/training0/classe_%d.dat' %i) for i in range(n_classes*4)]
+        # list addition is my new favorite python thing
+        men += man
 
     # and all the female candidates
     for candidate in range(7):
-        womens = [read_file(path + '/Female' + str(candidate) + '/training0/classe_%d.dat' %i) for i in range(n_classes*4)]
+        woman = [read_file(path + '/Female' + str(candidate) + '/training0/classe_%d.dat' %i) for i in range(n_classes*4)]
+        women += woman
 
     # combine and return!
-    res = mens + womens
+    res = men + women
     return(res)
 
 trials_all = read_group_to_lists("../PreTrainingDataset")
 
-
-# longest run is 1034, so we will pad to that
+# longest run is 1038, so we will pad to that
 maxlen = max([x.shape[0] for x in trials_all])
 
-# padd around axis
+
+# pad around axis
 # thankful for stack overflow today!
 def pad_along_axis(array: np.ndarray, target_length, axis=0):
     pad_size = target_length - array.shape[axis]
@@ -54,10 +60,14 @@ def window_stack(a, stepsize=1, width=3):
 window_stack(trials_padded[0], stepsize = 5, width = int(260/5)).shape
 
 trials_rolled = [window_stack(x, 5, int(260/5)) for x in trials_padded]
-trainx = np.moveaxis(np.concatenate(trials_rolled, axis = 2), 2, 0)
-trainx.shape
-# (14560, 155, 8)
 
+trials_rolled[0].shape
+
+
+trainx = np.moveaxis(np.concatenate(trials_rolled, axis = 2), 2, 0)
+
+trainx.shape
+#(27664, 198, 8)
 
 # also update this to have labels
 # finally, we probably want to use keras generators, because its faster and
