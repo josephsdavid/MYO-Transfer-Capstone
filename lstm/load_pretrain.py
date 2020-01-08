@@ -46,6 +46,10 @@ def window_stack(a, stepsize=1, width=3):
     return np.dstack( a[i:1+n+i-width:stepsize] for i in range(0,width) )
 
 
+
+
+
+
 # window size = 260 ms, as per the original paper
 # data collected at 200 hz, so roughly 5 seconds of data
 # stepsize = 5 seconds, as per original paper
@@ -70,7 +74,7 @@ def read_data(path, n_classes = 7, scale = False):
     # pad data for the lstm
     trials_padded = [pad_along_axis(x, maxlen, axis=0) for x in trials_all]
     # sliding window trials
-    trials_rolled = [window_stack(x, 5, int(260/5)) for x in trials_padded]
+    trials_rolled = [window_stack(x, 21, int(260/5)) for x in trials_padded]
     # force into proper arrays
     trainy = roll_labels(trials_rolled, labs)
     trainx = np.moveaxis(np.concatenate(trials_rolled, axis = 2), 2, 0)
