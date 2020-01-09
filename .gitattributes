@@ -26,3 +26,6 @@
 # with the python modules ``pickle``, ``dbm.*``,
 # ``shelve``, ``marshal``, ``anydbm``, & ``bsddb``
 # (among others).
+#
+*.dat linguist-detectable=false
+*.csv linguist-detectable=false
