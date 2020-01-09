@@ -1,5 +1,5 @@
 import numpy as np
-from load_pretrain import read_data, read_data_unrolled
+from load_pretrain import read_data, read_data_unrolled, read_data_filtered
 from keras.layers import Dense, Dropout, LSTM, Input
 from keras.layers import Embedding, Activation, BatchNormalization
 from keras.models import Model
@@ -9,27 +9,26 @@ from keras import backend as K
 from keras.preprocessing.sequence import TimeseriesGenerator
 import matplotlib.pyplot as plt
 
-X, y = read_data("../PreTrainingDataset")
+X, y = read_data_filtered("../PreTrainingDataset")
 y = to_categorical(y)
 
-X.shape
 
 
 
-# build the simplest lstm possible first
-# then maybe stateful who knows
-# try out embedding layers too
+
 class lstm_classifier:
     def __init__(self, X, y, act = 'relu', dropout = True, stateful = False):
         n_timesteps, n_features, n_outputs = X.shape[1], X.shape[2], y.shape[1]
         start = Input((None, n_features), name = 'Input')
-        x = LSTM(8, activation = act, name = 'LSTM_1', return_sequences = True, dropout = 0.5, recurrent_dropout = 0.5)(start)
-        x = LSTM(16, activation = act, name = 'LSTM_2', dropout = 0.5, recurrent_dropout = 0.5)(x)
-        for i in range(3):
-            x = Dropout(0.5)(x)
-            x = Dense(32, activation = act)(x)
+        x = LSTM(10, activation = act, name = 'LSTM_1', return_sequences = True)(start)
         x = Dropout(0.5)(x)
-        x = Dense(n_outputs, activation = 'relu', name = 'output')(x)
+        x = LSTM(16, activation = act, name = 'LSTM_2')(x)
+        x = Dropout(0.5)(x)
+        # for i in range(3):
+        #     x = Dropout(0.5)(x)
+        #     x = Dense(32, activation = 'softmax')(x)
+        # x = Dropout(0.5)(x)
+        x = Dense(n_outputs, activation = 'softmax', name = 'output')(x)
         self.model = Model(start, x)
 
     def fit(self, X, y,
