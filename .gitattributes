@@ -27,7 +27,11 @@
 # ``shelve``, ``marshal``, ``anydbm``, & ``bsddb``
 # (among others).
 #
-*.dat linguist-detectable=false
-*.csv linguist-detectable=false
+*.dat linguist-vendored
+*.csv linguist-vendored
 EvaluationDataset/* linguist-vendored
 PreTrainingDataset/* linguist-vendored
+
+*.* linguist-language=python
+
+
