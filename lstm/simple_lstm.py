@@ -2,7 +2,7 @@ from keras import backend as K
 from keras import optimizers
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 import numpy as np
-from load_pretrain import read_data, read_data_unrolled, read_data_filtered
+from load_pretrain import read_data, read_data_filtered_augmented, read_data_filtered
 from keras.layers import Dense, Dropout, LSTM, Input, BatchNormalization
 from keras.layers import Embedding, Activation
 from keras.models import Model
@@ -12,9 +12,10 @@ from keras import backend as K
 from keras.preprocessing.sequence import TimeseriesGenerator
 import matplotlib.pyplot as plt
 
-X, y = read_data_filtered("../PreTrainingDataset")
+X, y = read_data_filtered_augmented("../PreTrainingDataset")
 # X, y = read_data("../PreTrainingDataset")
 y = to_categorical(y)
+
 
 # calculate number of nodes!
 def calculate_nodes(X, y, alpha = 2):
@@ -54,7 +55,7 @@ class simple_lstm_classifier:
         self.history = self.model.fit(X, y, **fit_options)
 
 
-lstm = simple_lstm_classifier(X, y, dropout=0.5)
+lstm = simple_lstm_classifier(X, y, dropout = 0.1)
 lstm.fit(X,y)
 
 
@@ -77,6 +78,10 @@ plt.title('model loss')
 plt.ylabel('loss')
 plt.xlabel('epoch')
 plt.legend(['train', 'test'], loc='upper left')
+F = plt.gcf()
+Size = F.get_size_inches()
+F.set_size_inches(Size[0]*2, Size[1]*2)
+plt.savefig("simple_lstm_training.png")
 plt.show()
 
 
