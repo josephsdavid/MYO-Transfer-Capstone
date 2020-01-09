@@ -29,3 +29,5 @@
 #
 *.dat linguist-detectable=false
 *.csv linguist-detectable=false
+EvaluationDataset/* linguist-vendored
+PreTrainingDataset/* linguist-vendored
