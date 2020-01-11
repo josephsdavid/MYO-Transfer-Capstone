@@ -3,11 +3,14 @@ from scipy import signal
 from sklearn.preprocessing import MinMaxScaler
 
 # load up the first example first!
+
 def read_file(path):
     f = np.array(np.fromfile(path, dtype = np.int16))
     return f.reshape(int(f.shape[0]/8),8)
 
 
+# the output of this function is a list of (timesteps, features) arrays, as well
+# as some labels
 def read_group_to_lists(path, n_classes = 7):
     # grab in all the male candidates
     res = []
@@ -29,18 +32,21 @@ def read_group_to_lists(path, n_classes = 7):
 
     return res, labels
 
-# longest run is 1038, so we will pad to that
-# pad around axis
-# thankful for stack overflow today!
 
-
+# this is the key sliding window function, stepsize is the distance apart each
+# window is (so for example with the defaults, if the data is measure in
+# seconds, we are going to take 3 second windows with 2 (width-stepsize) overlap)
+# This function takes in an array of (timesteps, features), and outputs an array
+# of (time related number, features, samples). This has the bonus of
+# preformatting the data for an LSTM
 def window_stack(a, stepsize=1, width=3):
     n = a.shape[0]
     return np.dstack( a[i:1+n+i-width:stepsize] for i in range(0,width) )
 
 
 
-
+# pads along the axis of a numpy array, to make them all the same length, that
+# way our list can be dstacked into an array
 def pad_along_axis(array: np.ndarray, target_length, axis=0):
     pad_size = target_length - array.shape[axis]
     axis_nb = len(array.shape)
@@ -53,12 +59,12 @@ def pad_along_axis(array: np.ndarray, target_length, axis=0):
 
 
 
-
 # window size = 260 ms, as per the original paper
 # data collected at 200 hz, so roughly 5 seconds of data
 # stepsize = 5 seconds, as per original paper
-# trials_rolled = [window_stack(x, 5, int(260/5)) for x in trials_padded]
+# trials_rolled = [window_stack(x, 21, int(260/5)) for x in trials_padded]
 
+# to get the labels to match up with our windows
 def roll_labels(x, y):
     labs_rolled = []
     for i in range(len(y)):
@@ -69,7 +75,8 @@ def roll_labels(x, y):
 
 
 def read_data(path, n_classes = 7, scale = False):
-    # read in trials and label them
+    # read in trials and label them, data format is list of (timesteps,
+    # features) arrays
     trials_all, labs  = read_group_to_lists(path, n_classes = n_classes)
     # get maximum length for padding
     maxlen = max([x.shape[0] for x in trials_all])
@@ -78,9 +85,11 @@ def read_data(path, n_classes = 7, scale = False):
     # pad data for the lstm
     trials_padded = [pad_along_axis(x, maxlen, axis=0) for x in trials_all]
     # sliding window trials
-    trials_rolled = [window_stack(x, 5, int(260/5)) for x in trials_padded]
-    # force into proper arrays
+    # new data format is a list of (time related deal, features, samples) arrays
+    trials_rolled = [window_stack(x, 21, int(260/5)) for x in trials_padded]
     trainy = roll_labels(trials_rolled, labs)
+    # then we just concatenate the list, formatting the data as a new numpy
+    # array with dims (samples, time, features)
     trainx = np.moveaxis(np.concatenate(trials_rolled, axis = 2), 2, 0)
     return trainx, trainy
 
@@ -99,6 +108,7 @@ def read_data_unrolled(path, n_classes = 7):
     return trainx, trainy
 
 
+# high pass butterworth filter discussed in the paper
 def butter_highpass(cutoff, fs, order=3):
     # nyquist frequency!!
     nyq = .5*fs
@@ -124,6 +134,7 @@ def butter_highpass_filter(data, cutoff, fs, order=3):
 
 def read_data_filtered(path, n_classes = 7, scale = False):
     trials_all, labs  = read_group_to_lists(path, n_classes = n_classes)
+    # same thing as read_data but its got a filter
     trials_all = [butter_highpass_filter(x, 2, 200) for x in trials_all]
     if (scale):
         trials_all = [MinMaxScaler().fit_transform(x) for x in trials_all]
@@ -133,7 +144,7 @@ def read_data_filtered(path, n_classes = 7, scale = False):
     # pad data for the lstm
     trials_padded = [pad_along_axis(x, maxlen, axis=0) for x in trials_all]
     # sliding window trials
-    trials_rolled = [window_stack(x, 5, int(260/5)) for x in trials_padded]
+    trials_rolled = [window_stack(x, 21, int(260/5)) for x in trials_padded]
     # force into proper arrays
     trainy = roll_labels(trials_rolled, labs)
     trainx = np.moveaxis(np.concatenate(trials_rolled, axis = 2), 2, 0)
@@ -232,20 +243,23 @@ def add_noise_snr(signal, snr = 25):
 # [i.shape for i in x2]
 
 def read_data_filtered_augmented(path, n_classes = 7, scale = False):
+    # read data [(time, feat)]
     trials_all, labs  = read_group_to_lists(path, n_classes = n_classes)
+    # shift electrodes for double data
     trials_all, labs = augment_data(trials_all, labs)
+    # add noisy data while preserving SNR of 25, doubling data again
     trials_all = trials_all + [add_noise_snr(i) for i in trials_all]
     labs = labs + labs
+    # butterworth
     trials_all = [butter_highpass_filter(x, 2, 200) for x in trials_all]
     if (scale):
         trials_all = [MinMaxScaler().fit_transform(x) for x in trials_all]
     # get maximum length for padding
     maxlen = max([x.shape[0] for x in trials_all])
-
     # pad data for the lstm
     trials_padded = [pad_along_axis(x, maxlen, axis=0) for x in trials_all]
     # sliding window trials
-    trials_rolled = [window_stack(x, 5, int(260/5)) for x in trials_padded]
+    trials_rolled = [window_stack(x, 21, int(260/5)) for x in trials_padded]
     # force into proper arrays
     trainy = roll_labels(trials_rolled, labs)
     trainx = np.moveaxis(np.concatenate(trials_rolled, axis = 2), 2, 0)
