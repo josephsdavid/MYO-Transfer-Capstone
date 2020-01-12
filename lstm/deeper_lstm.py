@@ -14,10 +14,10 @@ from sklearn.metrics import roc_auc_score
 import math
 import matplotlib.pyplot as plt
 from dataloaders import test_loader
-from load_pretrain import  read_data_filtered_augmented
+from load_pretrain import  read_data_augmented
 
 
-X, y = read_data_filtered_augmented("../PreTrainingDataset", noise = False)
+X, y = read_data_augmented("../PreTrainingDataset", noise = False)
 y = to_categorical(y)
 
 # I dont think there is much benefit to stacking LSTM layers in our case. The

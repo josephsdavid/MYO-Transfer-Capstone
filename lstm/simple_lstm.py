@@ -6,7 +6,7 @@ import tensorflow as tf
 from keras import optimizers
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 import numpy as np
-from load_pretrain import read_data, read_data_filtered_augmented, read_data_filtered
+from load_pretrain import read_data, read_data_augmented, read_data_filtered
 from keras.layers import Dense, Dropout, LSTM, Input, BatchNormalization
 from keras.layers import Embedding, Activation
 from keras.models import Model
@@ -16,7 +16,7 @@ from keras import backend as K
 from keras.preprocessing.sequence import TimeseriesGenerator
 import matplotlib.pyplot as plt
 
-X, y = read_data_filtered_augmented("../PreTrainingDataset", noise = False)
+X, y = read_data_augmented("../PreTrainingDataset", noise = False)
 # X, y = read_data("../PreTrainingDataset")
 y = to_categorical(y)
 
