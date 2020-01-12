@@ -1,6 +1,7 @@
 import numpy as np
 from scipy import signal
 from sklearn.preprocessing import StandardScaler
+import utils
 import load_pretrain as lp
 
 
@@ -64,7 +65,7 @@ def train_loader(path, n_classes = 7, scale = False, noise = False, filter = Tru
     return trainx, trainy
 
 def eval_generator(fn):
-    def read_data_filtered(path, n_classes = 7, scale = False, noise =  False, filter = True):
+    def read_data_aug(path, n_classes = 7, scale = False, noise =  False, filter = True):
         # read data [(time, feat)]
         trials_all, labs  = fn(path, n_classes = n_classes)
         if (filter):
@@ -82,7 +83,7 @@ def eval_generator(fn):
             scaler = StandardScaler().fit(utils.flatten(trainx))
             trainx = utils.scale(trainx, scaler)
         return trainx, trainy
-    return(read_data_filtered)
+    return(read_data_aug)
 
 
 val_loader, test_loader = (eval_generator(f) for f in [val_reader, test_reader])
