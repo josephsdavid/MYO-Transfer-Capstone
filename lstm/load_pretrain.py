@@ -1,6 +1,6 @@
 import numpy as np
 from scipy import signal
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import StandardScaler
 import utils
 
 # load up the first example first!
