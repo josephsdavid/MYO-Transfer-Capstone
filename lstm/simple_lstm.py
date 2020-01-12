@@ -16,7 +16,7 @@ from keras import backend as K
 from keras.preprocessing.sequence import TimeseriesGenerator
 import matplotlib.pyplot as plt
 
-X, y = read_data_augmented("../PreTrainingDataset", noise = False)
+X, y = read_data_augmented("../PreTrainingDataset")
 # X, y = read_data("../PreTrainingDataset")
 y = to_categorical(y)
 
@@ -60,7 +60,8 @@ class simple_lstm_classifier:
             }):
         adam = optimizers.adam(lr = lr)
         self.model.compile(optimizer = adam, **compilation_options)
-        self.history = self.model.fit(X, y, **fit_options)
+        callbacks = EarlyStopping(monitor = 'acc', patience = 10, mode = 'max')
+        self.history = self.model.fit(X, y, **fit_options, callbacks = [callbacks])
 
 
 lstm = simple_lstm_classifier(X, y, dropout = 0.1)
@@ -108,7 +109,7 @@ X_test, y_test = test_loader("../EvaluationDataset")
 y_test = to_categorical(y_test)
 X_test.shape
 
-score = lstm.model.evaluate(X_test, y_test)
+lstm.model.evaluate(X_test, y_test)
 # 68% accuracy
 
 
