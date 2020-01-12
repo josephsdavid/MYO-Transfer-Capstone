@@ -17,8 +17,6 @@ from keras.preprocessing.sequence import TimeseriesGenerator
 import matplotlib.pyplot as plt
 import itertools as it
 
-X_test, y_test = test_loader("../EvaluationDataset")
-y_test = to_categorical(y_test)
 
 class simple_lstm_classifier:
     def __init__(self, X, y, act = 'tanh', dropout = 0, stateful = False):
@@ -59,10 +57,25 @@ grid = list(it.product(*(tunables[i] for i in tunables)))
 results = {}
 for i in range(len(grid)):
     hp = dict(zip(pars, grid[i]))
+    X_test, y_test = test_loader("../EvaluationDataset", scale = grid[i][0])
+    y_test = to_categorical(y_test)
     X, y = read_data_augmented("../PreTrainingDataset", **hp)
+    y = to_categorical(y)
     lstm = simple_lstm_classifier(X,y, dropout = 0.1)
     lstm.fit(X, y, lr = 0.0005, fit_options=fit_options)
     score=lstm.model.evaluate(X_test, y_test)[1]
     results[grid[i]] = score
 
 results
+
+nofilter = list(results.keys())[1::2]
+
+
+filtered = list(results.keys())[0::2]
+
+np.mean([results[k] for k in filtered]) - np.mean([results[k] for k in nofilter])
+
+
+# best results = False, False, True, so scale = F, noise = F, filter = T
+# it is intereting to note that filtering the data did on average 6% better on
+# accuracy, which is an important result!
