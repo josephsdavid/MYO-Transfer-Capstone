@@ -39,43 +39,48 @@ test_reader = reader_generator('Test1')
 
 def train_loader(path, n_classes = 7, scale = False):
     # read data [(time, feat)]
-    trials_all, labs  = train_reader(path, n_classes = n_classes)
+    trials_all, labs  =lp.read_group_to_lists(path, n_classes = n_classes)
     # shift electrodes for double data
     trials_all, labs = lp.augment_data(trials_all, labs)
     # add noisy data while preserving SNR of 25, doubling data again
-    trials_all = trials_all + [lp.add_noise_snr(i) for i in trials_all]
-    labs = labs + labs
+    if (noise):
+        trials_all = trials_all + [lp.add_noise_snr(i) for i in trials_all]
+        labs = labs + labs
     # butterworth
-    trials_all = [lp.butter_highpass_filter(x, 2, 200) for x in trials_all]
-    if (scale):
-        trials_all = [MinMaxScaler().fit_transform(x) for x in trials_all]
+    if (filter):
+        trials_all = [lp.butter_highpass_filter(x, 2, 200) for x in trials_all]
     # get maximum length for padding
     maxlen = max([x.shape[0] for x in trials_all])
     # pad data for the lstm
     trials_padded = [lp.pad_along_axis(x, maxlen, axis=0) for x in trials_all]
     # sliding window trials
-    trials_rolled = [lp.window_stack(x, 21, int(260/5)) for x in trials_padded]
+    trials_rolled = [lp.window_stack(x, 19, int(260/5)) for x in trials_padded]
     # force into proper arrays
     trainy = lp.roll_labels(trials_rolled, labs)
     trainx = np.moveaxis(np.concatenate(trials_rolled, axis = 2), 2, 0)
+    if (scale):
+        scaler = StandardScaler().fit(utils.flatten(trainx))
+        trainx = utils.scale(trainx, scaler)
     return trainx, trainy
 
 def eval_generator(fn):
-    def read_data_filtered(path, n_classes = 7, scale = False):
+    def read_data_filtered(path, n_classes = 7, scale = False, filter = True):
         # read data [(time, feat)]
         trials_all, labs  = fn(path, n_classes = n_classes)
-        trials_all = [lp.butter_highpass_filter(x, 2, 200) for x in trials_all]
-        if (scale):
-            trials_all = [MinMaxScaler().fit_transform(x) for x in trials_all]
+        if (filter):
+            trials_all = [lp.butter_highpass_filter(x, 2, 200) for x in trials_all]
         # get maximum length for padding
         maxlen = max([x.shape[0] for x in trials_all])
         # pad data for the lstm
         trials_padded = [lp.pad_along_axis(x, maxlen, axis=0) for x in trials_all]
         # sliding window trials
-        trials_rolled = [lp.window_stack(x, 21, int(260/5)) for x in trials_padded]
+        trials_rolled = [lp.window_stack(x, 19, int(260/5)) for x in trials_padded]
         # force into proper arrays
         trainy = lp.roll_labels(trials_rolled, labs)
         trainx = np.moveaxis(np.concatenate(trials_rolled, axis = 2), 2, 0)
+        if (scale):
+            scaler = StandardScaler().fit(utils.flatten(trainx))
+            trainx = utils.scale(trainx, scaler)
         return trainx, trainy
     return(read_data_filtered)
 

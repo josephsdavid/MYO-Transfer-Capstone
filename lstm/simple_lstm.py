@@ -1,4 +1,8 @@
+from keras.models import load_model
+from dataloaders import test_loader
+from scipy.stats import gaussian_kde
 from keras import backend as K
+import tensorflow as tf
 from keras import optimizers
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 import numpy as np
@@ -12,7 +16,7 @@ from keras import backend as K
 from keras.preprocessing.sequence import TimeseriesGenerator
 import matplotlib.pyplot as plt
 
-X, y = read_data_filtered_augmented("../PreTrainingDataset")
+X, y = read_data_filtered_augmented("../PreTrainingDataset", noise = False)
 # X, y = read_data("../PreTrainingDataset")
 y = to_categorical(y)
 
@@ -31,6 +35,10 @@ calculate_nodes(X, y, 2)
 # build the simplest lstm possible first
 # then maybe stateful who knows
 # try out embedding layers too
+
+
+
+
 class simple_lstm_classifier:
     def __init__(self, X, y, act = 'tanh', dropout = 0, stateful = False):
         n_timesteps, n_features, n_outputs = X.shape[1], X.shape[2], y.shape[1]
@@ -56,10 +64,19 @@ class simple_lstm_classifier:
 
 
 lstm = simple_lstm_classifier(X, y, dropout = 0.1)
-lstm.fit(X,y)
+
+fit_options = {
+    'epochs': 100,
+    'batch_size':400,
+    'shuffle':True,
+    'verbose':1
+}
+
+lstm.fit(X, y, lr = 0.0005, fit_options=fit_options)
 
 
-# lr = default 0.001, val_acc = 0.67
+lstm.model.save("models/simple_lstm.h5")
+
 
 history = lstm.history
 
@@ -82,6 +99,37 @@ F = plt.gcf()
 Size = F.get_size_inches()
 F.set_size_inches(Size[0]*2, Size[1]*2)
 plt.savefig("simple_lstm_training.png")
+plt.show()
+
+
+
+######################## temporary evaluation
+X_test, y_test = test_loader("../EvaluationDataset")
+y_test = to_categorical(y_test)
+X_test.shape
+
+score = lstm.model.evaluate(X_test, y_test)
+# 68% accuracy
+
+
+preds = lstm.model.predict(X_test)
+
+
+fig = plt.figure()
+for k in range(preds.shape[-1]):
+    ax = fig.add_subplot(3, 3, k+1)
+    ax.plot(np.linspace(0,1, 200),gaussian_kde(preds[:,k])(np.linspace(0,1,200)), label = k)
+    ax.set_title(str(k))
+plt.savefig('simple_lstm_class_probs.png')
+plt.show()
+
+
+fig = plt.figure()
+for k in range(preds.shape[-1]):
+    ax = fig.add_subplot(3, 3, k+1)
+    ax.plot(np.linspace(0,1, 200),gaussian_kde(y_test[:,k])(np.linspace(0,1,200)), label = k)
+    ax.set_title(str(k))
+plt.savefig('actual_class_probs.png')
 plt.show()
 
 

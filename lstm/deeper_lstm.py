@@ -1,5 +1,6 @@
 import numpy as np
-from load_pretrain import  read_data_filtered_augmented
+from scipy.stats import gaussian_kde
+import tensorflow as tf
 from keras import optimizers
 from keras.layers import Dense, Dropout, LSTM, Input, Bidirectional
 from keras.layers import Embedding, Activation, BatchNormalization
@@ -8,17 +9,16 @@ from keras.utils import to_categorical
 from keras.utils.generic_utils import get_custom_objects
 from keras import backend as K
 from keras.preprocessing.sequence import TimeseriesGenerator
-from keras.callbacks import TensorBoard
+from keras.callbacks import TensorBoard, Callback, EarlyStopping
+from sklearn.metrics import roc_auc_score
 import math
 import matplotlib.pyplot as plt
+from dataloaders import test_loader
+from load_pretrain import  read_data_filtered_augmented
 
 
-
-X, y = read_data_filtered_augmented("../PreTrainingDataset")
+X, y = read_data_filtered_augmented("../PreTrainingDataset", noise = False)
 y = to_categorical(y)
-
-X.shape
-
 
 # I dont think there is much benefit to stacking LSTM layers in our case. The
 # idea of a stacked RNN is to evaluate the data at different timescales, and I
@@ -128,13 +128,24 @@ class wide_lstm_classifier:
             self.history = self.model.fit(X, y, **fit_options, callbacks = [callbacks])
         else:
             adam = optimizers.adam(lr = lr)
+            callbacks = EarlyStopping(monitor = 'acc', patience = 10, mode = 'max')
             self.model.compile(optimizer = adam, **compilation_options)
             self.history = self.model.fit(X, y, **fit_options)
 
 
 lstm = wide_lstm_classifier(X, y, dropout = 0.1, batch_norm = False)
 
-lstm.fit(X,y, tensorboard=False, lr = 0.0005)
+
+fit_options = {
+    'epochs': 100,
+    'batch_size':400,
+    'shuffle':True,
+    'verbose':1
+}
+
+lstm.fit(X,y, tensorboard=False, lr = 0.0005, fit_options = fit_options)
+
+lstm.model.save("models/wide_lstm.h5")
 
 history = lstm.history
 
@@ -143,7 +154,7 @@ print(history.history['val_acc'])
 
 plt.subplot(212)
 plt.plot(history.history['acc'])
-plt.plot(history.history['val_acc'])
+# plt.plot(history.history['val_acc'])
 plt.title('model accuracy')
 plt.ylabel('accuracy')
 plt.xlabel('epoch')
@@ -151,7 +162,7 @@ plt.legend(['train', 'test'], loc='upper left')
 # summarize history for loss
 plt.subplot(211)
 plt.plot(history.history['loss'])
-plt.plot(history.history['val_loss'])
+# plt.plot(history.history['val_loss'])
 plt.title('model loss')
 plt.ylabel('loss')
 plt.xlabel('epoch')
@@ -159,5 +170,28 @@ plt.legend(['train', 'test'], loc='upper left')
 F = plt.gcf()
 Size = F.get_size_inches()
 F.set_size_inches(Size[0]*2, Size[1]*2)
-plt.savefig("wide_lstm_training.png")
+# plt.savefig("wide_lstm_training.png")
 plt.show()
+
+
+
+######## temporary evaluation
+X_test, y_test = test_loader("../EvaluationDataset")
+y_test = to_categorical(y_test)
+
+
+score = lstm.model.evaluate(X_test, y_test)
+
+print("%s: %.2f%%" % (lstm.model.metrics_names[1], score[1]*100))
+71.79
+
+preds = lstm.model.predict(X_test)
+
+fig = plt.figure()
+for k in range(preds.shape[-1]):
+    ax = fig.add_subplot(3, 3, k+1)
+    ax.plot(np.linspace(0,1, 200),gaussian_kde(preds[:,k])(np.linspace(0,1,200)), label = k)
+    ax.set_title(str(k))
+plt.savefig('wide_lstm_class_probs.png')
+plt.show()
+
