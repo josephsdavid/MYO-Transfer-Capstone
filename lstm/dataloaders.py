@@ -37,7 +37,7 @@ val_reader = reader_generator('Test0')
 test_reader = reader_generator('Test1')
 
 
-def train_loader(path, n_classes = 7, scale = False):
+def train_loader(path, n_classes = 7, scale = False, noise = False, filter = True):
     # read data [(time, feat)]
     trials_all, labs  =lp.read_group_to_lists(path, n_classes = n_classes)
     # shift electrodes for double data
@@ -64,7 +64,7 @@ def train_loader(path, n_classes = 7, scale = False):
     return trainx, trainy
 
 def eval_generator(fn):
-    def read_data_filtered(path, n_classes = 7, scale = False, filter = True):
+    def read_data_filtered(path, n_classes = 7, scale = False, noise =  False, filter = True):
         # read data [(time, feat)]
         trials_all, labs  = fn(path, n_classes = n_classes)
         if (filter):
