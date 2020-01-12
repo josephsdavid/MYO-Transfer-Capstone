@@ -33,14 +33,12 @@ def reader_generator(instance):
         return res, labels
     return read_group_to_lists
 
-train_reader = reader_generator('training0')
-val_reader = reader_generator('Test0')
-test_reader = reader_generator('Test1')
+train_reader, val_reader, test_reader = (reader_generator(x) for x in ['training0', 'Test0', 'Test1'])
 
 
 def train_loader(path, n_classes = 7, scale = False, noise = False, filter = True):
     # read data [(time, feat)]
-    trials_all, labs  =lp.read_group_to_lists(path, n_classes = n_classes)
+    trials_all, labs  =train_reader(path, n_classes = n_classes)
     # shift electrodes for double data
     trials_all, labs = lp.augment_data(trials_all, labs)
     # add noisy data while preserving SNR of 25, doubling data again

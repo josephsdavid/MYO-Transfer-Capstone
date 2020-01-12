@@ -7,7 +7,8 @@ import utils
 
 def read_file(path):
     f = np.array(np.fromfile(path, dtype = np.int16))
-    return f.reshape(int(f.shape[0]/8),8)
+    out = f.reshape(int(f.shape[0]/8),8)
+    return out.astype(np.float32)
 
 
 # the output of this function is a list of (timesteps, features) arrays, as well
