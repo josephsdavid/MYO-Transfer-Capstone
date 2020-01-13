@@ -36,11 +36,12 @@ def reader_generator(instance):
 train_reader, val_reader, test_reader = (reader_generator(x) for x in ['training0', 'Test0', 'Test1'])
 
 
-def train_loader(path, n_classes = 7, scale = False, noise = False, filter = True):
+def train_loader(path, n_classes = 7, scale = False, noise = True, filter = True, shift = False):
     # read data [(time, feat)]
     trials_all, labs  =train_reader(path, n_classes = n_classes)
     # shift electrodes for double data
-    trials_all, labs = lp.augment_data(trials_all, labs)
+    if (shift):
+        trials_all, labs = lp.augment_data(trials_all, labs)
     # add noisy data while preserving SNR of 25, doubling data again
     if (noise):
         trials_all = trials_all + [lp.add_noise_snr(i) for i in trials_all]
@@ -48,12 +49,10 @@ def train_loader(path, n_classes = 7, scale = False, noise = False, filter = Tru
     # butterworth
     if (filter):
         trials_all = [lp.butter_highpass_filter(x, 2, 200) for x in trials_all]
-    # get maximum length for padding
-    maxlen = max([x.shape[0] for x in trials_all])
     # pad data for the lstm
-    trials_padded = [lp.pad_along_axis(x, maxlen, axis=0) for x in trials_all]
+    trials_padded = [lp.pad_along_axis(x, 1000, axis=0) for x in trials_all]
     # sliding window trials
-    trials_rolled = [lp.window_stack(x, 19, int(260/5)) for x in trials_padded]
+    trials_rolled = [lp.window_stack(x, 18, int(260/5)) for x in trials_padded]
     # force into proper arrays
     trainy = lp.roll_labels(trials_rolled, labs)
     trainx = np.moveaxis(np.concatenate(trials_rolled, axis = 2), 2, 0)
@@ -69,11 +68,10 @@ def eval_generator(fn):
         if (filter):
             trials_all = [lp.butter_highpass_filter(x, 2, 200) for x in trials_all]
         # get maximum length for padding
-        maxlen = max([x.shape[0] for x in trials_all])
         # pad data for the lstm
-        trials_padded = [lp.pad_along_axis(x, maxlen, axis=0) for x in trials_all]
+        trials_padded = [lp.pad_along_axis(x, 1000, axis=0) for x in trials_all]
         # sliding window trials
-        trials_rolled = [lp.window_stack(x, 19, int(260/5)) for x in trials_padded]
+        trials_rolled = [lp.window_stack(x, 18, int(260/5)) for x in trials_padded]
         # force into proper arrays
         trainy = lp.roll_labels(trials_rolled, labs)
         trainx = np.moveaxis(np.concatenate(trials_rolled, axis = 2), 2, 0)
