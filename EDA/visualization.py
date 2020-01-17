@@ -66,29 +66,69 @@ def shape_series(arr, channels=8):
     _dim = (channels, int(len(arr)/channels))
     return np.reshape(arr, _dim)
 
-def plot_trial(examples, labels, subject=0, classe=1, figsize=(5,8)):
+def plot_trial(examples, labels, subject=0, classe=1, figsize=(5,8), filtered=False):
     
     groups = [0, 1, 2, 3, 5, 6, 7]
     session = shape_series(examples[subject][classe])
     gesture = shape_series(labels[subject][classe])[0][0]
+    session2 = []
+    if filtered==True:
+        session2 = butter_bg_session(session)
+        print(session.shape)
 
-    fig, axes = pyplot.subplots(len(groups), 1,figsize=figsize)
+    fig, axes = pyplot.subplots(len(groups), 1,figsize=figsize, dpi=120)
     for n,group in enumerate(groups):
         axes[n].plot(session[group, :])
+        if filtered:
+            axes[n].plot(session2[group, :])
         axes[n].set_ylim(-150,150)
         axes[n].set_title('Channel {}'.format(group+1),y=0.8, loc='right')
     axes[n].set_xlabel('Gesture {} Code'.format(gesture))
     fig.show()
 
-# %%
+
+
+
+
 
 
 # %%
+from scipy.signal import butter, lfilter, freqz
+from sklearn.preprocessing import MinMaxScaler
+
+def butter_bandpass(lowcut, highcut, fs, order=5):
+    nyq = 1000.0
+    low = lowcut / nyq
+    high = highcut / nyq
+    b, a = butter(order, [low, high], btype='band')
+    return b, a
+
+
+def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
+    b, a = butter_bandpass(lowcut, highcut, fs, order=order)
+    y = lfilter(b, a, data)
+    return y
+
+def butter_bg_session(session):
+    # Number references from sEMG feature extraction article
+    # src: http://dx.doi.org/10.3390/s18051615
+    # Notch filtering is discouraged here 
+    # http://www.noraxon.com/wp-content/uploads/2014/12/ABC-EMG-ISBN.pdf
+    fs = 200.0
+    lowcut = 20.0
+    highcut = 500.0
+
+    # Time is sample count times freq of armband (200Hz)
+    T = session.shape[1] * 1/fs
+    nsamples = session.shape[1]
+    t = np.linspace(0, T, nsamples, endpoint=False)
+
+    session_b = [butter_bandpass_filter(x, lowcut, highcut, fs, order=4) for x in session]
+    return np.array(session_b)
 
 # %%
 examples, labels = read_data('../PreTrainingDataset',type='training0')
-plot_trial(examples, labels,0,15,(10,15))
-plot_trial(examples, labels,0,10, (10,15))
-
+plot_trial(examples, labels,0,20,(10,15))
+plot_trial(examples, labels,0,20, (10,15), True)
 
 # %%
