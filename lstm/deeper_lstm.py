@@ -1,15 +1,13 @@
 import numpy as np
 from scipy.stats import gaussian_kde
 import tensorflow as tf
-from keras import optimizers
-from keras.layers import Dense, Dropout, LSTM, Input, Bidirectional
-from keras.layers import Embedding, Activation, BatchNormalization
-from keras.models import Model
-from keras.utils import to_categorical
-from keras.utils.generic_utils import get_custom_objects
-from keras import backend as K
-from keras.preprocessing.sequence import TimeseriesGenerator
-from keras.callbacks import TensorBoard, Callback, EarlyStopping
+from tensorflow.keras import optimizers
+from tensorflow.keras.layers import Dense, Dropout, LSTM, Input, Bidirectional
+from tensorflow.keras.layers import Embedding, Activation, BatchNormalization
+from tensorflow.keras.models import Model
+from tensorflow.keras.utils import to_categorical
+from tensorflow.keras.preprocessing.sequence import TimeseriesGenerator
+from tensorflow.keras.callbacks import TensorBoard, Callback, EarlyStopping
 from sklearn.metrics import roc_auc_score
 import math
 import matplotlib.pyplot as plt
@@ -17,7 +15,8 @@ from dataloaders import test_loader
 from load_pretrain import  read_data_augmented
 
 
-X, y = read_data_augmented("../PreTrainingDataset", noise = False, scale = False, filter = True)
+X, y = read_data_augmented("../PreTrainingDataset")
+
 y = to_categorical(y)
 
 # I dont think there is much benefit to stacking LSTM layers in our case. The
@@ -57,12 +56,12 @@ class stacked_lstm_classifier:
             }, tensorboard = True):
         if tensorboard:
             callbacks = TensorBoard(batch_size = fit_options['batch_size'], update_freq=4000 , histogram_freq=1)
-            adam = optimizers.adam(lr = lr)
-            self.model.compile(optimizer = adam, **compilation_options)
+            Adam = optimizers.Adam(lr = lr)
+            self.model.compile(optimizer = Adam, **compilation_options)
             self.history = self.model.fit(X, y, **fit_options, callbacks = [callbacks])
         else:
-            adam = optimizers.adam(lr = lr)
-            self.model.compile(optimizer = adam, **compilation_options)
+            Adam = optimizers.Adam(lr = lr)
+            self.model.compile(optimizer = Adam, **compilation_options)
             self.history = self.model.fit(X, y, **fit_options)
 
 lstm = stacked_lstm_classifier(X, y, dropout = 0.1)
@@ -102,9 +101,10 @@ class wide_lstm_classifier:
     def __init__(self, X, y, act = 'tanh', dropout = 0, batch_norm = False):
         n_timesteps, n_features, n_outputs = X.shape[1], X.shape[2], y.shape[1]
         start = Input((None, n_features), name = 'Input')
-        x = Bidirectional(LSTM(60, activation = act,name = 'LSTM_1',
+        x = LSTM(60, activation = act,name = 'LSTM_1',
                   dropout = dropout,
-                  recurrent_dropout = dropout))(start)
+                  recurrent_dropout = dropout
+                 )(start)
         if batch_norm:
             x = BatchNormalization()(x)
         out = Dense(n_outputs, activation = 'softmax')(x)
@@ -123,17 +123,17 @@ class wide_lstm_classifier:
             }, tensorboard = True):
         if tensorboard:
             callbacks = TensorBoard(batch_size = fit_options['batch_size'], update_freq=4000 , histogram_freq=1)
-            adam = optimizers.adam(lr = lr)
-            self.model.compile(optimizer = adam, **compilation_options)
+            Adam = optimizers.Adam(lr = lr)
+            self.model.compile(optimizer = Adam, **compilation_options)
             self.history = self.model.fit(X, y, **fit_options, callbacks = [callbacks])
         else:
-            adam = optimizers.adam(lr = lr)
+            Adam = optimizers.Adam(lr = lr)
             callbacks = EarlyStopping(monitor = 'acc', patience = 10, mode = 'max')
-            self.model.compile(optimizer = adam, **compilation_options)
+            self.model.compile(optimizer = Adam, **compilation_options)
             self.history = self.model.fit(X, y, **fit_options)
 
 
-lstm = wide_lstm_classifier(X, y, dropout = 0.1, batch_norm = False)
+lstm = wide_lstm_classifier(X, y, dropout = 0.5, batch_norm = False)
 
 
 fit_options = {

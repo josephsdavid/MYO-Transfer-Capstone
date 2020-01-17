@@ -1,19 +1,16 @@
-from keras.models import load_model
+from tensorflow.keras.models import load_model
 from dataloaders import test_loader
 from scipy.stats import gaussian_kde
-from keras import backend as K
 import tensorflow as tf
-from keras import optimizers
-from keras.callbacks import EarlyStopping, ModelCheckpoint
+from tensorflow.keras import optimizers
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 import numpy as np
 from load_pretrain import read_data, read_data_augmented, read_data_filtered
-from keras.layers import Dense, Dropout, LSTM, Input, BatchNormalization
-from keras.layers import Embedding, Activation
-from keras.models import Model
-from keras.utils import to_categorical
-from keras.utils.generic_utils import get_custom_objects
-from keras import backend as K
-from keras.preprocessing.sequence import TimeseriesGenerator
+from tensorflow.keras.layers import Dense, Dropout, LSTM, Input, BatchNormalization
+from tensorflow.keras.layers import Embedding, Activation
+from tensorflow.keras.models import Model
+from tensorflow.keras.utils import to_categorical
+from tensorflow.keras.preprocessing.sequence import TimeseriesGenerator
 import matplotlib.pyplot as plt
 
 X, y = read_data_augmented("../PreTrainingDataset")
@@ -58,9 +55,9 @@ class simple_lstm_classifier:
                 'shuffle':False,
                 'verbose':1
             }):
-        adam = optimizers.adam(lr = lr)
-        self.model.compile(optimizer = adam, **compilation_options)
-        callbacks = EarlyStopping(monitor = 'acc', patience = 10, mode = 'max')
+        Adam = optimizers.Adam(lr = lr)
+        self.model.compile(optimizer = Adam, **compilation_options)
+        callbacks = EarlyStopping(monitor = 'accuracy', patience = 10, mode = 'max')
         self.history = self.model.fit(X, y, **fit_options, callbacks = [callbacks])
 
 
