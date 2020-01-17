@@ -3,7 +3,7 @@ from dataloaders import train_loader, val_loader, test_loader
 from tensorflow.keras.utils import to_categorical
 import tensorflow as tf
 from tensorflow.keras.models import load_model, Model
-from tensorflow.keras.layers import Dense, Input, LSTM
+from tensorflow.keras.layers import Dense, Input, LSTM, Dropout
 
 X_train, y_train = train_loader("../EvaluationDataset")
 y_train = to_categorical(y_train)
@@ -22,7 +22,7 @@ scores['wide_lstm_no_training'] = load_model("models/wide_lstm.h5").evaluate(X_t
 simple_source = load_model("models/simple_lstm.h5")
 simple_source.trainable= False
 
-hidden = Dense(120, activation = 'relu')(simple_source.layers[-2].output)
+hidden = Dense(120, activation = 'relu')(hidden)
 out = Dense(7, activation='softmax')(hidden)
 
 model_transfer = Model(simple_source.input, out)
@@ -38,7 +38,7 @@ model_transfer.compile(optimizer = Adam, **comp_opts)
 
 model_transfer.fit(X_train, y_train, batch_size = 400, epochs = 25, validation_data = (X_val, y_val))
 
-scores['simple_lstm_transfer'] = model_transfer.evaluate(X_test, y_test)
+scores['simple_lstm_transfer-frozen'] = model_transfer.evaluate(X_test, y_test)
 
 
 class simple_lstm_classifier:
@@ -75,14 +75,17 @@ fit_options = {
     'validation_data':(X_val, y_val)
 }
 
-lstm.fit(X_train, y_train, lr = 0.005, fit_options=fit_options)
+lstm.fit(X_train, y_train, lr = 0.0005, fit_options=fit_options)
 
+# this should be p high, however that will change when we get to the nina pro
+# dataset when we have a plethora of labels
 scores['lstm_trained_simple'] = lstm.model.evaluate(X_test, y_test)
 
 
 
 wide_source = load_model("models/wide_lstm.h5")
 wide_source.trainable= False
+
 
 hidden = Dense(120, activation = 'relu')(wide_source.layers[-2].output)
 out = Dense(7, activation='softmax')(hidden)
@@ -95,7 +98,7 @@ comp_opts = {
     'loss' : 'categorical_crossentropy',
     'metrics' : ['accuracy']}
 
-Adam = tf.keras.optimizers.Adam(lr = 0.001)
+Adam = tf.keras.optimizers.Adam(lr = 0.0005)
 model_transfer.compile(optimizer = Adam, **comp_opts)
 
 model_transfer.fit(X_train, y_train, batch_size = 400, epochs = 25, validation_data = (X_val, y_val))
@@ -116,12 +119,27 @@ comp_opts = {
     'loss' : 'categorical_crossentropy',
     'metrics' : ['accuracy']}
 
-Adam = tf.keras.optimizers.Adam(lr = 0.001)
+Adam = tf.keras.optimizers.Adam(lr = 0.0005)
 model_transfer.compile(optimizer = Adam, **comp_opts)
 
 model_transfer.fit(X_train, y_train, batch_size = 400, epochs = 25, validation_data = (X_val, y_val))
 
 scores['simple_lstm_transfer-unfrozen'] = model_transfer.evaluate(X_test, y_test)
+
+
+wide_source = load_model("models/wide_lstm.h5")
+hidden = Dense(120, activation = 'relu')(wide_source.layers[-2].output)
+out = Dense(7, activation='softmax')(hidden)
+model_transfer = Model(wide_source.input, out)
+model_transfer.summary()
+comp_opts = {
+    'loss' : 'categorical_crossentropy',
+    'metrics' : ['accuracy']}
+Adam = tf.keras.optimizers.Adam(lr = 0.00005)
+model_transfer.compile(optimizer = Adam, **comp_opts)
+model_transfer.fit(X_train, y_train, batch_size = 400, epochs = 25, validation_data = (X_val, y_val))
+scores['wide_lstm_transfer-unfrozen'] = model_transfer.evaluate(X_test, y_test)
+
 
 import json
 
@@ -129,5 +147,7 @@ scores2 = {k: [float(x) for x in scores[k]] for k in scores.keys()}
 
 with open('scores.json', 'w') as outfile:
     json.dump(scores2, outfile)
+
+json.dumps(scores2, indent = 2)
 
 
