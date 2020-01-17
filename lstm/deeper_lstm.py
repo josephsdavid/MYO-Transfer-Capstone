@@ -16,7 +16,6 @@ from load_pretrain import  read_data_augmented
 
 
 X, y = read_data_augmented("../PreTrainingDataset")
-
 y = to_categorical(y)
 
 # I dont think there is much benefit to stacking LSTM layers in our case. The
@@ -71,8 +70,8 @@ lstm.fit(X,y, tensorboard = False)
 history = lstm.history
 
 plt.subplot(212)
-plt.plot(history.history['acc'])
-plt.plot(history.history['val_acc'])
+plt.plot(history.history['accuracy'])
+plt.plot(history.history['val_accuracy'])
 plt.title('model accuracy')
 plt.ylabel('accuracy')
 plt.xlabel('epoch')
@@ -101,10 +100,10 @@ class wide_lstm_classifier:
     def __init__(self, X, y, act = 'tanh', dropout = 0, batch_norm = False):
         n_timesteps, n_features, n_outputs = X.shape[1], X.shape[2], y.shape[1]
         start = Input((None, n_features), name = 'Input')
-        x = LSTM(60, activation = act,name = 'LSTM_1',
+        x = (LSTM(120, activation = act,name = 'LSTM_1',
                   dropout = dropout,
                   recurrent_dropout = dropout
-                 )(start)
+                  ))(start)
         if batch_norm:
             x = BatchNormalization()(x)
         out = Dense(n_outputs, activation = 'softmax')(x)
@@ -128,33 +127,34 @@ class wide_lstm_classifier:
             self.history = self.model.fit(X, y, **fit_options, callbacks = [callbacks])
         else:
             Adam = optimizers.Adam(lr = lr)
-            callbacks = EarlyStopping(monitor = 'acc', patience = 10, mode = 'max')
+            callbacks = EarlyStopping(monitor = 'loss', patience = 10, mode = 'max')
             self.model.compile(optimizer = Adam, **compilation_options)
             self.history = self.model.fit(X, y, **fit_options)
 
 
-lstm = wide_lstm_classifier(X, y, dropout = 0.5, batch_norm = False)
+lstm = wide_lstm_classifier(X, y, dropout = 0.1, batch_norm = False)
 
 
 fit_options = {
     'epochs': 100,
     'batch_size':400,
     'shuffle':True,
+    'validation_split':0.1,
     'verbose':1
 }
 
-lstm.fit(X,y, tensorboard=False, lr = 0.0005, fit_options = fit_options)
+lstm.fit(X,y, tensorboard=False, lr = 0.00005, fit_options = fit_options)
 
 lstm.model.save("models/wide_lstm.h5")
 
 history = lstm.history
 
-print(history.history['val_acc'])
+print(history.history['val_accuracy'])
 
 
 plt.subplot(212)
-plt.plot(history.history['acc'])
-# plt.plot(history.history['val_acc'])
+plt.plot(history.history['accuracy'])
+plt.plot(history.history['val_accuracy'])
 plt.title('model accuracy')
 plt.ylabel('accuracy')
 plt.xlabel('epoch')
@@ -162,7 +162,7 @@ plt.legend(['train', 'test'], loc='upper left')
 # summarize history for loss
 plt.subplot(211)
 plt.plot(history.history['loss'])
-# plt.plot(history.history['val_loss'])
+plt.plot(history.history['val_loss'])
 plt.title('model loss')
 plt.ylabel('loss')
 plt.xlabel('epoch')
@@ -170,7 +170,7 @@ plt.legend(['train', 'test'], loc='upper left')
 F = plt.gcf()
 Size = F.get_size_inches()
 F.set_size_inches(Size[0]*2, Size[1]*2)
-# plt.savefig("wide_lstm_training.png")
+plt.savefig("wide_lstm_training.png")
 plt.show()
 
 
