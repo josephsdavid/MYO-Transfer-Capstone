@@ -12,8 +12,10 @@ from scipy.ndimage import zoom
 import json
 import os
 import argparse
-
-
+from Preprocessing.filters import butter_bandpass_filter, butter_highpass_filter
+from Preprocessing.data_utils import shape_series
+from Preprocessing.transforms import to_freq
+from scipy import signal
 #%%
 
 number_of_vector_per_example = 52
@@ -21,114 +23,132 @@ number_of_canals = 8
 number_of_classes = 7
 size_non_overlap = 5
 
+fs = 200.0
+lowcut = 450.0
+highcut = 20.0
+groups = [0, 1, 2, 3, 5, 6, 7]
+
+
+
+def calculate_spectrogram_vector(vector, fs=200, npserseg=57, noverlap=0):
+    frequencies_samples, time_segment_sample, spectrogram_of_vector = signal.spectrogram(x=vector, fs=fs,
+                                                                                         nperseg=npserseg,
+                                                                                         noverlap=noverlap,
+                                                                                         window="blackman",
+                                                                                         scaling="spectrum")
+    return spectrogram_of_vector, time_segment_sample, frequencies_samples
+
+def show_spectrogram(frequencies_samples, time_segment_sample, spectrogram_of_vector, ax):
+    # time_segment_sample = np.linspace(0, 250, 122)
+    # ax.set_tick_params(
+    #     axis='x',  # changes apply to the x-axis
+    #     which='both',  # both major and minor ticks are affected
+    #     bottom='off',  # ticks along the bottom edge are off
+    #     top='off',  # ticks along the top edge are off
+    #     labelbottom='off')  # labels along the bottom edge are off
+    # print time_segment_sample
+    ax.pcolormesh(time_segment_sample, frequencies_samples, spectrogram_of_vector)
+    ax.set_ylabel('Frequency [Hz]')
+    ax.set_xlabel('Time [ms]')
+    # ax.set_title("STFT")
+    return ax
 
 
 # %%
-def read_data(path, type):
-    print("Reading Data")
-    list_dataset = []
-    list_labels = []
+def butter_bg_session(session):
+    # Time is sample count times freq of armband (200Hz)
+    session_b = [butter_highpass_filter(x,  order=5) for x in session]
+    return np.array(session_b)
 
-
-    for candidate in range(1):
-        labels = []
-        examples = []
-        for i in range(number_of_classes * 4):
-            data_read_from_file = np.fromfile(path + '/Male' + str(candidate) + '/' + type + '/classe_%d.dat' % i,
-                                              dtype=np.int8)
-            data_read_from_file = np.array(data_read_from_file, dtype=np.float16)
-            dataset_example = data_read_from_file
-            examples.append(dataset_example)
-            labels.append((i % number_of_classes) + np.zeros(dataset_example.shape[0]))
-        # examples, labels = shift_electrodes(examples, labels)
-        list_dataset.append(examples)
-        list_labels.append(labels)
-
-    for candidate in range(1):
-        labels = []
-        examples = []
-        for i in range(number_of_classes * 4):
-            data_read_from_file = np.fromfile(path + '/Female' + str(candidate) + '/' + type + '/classe_%d.dat' % i,
-                                              dtype=np.int16)
-            data_read_from_file = np.array(data_read_from_file, dtype=np.float16)
-            dataset_example = data_read_from_file
-            examples.append(dataset_example)
-            labels.append((i % number_of_classes) + np.zeros(dataset_example.shape[0]))
-        # examples, labels = shift_electrodes(examples, labels)
-        list_dataset.append(examples)
-        list_labels.append(labels)
-
-    print("Finished Reading Data")
-    return list_dataset, list_labels
-
-# %%
-def shape_series(arr, channels=8):
-    _dim = (channels, int(len(arr)/channels))
-    return np.reshape(arr, _dim)
-
-def plot_trial(examples, labels, subject=0, classe=1, figsize=(5,8), filtered=False):
+def plot_f(x, Y, labels, title='',  figsize=(5,8)):
+    fig, axes = plt.subplots(len(labels), 1,figsize=figsize)
+    xticks = np.arange(0,101, step=10)
+    for n,l in enumerate(labels):
+        for a in Y:
+            N = a[l,:].size
+            xf, fft= to_freq(a[l, :], fs)
+            axes[n].plot(xf[:N // 2], np.abs(fft)[:N // 2]* 1 / N)
+            axes[n].set_xticks(xticks)
+        axes[n].set_title('Channel {}'.format(l+1),y=0.8, loc='right')
+    axes[n].set_xlabel(title)
     
-    groups = [0, 1, 2, 3, 5, 6, 7]
-    session = shape_series(examples[subject][classe])
-    gesture = shape_series(labels[subject][classe])[0][0]
-    session2 = []
-    if filtered==True:
-        session2 = butter_bg_session(session)
-        print(session.shape)
-
-    fig, axes = pyplot.subplots(len(groups), 1,figsize=figsize, dpi=120)
-    for n,group in enumerate(groups):
-        axes[n].plot(session[group, :])
-        if filtered:
-            axes[n].plot(session2[group, :])
-        axes[n].set_ylim(-150,150)
-        axes[n].set_title('Channel {}'.format(group+1),y=0.8, loc='right')
-    axes[n].set_xlabel('Gesture {} Code'.format(gesture))
     fig.show()
 
 
+def plot_ts(x, Y, labels, title='',  figsize=(5,8)):
+    fig, axes = plt.subplots(len(labels), 1,figsize=figsize)
+    yticks = np.arange(-130,131, step=20)
+    for n,l in enumerate(labels):
+        for a in Y:
+            axes[n].plot(x,a[l, :])
+            axes[n].set_yticks(yticks)
+            axes[n].set_ylim(-130,130)
+        axes[n].set_title('Channel {}'.format(l+1),y=0.8, loc='right')
+    axes[n].set_xlabel(title)
+    fig.show()
 
+def plot_spectro(x, Y, labels, title='',  figsize=(5,8)):
+    fig, axes = plt.subplots(len(labels), 1,figsize=figsize)
+    for n,l in enumerate(labels):
+        for a in Y:
+            sv, tss, fqs = calculate_spectrogram_vector(a[l, :])
+            # sv = np.swapaxes(sv,0,1)
+            axes[n] = show_spectrogram(fqs, tss, sv, axes[n])
+    fig.show()
 
+plots_functions = {
+    'freq': plot_f,
+    'ts': plot_ts,
+    'spec': plot_spectro
+}
 
-
-
-# %%
-from scipy.signal import butter, lfilter, freqz
-from sklearn.preprocessing import MinMaxScaler
-
-def butter_bandpass(lowcut, highcut, fs, order=5):
-    nyq = 1000.0
-    low = lowcut / nyq
-    high = highcut / nyq
-    b, a = butter(order, [low, high], btype='band')
-    return b, a
-
-
-def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
-    b, a = butter_bandpass(lowcut, highcut, fs, order=order)
-    y = lfilter(b, a, data)
-    return y
-
-def butter_bg_session(session):
-    # Number references from sEMG feature extraction article
-    # src: http://dx.doi.org/10.3390/s18051615
-    # Notch filtering is discouraged here 
-    # http://www.noraxon.com/wp-content/uploads/2014/12/ABC-EMG-ISBN.pdf
-    fs = 200.0
-    lowcut = 20.0
-    highcut = 500.0
-
-    # Time is sample count times freq of armband (200Hz)
-    T = session.shape[1] * 1/fs
+def plot_trial(examples, labels, subject=0, classe=1, figsize=(5,8), filtered=False, ptype='ts'):
+    if type(classe)!= int:
+        session = []
+        for i in classe:
+            temp = shape_series(examples[subject][i]).T
+            session.append(temp[:1000,:])
+        session = np.concatenate(session, ).T
+        print(session.shape)
+        title = ''
+    else:
+        session = shape_series(examples[subject][classe])
+        gesture = shape_series(labels[subject][classe])[0][0]
+        title = 'Gesture {} Code'.format(gesture)
+    
+    
     nsamples = session.shape[1]
+    T = nsamples * 1/fs
     t = np.linspace(0, T, nsamples, endpoint=False)
+    print(T, t)
+    data = [session]
+    if filtered==True:
+        data.append(butter_bg_session(session))
 
-    session_b = [butter_bandpass_filter(x, lowcut, highcut, fs, order=4) for x in session]
-    return np.array(session_b)
+    
+    plots_functions[ptype](t, data, groups, title, figsize)
+    
+
+
+
+
 
 # %%
-examples, labels = read_data('../PreTrainingDataset',type='training0')
-plot_trial(examples, labels,0,20,(10,15))
-plot_trial(examples, labels,0,20, (10,15), True)
+def calculate_spectrogram_dataset(dataset):
+    dataset_spectrogram = []
+    for examples in dataset:
+        canals = []
+        examples = shape_series(examples)
+        for electrode_vector in examples:
+            spectrogram_of_vector, time_segment_sample, frequencies_samples = \
+                calculate_spectrogram_vector(electrode_vector, npserseg=28, noverlap=20)
+            #remove the low frequency signal as it's useless for sEMG (0-5Hz)
+            spectrogram_of_vector = spectrogram_of_vector[1:]
+            canals.append(np.swapaxes(spectrogram_of_vector, 0, 1))
 
-# %%
+        example_to_classify = np.swapaxes(canals, 0, 1)
+        dataset_spectrogram.append(example_to_classify)
+
+    return dataset_spectrogram
+
+
