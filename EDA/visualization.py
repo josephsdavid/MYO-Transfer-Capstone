@@ -31,23 +31,18 @@ groups = [0, 1, 2, 3, 5, 6, 7]
 
 
 def calculate_spectrogram_vector(vector, fs=200, npserseg=57, noverlap=0):
-    frequencies_samples, time_segment_sample, spectrogram_of_vector = signal.spectrogram(x=vector, fs=fs,
-                                                                                         nperseg=npserseg,
-                                                                                         noverlap=noverlap,
-                                                                                         window="blackman",
-                                                                                         scaling="spectrum")
+    fss, tss, sov = signal.spectrogram(x=vector, fs=fs,
+                    nperseg=npserseg,
+                    noverlap=noverlap,
+                    window="hann",
+                    scaling="spectrum")
+                                                                                        
+
+    frequencies_samples, time_segment_sample, spectrogram_of_vector = fss, tss, sov
     return spectrogram_of_vector, time_segment_sample, frequencies_samples
 
 def show_spectrogram(frequencies_samples, time_segment_sample, spectrogram_of_vector, ax):
-    # time_segment_sample = np.linspace(0, 250, 122)
-    # ax.set_tick_params(
-    #     axis='x',  # changes apply to the x-axis
-    #     which='both',  # both major and minor ticks are affected
-    #     bottom='off',  # ticks along the bottom edge are off
-    #     top='off',  # ticks along the top edge are off
-    #     labelbottom='off')  # labels along the bottom edge are off
-    # print time_segment_sample
-    ax.pcolormesh(time_segment_sample, frequencies_samples, spectrogram_of_vector)
+    ax.pcolormesh(time_segment_sample, frequencies_samples, spectrogram_of_vector, cmap='viridis')
     ax.set_ylabel('Frequency [Hz]')
     ax.set_xlabel('Time [ms]')
     # ax.set_title("STFT")
@@ -57,7 +52,7 @@ def show_spectrogram(frequencies_samples, time_segment_sample, spectrogram_of_ve
 # %%
 def butter_bg_session(session):
     # Time is sample count times freq of armband (200Hz)
-    session_b = [butter_highpass_filter(x,  order=5) for x in session]
+    session_b = [butter_highpass_filter(x,  order=4) for x in session]
     return np.array(session_b)
 
 def plot_f(x, Y, labels, title='',  figsize=(5,8)):
@@ -67,8 +62,11 @@ def plot_f(x, Y, labels, title='',  figsize=(5,8)):
         for a in Y:
             N = a[l,:].size
             xf, fft= to_freq(a[l, :], fs)
-            axes[n].plot(xf[:N // 2], np.abs(fft)[:N // 2]* 1 / N)
+            fft_mag = np.abs(fft)
+            fft_db = 20 * np.log10(fft_mag)
+            axes[n].plot(xf[:N // 2], fft_db[:N//2])
             axes[n].set_xticks(xticks)
+            axes[n].set_ylabel('PSD (dB)')
         axes[n].set_title('Channel {}'.format(l+1),y=0.8, loc='right')
     axes[n].set_xlabel(title)
     
@@ -109,7 +107,7 @@ def plot_trial(examples, labels, subject=0, classe=1, figsize=(5,8), filtered=Fa
             temp = shape_series(examples[subject][i]).T
             session.append(temp[:1000,:])
         session = np.concatenate(session, ).T
-        print(session.shape)
+        # print(session.shape)
         title = ''
     else:
         session = shape_series(examples[subject][classe])
@@ -120,7 +118,7 @@ def plot_trial(examples, labels, subject=0, classe=1, figsize=(5,8), filtered=Fa
     nsamples = session.shape[1]
     T = nsamples * 1/fs
     t = np.linspace(0, T, nsamples, endpoint=False)
-    print(T, t)
+    # print(nsamples, 1/fs)
     data = [session]
     if filtered==True:
         data.append(butter_bg_session(session))

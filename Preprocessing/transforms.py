@@ -19,7 +19,7 @@ from scipy import fftpack
 
 def to_freq(x, f_s=200):
     X = np.fft.fft(x)
-    freqs = np.fft.fftfreq(len(x),d=1/2000)
+    freqs = np.fft.fftfreq(len(x),d=1/200)
     # 1/T = frequency
     f = np.linspace(0, f_s, len(x))
-    return f, X
+    return freqs, X
