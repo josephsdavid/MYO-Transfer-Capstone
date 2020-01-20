@@ -1,9 +1,12 @@
 deprecated/
-
+ninaPro/
+result/
+result
 # for davids health
 *.nix
 nix/
 .envrc
+
 
 # tensorboard logs
 logs/
