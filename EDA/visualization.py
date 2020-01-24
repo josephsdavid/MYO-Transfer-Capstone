@@ -1,9 +1,8 @@
 #%%
 from scipy.stats import gaussian_kde
 import numpy as np
-from keras.utils import to_categorical
-from keras.utils.generic_utils import get_custom_objects
-from keras.preprocessing.sequence import TimeseriesGenerator
+from tensorflow.keras.utils import to_categorical
+from tensorflow.keras.preprocessing.sequence import TimeseriesGenerator
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as GridSpec
 import itertools as it
@@ -36,7 +35,7 @@ def calculate_spectrogram_vector(vector, fs=200, npserseg=57, noverlap=0):
                     noverlap=noverlap,
                     window="hann",
                     scaling="spectrum")
-                                                                                        
+
 
     frequencies_samples, time_segment_sample, spectrogram_of_vector = fss, tss, sov
     return spectrogram_of_vector, time_segment_sample, frequencies_samples
@@ -69,7 +68,7 @@ def plot_f(x, Y, labels, title='',  figsize=(5,8)):
             axes[n].set_ylabel('PSD (dB)')
         axes[n].set_title('Channel {}'.format(l+1),y=0.8, loc='right')
     axes[n].set_xlabel(title)
-    
+
     fig.show()
 
 
@@ -113,8 +112,8 @@ def plot_trial(examples, labels, subject=0, classe=1, figsize=(5,8), filtered=Fa
         session = shape_series(examples[subject][classe])
         gesture = shape_series(labels[subject][classe])[0][0]
         title = 'Gesture {} Code'.format(gesture)
-    
-    
+
+
     nsamples = session.shape[1]
     T = nsamples * 1/fs
     t = np.linspace(0, T, nsamples, endpoint=False)
@@ -123,9 +122,9 @@ def plot_trial(examples, labels, subject=0, classe=1, figsize=(5,8), filtered=Fa
     if filtered==True:
         data.append(butter_bg_session(session))
 
-    
+
     plots_functions[ptype](t, data, groups, title, figsize)
-    
+
 
 
 
