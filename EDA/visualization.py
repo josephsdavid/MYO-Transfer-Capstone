@@ -1,145 +1,152 @@
 #%%
-from keras.models import load_model
 from scipy.stats import gaussian_kde
-from keras import backend as K
-import tensorflow as tf
-from keras import optimizers
-from keras.callbacks import EarlyStopping, ModelCheckpoint
 import numpy as np
-from keras.layers import Dense, Dropout, LSTM, Input, BatchNormalization
-from keras.layers import Embedding, Activation
-from keras.models import Model
-from keras.applications import Xception
-from keras.utils import multi_gpu_model
 from keras.utils import to_categorical
 from keras.utils.generic_utils import get_custom_objects
-from keras import backend as K
 from keras.preprocessing.sequence import TimeseriesGenerator
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as GridSpec
 import itertools as it
-
+import pywt
+from scipy.ndimage import zoom
 import json
 import os
 import argparse
-
-
+from Preprocessing.filters import butter_bandpass_filter, butter_highpass_filter
+from Preprocessing.data_utils import shape_series
+from Preprocessing.transforms import to_freq
+from scipy import signal
 #%%
-import pywt
-from scipy.ndimage import zoom
+
 number_of_vector_per_example = 52
 number_of_canals = 8
 number_of_classes = 7
 size_non_overlap = 5
 
-def calculate_wavelet_dataset(dataset):
+fs = 200.0
+lowcut = 450.0
+highcut = 20.0
+groups = [0, 1, 2, 3, 5, 6, 7]
+
+
+
+def calculate_spectrogram_vector(vector, fs=200, npserseg=57, noverlap=0):
+    fss, tss, sov = signal.spectrogram(x=vector, fs=fs,
+                    nperseg=npserseg,
+                    noverlap=noverlap,
+                    window="hann",
+                    scaling="spectrum")
+                                                                                        
+
+    frequencies_samples, time_segment_sample, spectrogram_of_vector = fss, tss, sov
+    return spectrogram_of_vector, time_segment_sample, frequencies_samples
+
+def show_spectrogram(frequencies_samples, time_segment_sample, spectrogram_of_vector, ax):
+    ax.pcolormesh(time_segment_sample, frequencies_samples, spectrogram_of_vector, cmap='viridis')
+    ax.set_ylabel('Frequency [Hz]')
+    ax.set_xlabel('Time [ms]')
+    # ax.set_title("STFT")
+    return ax
+
+
+# %%
+def butter_bg_session(session):
+    # Time is sample count times freq of armband (200Hz)
+    session_b = [butter_highpass_filter(x,  order=4) for x in session]
+    return np.array(session_b)
+
+def plot_f(x, Y, labels, title='',  figsize=(5,8)):
+    fig, axes = plt.subplots(len(labels), 1,figsize=figsize)
+    xticks = np.arange(0,101, step=10)
+    for n,l in enumerate(labels):
+        for a in Y:
+            N = a[l,:].size
+            xf, fft= to_freq(a[l, :], fs)
+            fft_mag = np.abs(fft)
+            fft_db = 20 * np.log10(fft_mag)
+            axes[n].plot(xf[:N // 2], fft_db[:N//2])
+            axes[n].set_xticks(xticks)
+            axes[n].set_ylabel('PSD (dB)')
+        axes[n].set_title('Channel {}'.format(l+1),y=0.8, loc='right')
+    axes[n].set_xlabel(title)
+    
+    fig.show()
+
+
+def plot_ts(x, Y, labels, title='',  figsize=(5,8)):
+    fig, axes = plt.subplots(len(labels), 1,figsize=figsize)
+    yticks = np.arange(-130,131, step=20)
+    for n,l in enumerate(labels):
+        for a in Y:
+            axes[n].plot(x,a[l, :])
+            axes[n].set_yticks(yticks)
+            axes[n].set_ylim(-130,130)
+        axes[n].set_title('Channel {}'.format(l+1),y=0.8, loc='right')
+    axes[n].set_xlabel(title)
+    fig.show()
+
+def plot_spectro(x, Y, labels, title='',  figsize=(5,8)):
+    fig, axes = plt.subplots(len(labels), 1,figsize=figsize)
+    for n,l in enumerate(labels):
+        for a in Y:
+            sv, tss, fqs = calculate_spectrogram_vector(a[l, :])
+            # sv = np.swapaxes(sv,0,1)
+            axes[n] = show_spectrogram(fqs, tss, sv, axes[n])
+    fig.show()
+
+plots_functions = {
+    'freq': plot_f,
+    'ts': plot_ts,
+    'spec': plot_spectro
+}
+
+def plot_trial(examples, labels, subject=0, classe=1, figsize=(5,8), filtered=False, ptype='ts'):
+    if type(classe)!= int:
+        session = []
+        for i in classe:
+            temp = shape_series(examples[subject][i]).T
+            session.append(temp[:1000,:])
+        session = np.concatenate(session, ).T
+        # print(session.shape)
+        title = ''
+    else:
+        session = shape_series(examples[subject][classe])
+        gesture = shape_series(labels[subject][classe])[0][0]
+        title = 'Gesture {} Code'.format(gesture)
+    
+    
+    nsamples = session.shape[1]
+    T = nsamples * 1/fs
+    t = np.linspace(0, T, nsamples, endpoint=False)
+    # print(nsamples, 1/fs)
+    data = [session]
+    if filtered==True:
+        data.append(butter_bg_session(session))
+
+    
+    plots_functions[ptype](t, data, groups, title, figsize)
+    
+
+
+
+
+
+# %%
+def calculate_spectrogram_dataset(dataset):
     dataset_spectrogram = []
-    mother_wavelet = 'mexh'
     for examples in dataset:
         canals = []
+        examples = shape_series(examples)
         for electrode_vector in examples:
-            coefs = calculate_wavelet_vector(np.abs(electrode_vector), 
-                                            mother_wavelet=mother_wavelet, 
-                                            scales=np.arange(1, 33))  # 33 originally
-            # print(np.shape(coefs))
-            # show_wavelet(coef=coefs)
-            coefs = zoom(coefs, .25, order=0)
-            coefs = np.delete(coefs, axis=0, obj=len(coefs)-1)
-            coefs = np.delete(coefs, axis=1, obj=np.shape(coefs)[1]-1)
-            canals.append(np.swapaxes(coefs, 0, 1))
+            spectrogram_of_vector, time_segment_sample, frequencies_samples = \
+                calculate_spectrogram_vector(electrode_vector, npserseg=28, noverlap=20)
+            #remove the low frequency signal as it's useless for sEMG (0-5Hz)
+            spectrogram_of_vector = spectrogram_of_vector[1:]
+            canals.append(np.swapaxes(spectrogram_of_vector, 0, 1))
+
         example_to_classify = np.swapaxes(canals, 0, 1)
         dataset_spectrogram.append(example_to_classify)
 
     return dataset_spectrogram
 
-def calculate_wavelet_vector(vector, mother_wavelet='mexh', scales=np.arange(1, 32)):
-    coef, freqs = pywt.cwt(vector, scales=scales, wavelet=mother_wavelet)
-    return coef
 
-def show_wavelet(coef):
-    print(np.shape(coef))
-    plt.rcParams.update({'font.size': 36})
-    plt.matshow(coef)
-    plt.ylabel('Scale')
-    plt.xlabel('Samples')
-    plt.show()
-
-
-
-#%%
-def format_data_to_train(vector_to_format):
-    dataset_example_formatted = []
-    example = []
-    emg_vector = []
-    for value in vector_to_format:
-        emg_vector.append(value)
-        if (len(emg_vector) >= 8):
-            if (example == []):
-                example = emg_vector
-            else:
-                example = np.row_stack((example, emg_vector))
-            emg_vector = []
-            if (len(example) >= number_of_vector_per_example):
-                example = example.transpose()
-                dataset_example_formatted.append(example)
-                example = example.transpose()
-                example = example[size_non_overlap:]
-    data_calculated = calculate_wavelet_dataset(dataset_example_formatted)
-    return np.array(dataset_example_formatted)
-
-# %%
-def read_data(path, type):
-    print("Reading Data")
-    list_dataset = []
-    list_labels = []
-
-
-    for candidate in range(15):
-        labels = []
-        examples = []
-        for i in range(number_of_classes * 4):
-            data_read_from_file = np.fromfile(path + '/Male' + str(candidate) + '/' + type + '/classe_%d.dat' % i,
-                                              dtype=np.int8)
-            data_read_from_file = np.array(data_read_from_file, dtype=np.float16)
-            dataset_example = format_data_to_train(data_read_from_file)
-            examples.append(dataset_example)
-            labels.append((i % number_of_classes) + np.zeros(dataset_example.shape[0]))
-        # examples, labels = shift_electrodes(examples, labels)
-        list_dataset.append(examples)
-        list_labels.append(labels)
-
-    for candidate in range(2):
-        labels = []
-        examples = []
-        for i in range(number_of_classes * 4):
-            data_read_from_file = np.fromfile(path + '/Female' + str(candidate) + '/' + type + '/classe_%d.dat' % i,
-                                              dtype=np.int8)
-            data_read_from_file = np.array(data_read_from_file, dtype=np.float16)
-            dataset_example = format_data_to_train(data_read_from_file)
-            examples.append(dataset_example)
-            labels.append((i % number_of_classes) + np.zeros(dataset_example.shape[0]))
-        # examples, labels = shift_electrodes(examples, labels)
-        list_dataset.append(examples)
-        list_labels.append(labels)
-
-    print("Finished Reading Data")
-    return list_dataset, list_labels
-# %%
-examples, labels = read_data('../EvaluationDataset',type='training0')
-labels.shape()
-# %%
-from matplotlib import pyplot
-# load dataset
-values = examples
-# specify columns to plot
-groups = [0, 1, 2, 3, 5, 6, 7]
-i = 1
-# plot each column
-pyplot.figure()
-for group in groups:
-	pyplot.subplot(len(groups), 1, i)
-	pyplot.plot(values[:, group])
-	i += 1
-pyplot.show()
-
-# %%
