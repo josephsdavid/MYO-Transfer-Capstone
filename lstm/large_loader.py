@@ -89,6 +89,7 @@ train_reader, val_reader, test_reader = (reader_generator(x) for x in ['training
 
 def split(band=False):
     pt, labs = read_group_to_lists("../PreTrainingDataset")
+    print(len(pt)/28)
     tr0, l0 = train_reader("../EvaluationDataset")
     tr1, l1 = val_reader("../EvaluationDataset")
     tr2, l2 = test_reader("../EvaluationDataset")
@@ -98,8 +99,10 @@ def split(band=False):
 
     res_emg = [lp.butter_highpass_filter(x, 2, 200) for x in res_emg]
     res_emg = [lp.pad_along_axis(x, 1000, axis=0) for x in res_emg]
+    print(len(res_emg)/28*0.4)
 
-    split_emg, split_lab = ([x[:-56], x[-56:]] for x in [res_emg, res_lab])
+    split_emg, split_lab = ([x[len(pt):], x[:len(pt)]] for x in [res_emg, res_lab])
+    print([len(x)/28 for x in split_emg ])
     split_emg[0], split_lab[0]= lp.augment_data(split_emg[0], split_lab[0])
     split_emg[0] = split_emg[0] + [lp.add_noise_snr(i) for i in split_emg[0]]
     split_lab[0] = 2*split_lab[0]

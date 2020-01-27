@@ -1,5 +1,3 @@
-from tensorflow.python.framework.ops import disable_eager_execution
-disable_eager_execution()
 import tensorflow as tf
 from tensorflow.keras.models import load_model
 from dataloaders import test_loader
@@ -49,14 +47,18 @@ x_val = np.load("../data/x_val.npy")
 y_val = np.load("../data/y_val.npy")
 
 # fiddle with batch_size
-training_set = DataGenerator(x_tr, y_tr, batch_size = 1456, shuffle=True)
-val_set=DataGenerator(x_val, y_val, batch_size = 1456, shuffle=False)
+training_set = DataGenerator(x_tr, y_tr, batch_size = 5000, shuffle=True)
+del(x_tr, y_tr)
+val_set=DataGenerator(x_val, y_val, batch_size = 5000, shuffle=False)
+del(x_val, y_val)
+import gc
+gc.collect()
 
 
 start = Input((None, 8), name = 'Input')
 # or 170 or 298
-x = LSTM(170, activation = 'tanh'
-         ,dropout=0.2, recurrent_dropout=0.5
+x = LSTM(85, activation = 'tanh'
+         ,dropout=0.2, recurrent_dropout=0.25
          )(start)
 out = Dense(7, activation='softmax' )(x)
 lstm = Model(start, out)
@@ -65,7 +67,7 @@ fit_options = {
     'verbose':1,
 }
 compilation_options = {
-    'optimizer':optimizers.Adam(lr=0.0001),
+    'optimizer':optimizers.Adam(lr=0.001),
     'loss' : 'sparse_categorical_crossentropy',
     'metrics' : ['accuracy']}
 cb = EarlyStopping(monitor="val_loss", patience = 15)
