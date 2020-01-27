@@ -13,70 +13,67 @@ from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.preprocessing.sequence import TimeseriesGenerator
 import matplotlib.pyplot as plt
 
-X, y = read_data_augmented("../PreTrainingDataset")
-# X, y = read_data("../PreTrainingDataset")
-y = to_categorical(y)
+class DataGenerator(tf.keras.utils.Sequence):
+    def __init__(self, features, targets, batch_size = 400, dim = (53), n_channels = 8, shuffle=True, n_classes=7):
+        self.dim = dim
+        self.batch_size = batch_size
+        self.targets = targets
+        self.features=features
+        self.n_classes = n_classes
+        self.n_channels = n_channels
+        self.shuffle =shuffle
+        self.on_epoch_end()
+
+    def __len__(self):
+        'number of batches per epoch'
+        return int(np.floor(self.features.shape[0]/self.batch_size))
+
+    def on_epoch_end(self):
+        self.indexes=np.arange(self.features.shape[0])
+        if self.shuffle:
+            np.random.shuffle(self.indexes)
+
+    def __getitem__(self, index):
+        'generate a single batch'
+        indexes = self.indexes[index*self.batch_size:(index+1)*self.batch_size]
+        return self.features[indexes,:,:],  self.targets[indexes]
 
 
-# calculate number of nodes!
-def calculate_nodes(X, y, alpha = 2):
-    Ns = X.shape[0]
-    Ni = X.shape[2]
-    No = y.shape[-1]
-    Nh = Ns / (alpha * (Ni + No))
-    return(Nh)
 
-calculate_nodes(X, y, 2)
+x_tr = np.load("../data/x_train.npy")
+y_tr = np.load("../data/y_train.npy")
+x_val = np.load("../data/x_val.npy")
+y_val = np.load("../data/y_val.npy")
 
-
-# build the simplest lstm possible first
-# then maybe stateful who knows
-# try out embedding layers too
+training_set = DataGenerator(x_tr, y_tr, batch_size = 1456*2)
+val_set=DataGenerator(x_val, y_val, batch_size = 1456*2)
 
 
+start = Input((None, 8), name = 'Input')
+# or 170 or 298
+x = LSTM(298, activation = 'tanh', dropout=0.2, recurrent_dropout=0.25)(start)
+out = Dense(7, activation='softmax' )(x)
 
-
-class simple_lstm_classifier:
-    def __init__(self, X, y, act = 'tanh', dropout = 0, stateful = False):
-        n_timesteps, n_features, n_outputs = X.shape[1], X.shape[2], y.shape[1]
-        start = Input((None, n_features), name = 'Input')
-        x = LSTM(20, activation = act, name = 'LSTM_1', stateful = stateful, dropout = dropout, recurrent_dropout = dropout)(start)
-        out = Dense(n_outputs, activation = 'softmax')(x)
-        self.model = Model(start, out)
-
-    def fit(self, X, y, lr = .001,
-            compilation_options = {
-                'loss' : 'categorical_crossentropy',
-                'metrics' : ['accuracy']},
-            fit_options = {
-                'epochs': 100,
-                'batch_size':400,
-                'validation_split':0.33,
-                'shuffle':False,
-                'verbose':1
-            }):
-        Adam = optimizers.Adam(lr = lr)
-        self.model.compile(optimizer = Adam, **compilation_options)
-        callbacks = EarlyStopping(monitor = 'accuracy', patience = 10, mode = 'max')
-        self.history = self.model.fit(X, y, **fit_options, callbacks = [callbacks])
-
-
-lstm = simple_lstm_classifier(X, y, dropout = 0.1)
+lstm = Model(start, out)
 
 fit_options = {
     'epochs': 100,
-    'batch_size':400,
-    'shuffle':True,
-    'verbose':1
+    'verbose':1,
 }
+compilation_options = {
+    'optimizer':optimizers.Adam(lr=0.0005),
+    'loss' : 'sparse_categorical_crossentropy',
+    'metrics' : ['accuracy']}
 
-lstm.fit(X, y, lr = 0.0005, fit_options=fit_options)
+cb = EarlyStopping(monitor="val_loss", patience = 15)
+cb2 = tf.keras.callbacks.ReduceLROnPlateau(monitor='val_loss')
+check = tf.keras.callbacks.ModelCheckpoint("simple_lstm.h5", monior='val_loss', save_best_only=True)
 
+lstm.compile(**compilation_options)
+history = lstm.fit(training_set,
+                         validation_data=val_set,
+                         **fit_options, callbacks = [cb, cb2, check])
 
-lstm.model.save("models/simple_lstm.h5")
-
-
-history = lstm.history
 
 plt.subplot(212)
 plt.plot(history.history['acc'])
@@ -99,35 +96,35 @@ F.set_size_inches(Size[0]*2, Size[1]*2)
 plt.savefig("simple_lstm_training.png")
 plt.show()
 
-
-
-######################## temporary evaluation
-X_test, y_test = test_loader("../EvaluationDataset")
-y_test = to_categorical(y_test)
-X_test.shape
-
-lstm.model.evaluate(X_test, y_test)
-# 68% accuracy
-
-
-preds = lstm.model.predict(X_test)
-
-
-fig = plt.figure()
-for k in range(preds.shape[-1]):
-    ax = fig.add_subplot(3, 3, k+1)
-    ax.plot(np.linspace(0,1, 200),gaussian_kde(preds[:,k])(np.linspace(0,1,200)), label = k)
-    ax.set_title(str(k))
-plt.savefig('simple_lstm_class_probs.png')
-plt.show()
-
-
-fig = plt.figure()
-for k in range(preds.shape[-1]):
-    ax = fig.add_subplot(3, 3, k+1)
-    ax.plot(np.linspace(0,1, 200),gaussian_kde(y_test[:,k])(np.linspace(0,1,200)), label = k)
-    ax.set_title(str(k))
-plt.savefig('actual_class_probs.png')
-plt.show()
-
-
+#
+#
+######################### temporary evaluation
+#X_test, y_test = test_loader("../EvaluationDataset")
+#y_test = to_categorical(y_test)
+#X_test.shape
+#
+#lstm.model.evaluate(X_test, y_test)
+## 68% accuracy
+#
+#
+#preds = lstm.model.predict(X_test)
+#
+#
+#fig = plt.figure()
+#for k in range(preds.shape[-1]):
+#    ax = fig.add_subplot(3, 3, k+1)
+#    ax.plot(np.linspace(0,1, 200),gaussian_kde(preds[:,k])(np.linspace(0,1,200)), label = k)
+#    ax.set_title(str(k))
+#plt.savefig('simple_lstm_class_probs.png')
+#plt.show()
+#
+#
+#fig = plt.figure()
+#for k in range(preds.shape[-1]):
+#    ax = fig.add_subplot(3, 3, k+1)
+#    ax.plot(np.linspace(0,1, 200),gaussian_kde(y_test[:,k])(np.linspace(0,1,200)), label = k)
+#    ax.set_title(str(k))
+#plt.savefig('actual_class_probs.png')
+#plt.show()
+#
+#
