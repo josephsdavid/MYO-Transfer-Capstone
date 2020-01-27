@@ -1,7 +1,9 @@
+from tensorflow.python.framework.ops import disable_eager_execution
+disable_eager_execution()
+import tensorflow as tf
 from tensorflow.keras.models import load_model
 from dataloaders import test_loader
 from scipy.stats import gaussian_kde
-import tensorflow as tf
 from tensorflow.keras import optimizers
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 import numpy as np
@@ -12,6 +14,7 @@ from tensorflow.keras.models import Model
 from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.preprocessing.sequence import TimeseriesGenerator
 import matplotlib.pyplot as plt
+
 
 class DataGenerator(tf.keras.utils.Sequence):
     def __init__(self, features, targets, batch_size = 400, dim = (53), n_channels = 8, shuffle=True, n_classes=7):
@@ -46,42 +49,38 @@ x_val = np.load("../data/x_val.npy")
 y_val = np.load("../data/y_val.npy")
 
 # fiddle with batch_size
-training_set = DataGenerator(x_tr, y_tr, batch_size = 1456, shuffle=False)
+training_set = DataGenerator(x_tr, y_tr, batch_size = 1456, shuffle=True)
 val_set=DataGenerator(x_val, y_val, batch_size = 1456, shuffle=False)
 
 
 start = Input((None, 8), name = 'Input')
 # or 170 or 298
 x = LSTM(170, activation = 'tanh'
-         ,dropout=0.2, recurrent_dropout=0.25
+         ,dropout=0.2, recurrent_dropout=0.5
          )(start)
 out = Dense(7, activation='softmax' )(x)
-
 lstm = Model(start, out)
-
 fit_options = {
     'epochs': 100,
     'verbose':1,
 }
 compilation_options = {
-    'optimizer':optimizers.Adam(lr=0.0005),
+    'optimizer':optimizers.Adam(lr=0.0001),
     'loss' : 'sparse_categorical_crossentropy',
     'metrics' : ['accuracy']}
-
 cb = EarlyStopping(monitor="val_loss", patience = 15)
 cb2 = tf.keras.callbacks.ReduceLROnPlateau(monitor='val_loss')
 check = tf.keras.callbacks.ModelCheckpoint("simple_lstm.h5", monior='val_loss', save_best_only=True)
-
 lstm.compile(**compilation_options)
 
-history = lstm.fit(x_tr, y_tr,
-                         validation_data=(x_val, y_val), shuffle = False, batch_size=1456,
+history = lstm.fit(training_set,
+                         validation_data=val_set,# shuffle = False, batch_size=1456,
                          **fit_options, callbacks = [cb, cb2, check])
 
 
 plt.subplot(212)
-plt.plot(history.history['acc'])
-plt.plot(history.history['val_acc'])
+plt.plot(history.history['accuracy'])
+plt.plot(history.history['val_accuracy'])
 plt.title('model accuracy')
 plt.ylabel('accuracy')
 plt.xlabel('epoch')

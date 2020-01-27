@@ -71,7 +71,7 @@ def roll_labels(x, y):
     labs_rolled = []
     for i in range(len(y)):
         l = y[i]
-        n = x[i].shape[2]
+        n = x[i].shape[0]
         labs_rolled.append(np.repeat(l,n))
     return np.hstack(labs_rolled)
 

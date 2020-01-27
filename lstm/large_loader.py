@@ -103,8 +103,9 @@ def split(band=False):
     split_emg[0], split_lab[0]= lp.augment_data(split_emg[0], split_lab[0])
     split_emg[0] = split_emg[0] + [lp.add_noise_snr(i) for i in split_emg[0]]
     split_lab[0] = 2*split_lab[0]
-    trainx = [lp.window_stack(x, 18, int(260/5)) for x in split_emg[0]]
-    testx = [lp.window_stack(x, 18, int(260/5)) for x in split_emg[1]]
+    trainx = [lp.window_stack(x, 5, int(260/5)) for x in split_emg[0]]
+    print(trainx[0].shape)
+    testx = [lp.window_stack(x, 5, int(260/5)) for x in split_emg[1]]
     # force into proper arrays
     trainy = lp.roll_labels(trainx, split_lab[0])
     testy = lp.roll_labels(trainx, split_lab[1])
@@ -115,7 +116,7 @@ def split(band=False):
     #test_labs = []
     #for i in range(len(split_lab[1])):
     #    test_labs.append(np.repeat(split_lab[1][i], split_emg[1][i].shape[0]))
-    return np.moveaxis(np.dstack(trainx),2,0), np.hstack(trainy), np.moveaxis(np.dstack(testx),2,0), np.hstack(testy)
+    return np.moveaxis(np.concatenate(trainx,axis=0),2,1), np.hstack(trainy), np.moveaxis(np.concatenate(testx),2,1), np.hstack(testy)
 
 xtr, ytr, xt, yt = split()
 
