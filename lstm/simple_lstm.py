@@ -46,13 +46,15 @@ x_val = np.load("../data/x_val.npy")
 y_val = np.load("../data/y_val.npy")
 
 # fiddle with batch_size
-training_set = DataGenerator(x_tr, y_tr, batch_size = 400)
-val_set=DataGenerator(x_val, y_val, batch_size = 400)
+training_set = DataGenerator(x_tr, y_tr, batch_size = 1456, shuffle=False)
+val_set=DataGenerator(x_val, y_val, batch_size = 1456, shuffle=False)
 
 
 start = Input((None, 8), name = 'Input')
 # or 170 or 298
-x = LSTM(170, activation = 'tanh', dropout=0.2, recurrent_dropout=0.25)(start)
+x = LSTM(170, activation = 'tanh'
+         ,dropout=0.2, recurrent_dropout=0.25
+         )(start)
 out = Dense(7, activation='softmax' )(x)
 
 lstm = Model(start, out)
@@ -71,8 +73,9 @@ cb2 = tf.keras.callbacks.ReduceLROnPlateau(monitor='val_loss')
 check = tf.keras.callbacks.ModelCheckpoint("simple_lstm.h5", monior='val_loss', save_best_only=True)
 
 lstm.compile(**compilation_options)
-history = lstm.fit(training_set,
-                         validation_data=val_set,
+
+history = lstm.fit(x_tr, y_tr,
+                         validation_data=(x_val, y_val), shuffle = False, batch_size=1456,
                          **fit_options, callbacks = [cb, cb2, check])
 
 
