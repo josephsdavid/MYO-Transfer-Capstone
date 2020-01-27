@@ -45,13 +45,14 @@ y_tr = np.load("../data/y_train.npy")
 x_val = np.load("../data/x_val.npy")
 y_val = np.load("../data/y_val.npy")
 
-training_set = DataGenerator(x_tr, y_tr, batch_size = 1456*2)
-val_set=DataGenerator(x_val, y_val, batch_size = 1456*2)
+# fiddle with batch_size
+training_set = DataGenerator(x_tr, y_tr, batch_size = 400)
+val_set=DataGenerator(x_val, y_val, batch_size = 400)
 
 
 start = Input((None, 8), name = 'Input')
 # or 170 or 298
-x = LSTM(298, activation = 'tanh', dropout=0.2, recurrent_dropout=0.25)(start)
+x = LSTM(170, activation = 'tanh', dropout=0.2, recurrent_dropout=0.25)(start)
 out = Dense(7, activation='softmax' )(x)
 
 lstm = Model(start, out)
