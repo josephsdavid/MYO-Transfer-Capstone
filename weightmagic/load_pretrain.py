@@ -1,1 +1,0 @@
-/home/david/capstone/lstm/load_pretrain.py

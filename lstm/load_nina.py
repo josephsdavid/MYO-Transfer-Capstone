@@ -15,6 +15,9 @@ guess.keys()
 
 
 
+def indices(list, filter=lambda x: bool(x)):
+    return [i for i, x, in enumerate(list) if filtr(x)]
+
 def load_file(path):
     res = scipy.io.loadmat(path)
     emg = res['emg'][:,:8]
@@ -26,12 +29,18 @@ emg, x = load_file("../ninaPro/s1/S1_E1_A1.mat")
 def load_train_raw(path_to_nina = ".."):
     data = []
     labs = []
+    ex = []
     for i in range(1,10):
         for j in range(1,4):
             path = path_to_nina + "/ninaPro/" + "s" + str(i) + "/S" + str(i) + "_E" + str(j) + "_A1.mat"
             emg, l = load_file(path)
             data.append(emg)
             labs.append(l*j)
+            ex += j
+
+
+
+
     return(data, labs)
 
 

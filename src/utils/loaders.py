@@ -1,9 +1,8 @@
 import tensorflow.keras as keras
 import numpy as np
 import abc
-from helpers import read_file_validation, pad_along_axis
-import preprocessors as pp
-import augmentors as aa
+from .helpers import read_file_validation, pad_along_axis
+from .augmentors import window_roll, roll_labels
 
 class Loader(abc.ABC):
     @abc.abstractmethod
@@ -20,9 +19,8 @@ class Loader(abc.ABC):
 
 
 
-class ValidationLoader(Loader):
+class PreValidationLoader(Loader):
     def __init__(self, path: str, process_fns: list, augment_fns: list, scale=False):
-        print("ok")
         self.path = path
         self.processors = process_fns
         self.augmentors = augment_fns
@@ -67,13 +65,55 @@ class ValidationLoader(Loader):
         for f in self.augmentors:
             self.emg, self.labels = f(self.emg, self.labels)
 
-        self.emg = [aa.window_roll(x, 5, 52) for x in self.emg]
-        self.labels = aa.roll_labels(self.emg, self.labels)
+        self.emg = [window_roll(x, 5, 52) for x in self.emg]
+        self.labels = roll_labels(self.emg, self.labels)
 
 
-def holder(x,y):
-    return x, y
+class PreTrainLoader(Loader):
+    def __init__(self, path: str, process_fns: list, augment_fns: list, scale=False):
+        self.path = path
+        self.processors = process_fns
+        self.augmentors = augment_fns
+        self.read_data()
+        self.process_data()
+        self.augment_data()
+        self.emg = np.moveaxis(np.concatenate(self.emg,axis=0),2,1)
+        if scale:
+            self.emg = pp.scale(self.emg)
 
+    def _read_group_to_lists(self):
+        res = []
+        labels = []
+        trials = range(7*4)
+        for instance in ['training0', 'Test0', 'Test1']:
+            for candidate in range(15):
+                man = [read_file_validation(self.path + '/Male' + str(candidate) + '/' + instance + '/classe_%d.dat' %i) for i in trials]
+                # list addition is my new favorite python thing
+                labs = [t % 7 for t in trials]
+                res += man
+                labels += labs
+                # and all the female candidates
+            for candidate in range(2):
+                woman = [read_file_validation(self.path + '/Female' + str(candidate) + '/' + instance + '/classe_%d.dat' %i) for i in trials]
+                labs = [t % 7 for t in trials]
+                res += woman
+                labels += labs
+        return res, labels
+
+    def read_data(self):
+        self.emg, self.labels = self._read_group_to_lists()
+        self.emg = [pad_along_axis(x, 1000) for x in self.emg]
+
+    def process_data(self):
+        for f in self.processors:
+            self.emg = [f(x) for x in self.emg]
+
+    def augment_data(self):
+        for f in self.augmentors:
+            self.emg, self.labels = f(self.emg, self.labels)
+
+        self.emg = [window_roll(x, 5, 52) for x in self.emg]
+        self.labels = roll_labels(self.emg, self.labels)
 
 # x = ValidationLoader("../../PreTrainingDataset", [pp.butter_highpass_filter], [aa.add_noise])
 

@@ -224,7 +224,7 @@ def augment_data(trials, labs):
 
 def add_noise_snr(signal, snr = 25):
     # convert signal to db
-    sgn_db = np.log10((signal ** 2).mean(axis = 0))  * 10
+    sgn_db = np.log10((signal ** 2).mean(axis = 1))  * 10
     # noise in db
     noise_avg_db = sgn_db - snr
     # convert noise_db

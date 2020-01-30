@@ -1,15 +1,18 @@
 import tensorflow as tf
+import math
 from tensorflow.keras.models import load_model
 from dataloaders import test_loader
 from scipy.stats import gaussian_kde
 from tensorflow.keras import optimizers
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
+from cycle import CyclicLR
 import numpy as np
 from load_pretrain import read_data, read_data_augmented, read_data_filtered
-from tensorflow.keras.layers import Dense, Dropout, LSTM, Input, BatchNormalization
-from tensorflow.keras.layers import Embedding, Activation
+from tensorflow.keras.layers import Dense, Dropout, GRU, Input, BatchNormalization, GaussianNoise, LSTM
+from tensorflow.keras.layers import Embedding, Activation, PReLU, TimeDistributed, RepeatVector, Flatten
 from tensorflow.keras.models import Model
 from tensorflow.keras.utils import to_categorical
+import tensorflow.keras.regularizers as rr
 from tensorflow.keras.preprocessing.sequence import TimeseriesGenerator
 import matplotlib.pyplot as plt
 
@@ -46,38 +49,83 @@ y_tr = np.load("../data/y_train.npy")
 x_val = np.load("../data/x_val.npy")
 y_val = np.load("../data/y_val.npy")
 
+
+print(x_val.shape, x_tr.shape)
+
+
 # fiddle with batch_size
-training_set = DataGenerator(x_tr, y_tr, batch_size = 5000, shuffle=True)
-del(x_tr, y_tr)
-val_set=DataGenerator(x_val, y_val, batch_size = 5000, shuffle=False)
-del(x_val, y_val)
-import gc
-gc.collect()
+training_set = DataGenerator(x_tr, y_tr, batch_size = 3000, shuffle=True)
+val_set=DataGenerator(x_val, y_val, batch_size = 3000, shuffle=False)
 
 
-start = Input((None, 8), name = 'Input')
-# or 170 or 298
-x = LSTM(85, activation = 'tanh'
-         ,dropout=0.2, recurrent_dropout=0.25
+#inn = Input((52, 8))
+#f = Flatten()(inn)
+#encoded = Dense((300), activation='relu',
+#               activity_regularizer=rr.l1(10e-5))(f)
+#encoded = Dense((100), activation='relu',
+#               activity_regularizer=rr.l1(10e-5))(encoded)
+#encoded = Dense((40))(encoded)
+#decoded = Dense(100)(encoded)
+#decoded = Dense(300)(decoded)
+#decoded = Dense((416), activation='sigmoid')(decoded)
+#
+#ae = Model(inn, decoded)
+#ae.compile('adam','mse')
+#ae.fit(x_tr, x_flat, batch_size = 3000, epochs = 100)
+#
+#
+#x = RepeatVector(52)(encoded)
+#x = LSTM(40
+#         , recurrent_dropout=0.5,dropout=0.5, activation = 'tanh'
+#         )(encoded)
+#out = Dense(7, activation='softmax' )(x)
+#
+#sparseguy = Model(inn, out)
+#sparseguy.compile('adam','sparse_categorical_crossentropy')
+#sparseguy.fit(x_tr, y_tr, validation_data = (x_val, y_val), batch_size = 3000, epochs = 10)
+#
+#inn = Input((52, 8))
+
+
+
+start = Input((60, 8), name = 'Input')
+x = LSTM(16
+         , recurrent_dropout=0.1,dropout=0.1
+         , activation = 'tanh', return_sequences= True,
          )(start)
+x = LSTM(32
+         , recurrent_dropout=0.1,dropout=0.1
+         , activation = 'tanh', return_sequences=True
+         )(x)
+x = LSTM(64
+         , recurrent_dropout=0.1,dropout=0.1
+         , activation = 'tanh',
+         )(x)
 out = Dense(7, activation='softmax' )(x)
 lstm = Model(start, out)
 fit_options = {
-    'epochs': 100,
+    'epochs': 1000,
     'verbose':1,
 }
 compilation_options = {
-    'optimizer':optimizers.Adam(lr=0.001),
+    'optimizer':optimizers.SGD(1e-7, momentum=0.9),
     'loss' : 'sparse_categorical_crossentropy',
     'metrics' : ['accuracy']}
-cb = EarlyStopping(monitor="val_loss", patience = 15)
-cb2 = tf.keras.callbacks.ReduceLROnPlateau(monitor='val_loss')
+cb = EarlyStopping(monitor="val_loss", patience = 30)
+#cb2 = tf.keras.callbacks.ReduceLROnPlateau(monitor='val_loss', patience = 2, verbose = 1)
+clr = CyclicLR(
+	mode="triangular",
+	base_lr=1e-7,
+	max_lr=1e-2,
+	step_size= 8 * (len(training_set)))
 check = tf.keras.callbacks.ModelCheckpoint("simple_lstm.h5", monior='val_loss', save_best_only=True)
 lstm.compile(**compilation_options)
+print(lstm.summary())
+# run through entire set every 100 epochs
+# this lets us trick the reduce lr on plateau into updating dynamically
+history = lstm.fit(training_set, steps_per_epoch = int(len(training_set)/8),#batch_size = 6000,
+                   validation_data = val_set,**fit_options, callbacks = [cb, clr, check])
 
-history = lstm.fit(training_set,
-                         validation_data=val_set,# shuffle = False, batch_size=1456,
-                         **fit_options, callbacks = [cb, cb2, check])
 
 
 plt.subplot(212)
