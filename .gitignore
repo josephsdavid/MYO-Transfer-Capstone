@@ -1,7 +1,9 @@
 deprecated/
 ninaPro/
+*.h5
 result/
 result
+data/
 # for davids health
 *.nix
 nix/
