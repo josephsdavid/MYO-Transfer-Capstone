@@ -1,4 +1,5 @@
 deprecated/
+lstm_tuning/
 capstone/
 ninaPro/
 *.h5
