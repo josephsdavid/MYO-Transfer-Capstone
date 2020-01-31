@@ -12,6 +12,8 @@ batch=3000
 min_lr = 1e-7
 max_lr = 1e-2
 
+strategy = tf.distribute.MirroredStrategy()
+
 train_set = u.PreTrainGenerator("../EvaluationDataset", [u.butter_highpass_filter], [u.add_noise], batch_size = batch
                                 )
 val_set = u.PreValGenerator("../PreTrainingDataset", [u.butter_highpass_filter], [u.add_noise], batch_size = batch)
@@ -25,15 +27,14 @@ lr_manager = cb.OneCycleLR(1e-3,
                            end_percentage = 0.1, scale_percentage = None,
                            maximum_momentum = 0.95, minimum_momentum=0.85
                            )
-
-inputs = Input((52, 8))
-x = LSTM(400, activation = 'tanh', return_sequences=True, dropout=0.5, recurrent_dropout=0.5)(inputs)
-x = LSTM(800, activation = 'tanh', dropout=0.5, recurrent_dropout=0.5)(x)
-outputs = Dense(7, activation='softmax')(x)
-
-lstm = Model(inputs, outputs)
-optim = SGD(lr=0.0025, momentum = 0.95, nesterov = True)
-lstm.compile(loss='sparse_categorical_crossentropy', optimizer=optim, metrics = ['accuracy'])
+with strategy.scope():
+	inputs = Input((52, 8))
+	x = LSTM(400, activation = 'tanh', return_sequences=True, dropout=0.5, recurrent_dropout=0.5)(inputs)
+	x = LSTM(800, activation = 'tanh', dropout=0.5, recurrent_dropout=0.5)(x)
+	outputs = Dense(7, activation='softmax')(x)
+	lstm = Model(inputs, outputs)
+	optim = SGD(lr=0.0025, momentum = 0.95, nesterov = True)
+	lstm.compile(loss='sparse_categorical_crossentropy', optimizer=optim, metrics = ['accuracy'])
 
 history = lstm.fit(train_set, epochs=100, validation_data=val_set, callbacks=[lr_manager])
 

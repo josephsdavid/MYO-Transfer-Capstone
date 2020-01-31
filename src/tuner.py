@@ -53,7 +53,7 @@ lr_manager = cb.OneCycleLR(1e-3,
     	)
 stopper = EarlyStopping(monitor = "val_loss", patience=10)
 
-tuner = kt.Hyperband(build_model, objective = 'val_accuracy', max_epochs=100, hyperband_iterations = 2, directory = 'result', project_name = 'lstm_tuning', distribution_strategy=tf.distribute.MirroredStrategy(), factor=2)
+tuner = kt.Hyperband(build_model, objective = 'val_accuracy', max_epochs=100, hyperband_iterations = 2, directory = 'result', project_name = 'lstm_tuning', distribution_strategy=tf.distribute.MirroredStrategy())
 
 
 tuner.search(train_set, steps_per_epoch = int(len(train_set)/4), validation_data = val_set, validation_steps=int(len(val_set)/5), callbacks = [stopper, lr_manager])

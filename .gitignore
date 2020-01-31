@@ -2,8 +2,9 @@ deprecated/
 capstone/
 ninaPro/
 *.h5
-result/
-result
+*.json
+#result/
+#result
 data/
 # for davids health
 *.nix
