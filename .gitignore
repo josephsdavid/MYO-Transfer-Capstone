@@ -124,3 +124,5 @@ augmented/*.npy
 
 .vscode-server/
 .bash_history
+
+tmux.conf
