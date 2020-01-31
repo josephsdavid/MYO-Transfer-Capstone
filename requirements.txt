@@ -1,0 +1,8 @@
+tensorflow-gpu
+numpy
+scikit-learn
+keras-tuner
+EMD-signal
+pywavelets
+matplotlib
+h5py

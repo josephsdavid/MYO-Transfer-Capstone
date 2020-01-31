@@ -27,7 +27,7 @@ lr_manager = cb.OneCycleLR(1e-3,
                            )
 
 inputs = Input((52, 8))
-x = LSTM(40, activation = 'tanh', dropout=0.1, recurrent_dropout=0.1)(inputs)
+x = LSTM(400, activation = 'tanh', dropout=0.1, recurrent_dropout=0.1)(inputs)
 outputs = Dense(7, activation='softmax')(x)
 
 lstm = Model(inputs, outputs)
@@ -56,6 +56,6 @@ F = plt.gcf()
 Size = F.get_size_inches()
 F.set_size_inches(Size[0]*2, Size[1]*2)
 plt.savefig("results/simple_lstm_training.png")
-plt.show()
+#plt.show()
 
 
