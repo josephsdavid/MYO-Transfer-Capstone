@@ -7,7 +7,7 @@ from tensorflow.keras.optimizers import SGD
 from tensorflow.keras.models import Model
 import matplotlib.pyplot as plt
 
-batch=400
+batch=3000
 
 min_lr = 1e-7
 max_lr = 1e-2
@@ -27,7 +27,8 @@ lr_manager = cb.OneCycleLR(1e-3,
                            )
 
 inputs = Input((52, 8))
-x = LSTM(400, activation = 'tanh', dropout=0.1, recurrent_dropout=0.1)(inputs)
+x = LSTM(400, activation = 'tanh', return_sequences=True, dropout=0.5, recurrent_dropout=0.5)(inputs)
+x = LSTM(800, activation = 'tanh', dropout=0.5, recurrent_dropout=0.5)(x)
 outputs = Dense(7, activation='softmax')(x)
 
 lstm = Model(inputs, outputs)
