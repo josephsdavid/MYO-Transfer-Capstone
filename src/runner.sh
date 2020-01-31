@@ -1,6 +1,6 @@
-#!/bin/bash
-#SBATCH -J deep_learning
-#SBATCH -e result/testerr.txt
+#!/usr/bin/env bash
+#SBATCH -J deep_test
+#SBATCH -e result/testerr-%j.txt
 #SBATCH -o result/testout.txt
 #SBATCH -p  v100x8 --gres=gpu:2 --mem=40G
 #SBATCH -t 400

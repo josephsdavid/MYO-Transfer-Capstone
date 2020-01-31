@@ -38,7 +38,7 @@ with strategy.scope():
 
 history = lstm.fit(train_set, epochs=100, validation_data=val_set, callbacks=[lr_manager])
 
-
+plt.use['agg']
 plt.subplot(212)
 plt.plot(history.history['accuracy'])
 plt.plot(history.history['val_accuracy'])
@@ -57,7 +57,7 @@ plt.legend(['train', 'test'], loc='upper left')
 F = plt.gcf()
 Size = F.get_size_inches()
 F.set_size_inches(Size[0]*2, Size[1]*2)
-plt.savefig("results/simple_lstm_training.png")
+plt.savefig("result/simple_lstm_training.png")
 #plt.show()
 
 
