@@ -7,6 +7,10 @@ from tensorflow.keras.optimizers import SGD
 from tensorflow.keras.models import Model
 import matplotlib.pyplot as plt
 
+from tensorflow.python.framework.ops import disable_eager_execution
+
+disable_eager_execution()
+
 
 strategy = tf.distribute.MirroredStrategy()
 batch=20
@@ -34,7 +38,7 @@ epochs = len(train_set)*4
 
 for e in range(epochs):
     print("epoch: {}".format(e+1))
-    lstm.fit(train_set, steps_per_epoch=1, validation_data=val_set, use_multiprocessing=True, epochs=epochs, shuffle=False, val_steps=1)
+    lstm.fit(train_set, steps_per_epoch=1, validation_data=val_set, use_multiprocessing=True, epochs=epochs, shuffle=False, validation_steps=4)
     lstm.reset_states()
 
 lstm.save("result/stateful_lstm.h5")
