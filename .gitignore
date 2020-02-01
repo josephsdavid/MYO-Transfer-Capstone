@@ -6,7 +6,7 @@ ninaPro/
 *.json
 #result/
 #result
-data/
+#data/
 # for davids health
 *.nix
 nix/
@@ -126,3 +126,6 @@ augmented/*.npy
 .bash_history
 
 tmux.conf
+
+data/*
+!data/*.sh
