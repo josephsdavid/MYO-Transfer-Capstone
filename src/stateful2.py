@@ -8,8 +8,6 @@ from tensorflow.keras.models import Model
 from tensorflow.keras.callbacks import Callback, EarlyStopping, ModelCheckpoint
 from tensorflow.keras import backend as K
 import matplotlib.pyplot as plt
-from tensorflow.python.framework.ops import disable_eager_execution
-disable_eager_execution()
 
 
 batch=20
@@ -39,7 +37,7 @@ stopper = EarlyStopping(monitor="val_loss", patience=20)
 
 for e in range(len(train_set)*4):
 	print("epoch: {}/{}".format(e, len(train_set)*4))
-	lstm.fit(train_set, steps_per_epoch=1, epochs=1, verbose=0)
+	lstm.fit(train_set, steps_per_epoch=48, epochs=1, verbose=0, workers = 12, use_multiprocessing=True, shuffle = False)
 	lstm.reset_states()
 	if (e%(len(train_set)//10)==0 and e !=0):
 		lstm.evaluate(val_set, workers=12, use_multiprocessing=True, steps=len(val_set))
