@@ -6,23 +6,9 @@ from .helpers import read_file_validation, pad_along_axis
 from .augmentors import window_roll, roll_labels
 from .loaders import Loader
 
-# make file into 11-col (0-7: emg, 8: restimulus, 9: rerepetition, 10: subject)
-
-
-def _load_by_trial_raw(nina_path = ".", trial=1, options=None):
-    data = []
-    labs = []
-    reps = []
-    for i in range(1,11):
-        path = nina_path + "/ninaPro/" + "s" + str(i) + "/S" + str(i) + "_E" + str(trial) + "_A1.mat"
-        fileData, l = _load_file(path, options)
-        data.append(fileData)
-        labs.append(l)
-    return data, labs
-
-
-# d,l = _load_by_trial_raw()
-
+# This function returns two lists. basically groups on subject, then exercise
+# data: list of lists of 2D matrix (default emg data only)
+# labs: list of lists of arrays of which exercise trial 
 def _load_by_subjects_raw(nina_path=".", subjects=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], options=None):
     data = []
     labs = []
@@ -53,22 +39,25 @@ class NinaLoader(Loader):
         self.augmentors = augment_fns
         self.read_data()
         self.process_data()
+        print(f"Shape of emg: {np.shape(self.emg)}")
+        print(f"Shape of labels: {np.shape(self.labels)}")
         if augment_fns is not None:
             self.augment_data(step, window_size)
         self.emg = np.moveaxis(np.concatenate(self.emg,axis=0),2,1)
         if scale:
             self.emg = pp.scale(self.emg)
     
+    # features can be an array if we need to pass back additional 
+    # features with the emg data. could help recycle this
+    # loader if we want to group by rerepetition later on.
     def _load_file(self, path, features=None):
         res = scipy.io.loadmat(path)
         data = []
+        # Might need to start clipping emg segments here... RAM is 
+        # struggling to keep up with massive sizes
         emg = res['emg'][:,:8]
-        # emg = [pad_along_axis(x, 1000) for x in emg]
         lab = res['restimulus'][:]
-        # lab = lab[range(0,emg.shape[0])]
         data.append(emg)
-        # if features==None:
-        #     features = ['rerepetition']
         if features:
             for ft in features:
                 sameDim = data[0].shape[0]==np.shape(res[ft])[0]
@@ -85,16 +74,24 @@ class NinaLoader(Loader):
         labs = []
         reps = []
         for i in range(1,11):
+            print(f"Starting load of {i}/10 .mat files")
             path = self.path + "/ninaPro/" + "s" + str(i) + "/S" + str(i) + "_E" + str(trial) + "_A1.mat"
             fileData, l = self._load_file(path, options)
             data.append(fileData)
             labs.append(l)
+            
         return data, labs
 
     def _read_group_to_lists(self):
         res = []
         labels = []
         for e in self.excercises:
+            # In the papers the exercises are lettered not numbered
+            # Also watchout, the 'exercise' col in each .mat are 
+            # numbered weird. 
+            # ex: /s1/S1_E1_A1.mat has says ['exercise'] is 3.
+            # 1 ==> 3 | 2 ==> 1 | 3 ==> 2 (I think)[again only if reading 
+            # column in raw .mat]
             if e == 'a':
                 e = 1
             elif e == 'b':
