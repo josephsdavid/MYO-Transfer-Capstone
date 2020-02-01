@@ -5,7 +5,7 @@ import callbacks as cb
 from tensorflow.keras.layers import Input, Dense, LSTM
 from tensorflow.keras.optimizers import SGD
 from tensorflow.keras.models import Model
-from tensorflow.keras.callbacks import Callback, EarlyStopping
+from tensorflow.keras.callbacks import Callback, EarlyStopping, ModelCheckpoint
 from tensorflow.keras import backend as K
 import matplotlib.pyplot as plt
 
@@ -35,21 +35,21 @@ outputs = Dense(7, activation='softmax')(x)
 lstm = Model(inputs, outputs)
 lstm.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics= ['accuracy'])
 
-
+check = ModelCheckpoint("result/stateful_lstm.h5", monitor="val_loss", save_best_only=True)
 
 
 stopper = EarlyStopping(monitor="val_loss", patience=20)
 
 class ResetStatesCallback(Callback):
-    #def on_epoch_begin(self, epoch, logs={}):
-    #    print "Resetting states before epoch %d"%(epoch)
-    #    self.model.reset_states()
+	def on_batch_end(self, batch, logs={}):
+		self.model.reset_states()
 
-     def on_batch_begin(self, batch, logs={}):
-         self.model.reset_states()
-
-lstm.fit(train_set, validation_data=val_set, steps_per_epoch=len(train_set)//25,
-         validation_steps=len(val_set)//15, epochs=100, shuffle=False,
-         use_multiprocessing=True, callbacks = [ResetStatesCallback(), stopper])
+for e in range(len(train_set)*4):
+	print("epoch: {}/{}".format(e, len(train_set)*4))
+	lstm.fit(train_set, steps_per_epoch=1, epochs=1)
+	lstm.reset_states()
+	if e%25==0:
+		lstm.evaluate(val_set, steps=5)
+		lstm.save("result/stateful_lstm.h5")
 
 lstm.save("result/stateful_lstm.h5")
