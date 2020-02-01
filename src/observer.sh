@@ -6,6 +6,6 @@ while [ $counter -gt 0 ]
 do
 	printf '\033[2J'
 	tail -n 56 $file
-	sleep 30s
+	sleep 2s
 	counter=$((counter-1))
 done

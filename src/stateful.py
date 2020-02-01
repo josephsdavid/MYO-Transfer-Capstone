@@ -8,6 +8,7 @@ from tensorflow.keras.models import Model
 import matplotlib.pyplot as plt
 
 
+strategy = tf.distribute.MirroredStrategy()
 batch=20
 
 
@@ -21,28 +22,19 @@ val_set = u.PreValGenerator("../PreTrainingDataset",
                             [u.add_noise], batch_size = batch,
                             step=1, window_size=30, shuffle=False)
 
-
 inputs = Input(batch_shape=(batch, 30, 8))
-x = LSTM(40, activation = 'tanh',
-         dropout=0.5, recurrent_dropout=0.5, stateful=True)(inputs)
+x = LSTM(300, activation = 'tanh',
+		dropout=0.5, recurrent_dropout=0.5, stateful=True)(inputs)
 outputs = Dense(7, activation='softmax')(x)
 lstm = Model(inputs, outputs)
 lstm.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics= ['accuracy'])
 
 
-epochs = 100
+epochs = len(train_set)*4
 
 for e in range(epochs):
     print("epoch: {}".format(e+1))
-    history=lstm.fit(train_set, steps_per_epoch=len(train_set)//10,
-                     validation_data=val_set, verbose=1, use_multiprocessing=True,
-                     validation_steps=len(val_set)/5)
-    print("loss: {}, accuracy: {}, val_loss: {}, val_acc: {}".format(
-        history.history['loss'],
-        history.history['accuracy'],
-        history.history['val_loss'],
-        history.history['val_accuracy']
-    ))
+    lstm.fit(train_set, steps_per_epoch=1, validation_data=val_set, use_multiprocessing=True, epochs=epochs, shuffle=False, val_steps=1)
     lstm.reset_states()
 
-lstm.save("stateful_lstm")
+lstm.save("result/stateful_lstm.h5")
