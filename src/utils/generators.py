@@ -3,9 +3,10 @@ import numpy as np
 from .loaders import *
 
 class PreValGenerator(PreValidationLoader, tf.keras.utils.Sequence):
-    def __init__(self, path: str, process_fns: list, augment_fns: list, scale=False, batch_size=400, shuffle=True):
+    def __init__(self, path: str, process_fns: list, augment_fns: list, scale=False,
+                 batch_size=400, shuffle=True, step=5, window_size=52):
         # python is so fucking cool
-        super(PreValGenerator, self).__init__(path, process_fns, augment_fns, scale)
+        super(PreValGenerator, self).__init__(path, process_fns, augment_fns, scale, step, window_size)
         self.batch_size = batch_size
         self.shuffle =shuffle
         self.on_epoch_end()
@@ -27,9 +28,10 @@ class PreValGenerator(PreValidationLoader, tf.keras.utils.Sequence):
 
 
 class PreTrainGenerator(PreTrainLoader, tf.keras.utils.Sequence):
-    def __init__(self, path: str, process_fns: list, augment_fns: list, scale=False, batch_size=400, shuffle=True):
+    def __init__(self, path: str, process_fns: list, augment_fns: list, scale=False,
+                 batch_size=400, shuffle=True, step=5, window_size=52):
         # python is so fucking cool
-        super(PreTrainGenerator, self).__init__(path, process_fns, augment_fns, scale)
+        super(PreTrainGenerator, self).__init__(path, process_fns, augment_fns, scale, step, window_size)
         self.batch_size = batch_size
         self.shuffle =shuffle
         self.on_epoch_end()

@@ -20,13 +20,13 @@ class Loader(abc.ABC):
 
 
 class PreValidationLoader(Loader):
-    def __init__(self, path: str, process_fns: list, augment_fns: list, scale=False):
+    def __init__(self, path: str, process_fns: list, augment_fns: list, scale=False, step = 5, window_size = 52):
         self.path = path
         self.processors = process_fns
         self.augmentors = augment_fns
         self.read_data()
         self.process_data()
-        self.augment_data()
+        self.augment_data(step, window_size)
         self.emg = np.moveaxis(np.concatenate(self.emg,axis=0),2,1)
         if scale:
             self.emg = pp.scale(self.emg)
@@ -61,22 +61,22 @@ class PreValidationLoader(Loader):
         for f in self.processors:
             self.emg = [f(x) for x in self.emg]
 
-    def augment_data(self):
+    def augment_data(self, step, window_size):
         for f in self.augmentors:
             self.emg, self.labels = f(self.emg, self.labels)
 
-        self.emg = [window_roll(x, 5, 52) for x in self.emg]
+        self.emg = [window_roll(x, step, window_size) for x in self.emg]
         self.labels = roll_labels(self.emg, self.labels)
 
 
 class PreTrainLoader(Loader):
-    def __init__(self, path: str, process_fns: list, augment_fns: list, scale=False):
+    def __init__(self, path: str, process_fns: list, augment_fns: list, scale=False, step =5, window_size=52):
         self.path = path
         self.processors = process_fns
         self.augmentors = augment_fns
         self.read_data()
         self.process_data()
-        self.augment_data()
+        self.augment_data(step, window_size)
         self.emg = np.moveaxis(np.concatenate(self.emg,axis=0),2,1)
         if scale:
             self.emg = pp.scale(self.emg)
@@ -108,11 +108,11 @@ class PreTrainLoader(Loader):
         for f in self.processors:
             self.emg = [f(x) for x in self.emg]
 
-    def augment_data(self):
+    def augment_data(self, step, window_size):
         for f in self.augmentors:
             self.emg, self.labels = f(self.emg, self.labels)
 
-        self.emg = [window_roll(x, 5, 52) for x in self.emg]
+        self.emg = [window_roll(x, step, window_size) for x in self.emg]
         self.labels = roll_labels(self.emg, self.labels)
 
 # x = ValidationLoader("../../PreTrainingDataset", [pp.butter_highpass_filter], [aa.add_noise])
