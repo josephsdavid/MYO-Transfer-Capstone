@@ -105,8 +105,9 @@ lstm.compile(loss='sparse_categorical_crossentropy', optimizer='rmsprop', metric
 #		lstm.reset_states()
 #	lstm.evaluate(v_set)
 
-lstm.fit(t_set, steps_per_epoch=len(t_set)//10, validation_data=v_set, validation_freq=10, epochs=100)
-lstm.evaluate(x_val, y_val)
+lstm.fit(t_set, validation_data=v_set,  epochs=25,
+         callbacks=[ResetStatesCallback()])
+lstm.evaluate(x_val, y_val, batch_size=batch)
 preds=lstm.predict(v_set)
 lstm.save("result/stateful_lstm_attempted.h5")
 
