@@ -123,6 +123,9 @@ venv.bak/
 .mypy_cache/*.npy
 augmented/*.npy
 
+#pylint
+.pylint.d
+
 .vscode-server/
 .bash_history
 
