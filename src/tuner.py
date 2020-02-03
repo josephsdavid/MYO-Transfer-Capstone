@@ -56,6 +56,14 @@ stopper = EarlyStopping(monitor = "val_loss", patience=10)
 tuner = kt.Hyperband(build_model, objective = 'val_accuracy', max_epochs=100, hyperband_iterations = 2, directory = 'result', project_name = 'lstm_tuning', distribution_strategy=tf.distribute.MirroredStrategy())
 
 
-tuner.search(train_set, steps_per_epoch = int(len(train_set)/4), validation_data = val_set, validation_steps=int(len(val_set)/5), callbacks = [stopper, lr_manager])
+#tuner.search(train_set, steps_per_epoch = int(len(train_set)/4), validation_data = val_set, validation_steps=int(len(val_set)/5), callbacks = [stopper, lr_manager])
+best = tuner.get_best_hyperparameters(1)[0]
+print(best.values)
+import json
+with open("result/best_pars.json","w") as f:
+	json.dump(best.values, f)
+model = tuner.hypermodel.build(best)
+model.save("result/best_lstm.h5")
+
 
 
