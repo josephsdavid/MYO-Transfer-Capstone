@@ -85,8 +85,8 @@ class NinaLoader(Loader):
         data = []
         # Might need to start clipping emg segments here... RAM is 
         # struggling to keep up with massive sizes
-        emg = res['emg'][:MAX_SEQ,:8].copy()
-        lab = res['restimulus'][:MAX_SEQ].copy()
+        emg = res['emg'][:,:8].copy()
+        lab = res['restimulus'].copy()
         
         data.append(emg)
         if features:
@@ -113,7 +113,7 @@ class NinaLoader(Loader):
             fileData, l = self._load_file(path, options)
             data.append(fileData)
             labs.append(l)
-            
+        VERBOSE and print(f"[Step -1] \data {np.shape(data.copy())}\nlabs {np.shape(labs.copy())}")
         return data, labs
 
     def _read_group_to_lists(self):
@@ -136,7 +136,7 @@ class NinaLoader(Loader):
             res+=exData
             labels+=l
             VERBOSE and print(f"[Step 0] \nexData {np.shape(exData.copy())}\nlabels {np.shape(labels.copy())}")
-        return np.hstack(res), np.hstack(labels)
+        return res, labels
 
 
     
