@@ -28,7 +28,7 @@ EXCERCISE = list(str(args.excercise).strip())
 NINA_BASE = str(args.nPath)
 # This function returns two lists. basically groups on subject, then exercise
 # data: list of lists of 2D matrix (default emg data only)
-# labs: list of lists of arrays of which exercise trial 
+# labs: list of lists of arrays of which exercise trial
 # def _load_by_subjects_raw(nina_path=".", subjects=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], options=None):
 #     data = []
 #     labs = []
@@ -50,44 +50,46 @@ NINA_BASE = str(args.nPath)
 
 
 class NinaLoader(Loader):
-    def __init__(self, path: str, excercises: list, process_fns: list, augment_fns: list, scale=False, step =5, window_size=52):
+    def __init__(self, path: str, excercises: list, process_fns: list, augment_fns: list, scale=False, step =5, window_size=52, max_size=MAX_SEQ):
         self.path = path
         self.excercises = excercises
         if type(excercises) is not list:
             self.excercises = [excercises]
         self.processors = process_fns
         self.augmentors = augment_fns
+        self.max_size=max_size
         self.emg = self.read_data()
-        if VERBOSE : 
+        if VERBOSE :
             print(f"[Step 1 ==> processing] Shape of emg: {np.shape(self.emg.copy())}")
             print(f"[Step 1 ==> processing] Shape of labels: {np.shape(self.labels.copy())}")
         self.process_data()
-        if VERBOSE : 
+        if VERBOSE :
             print(f"[Step 2 ==> augment] Shape of emg: {np.shape(self.emg)}")
             print(f"[Step 2 ==> augment] Shape of labels: {np.shape(self.labels)}")
         if augment_fns is not None:
             self.augment_data(step, window_size)
-        if VERBOSE : 
+        if VERBOSE :
             print(f"[Step 3 ==> moveaxis] Shape of emg: {np.shape(self.emg)}")
             print(f"[Step 3 ==> moveaxis] Shape of labels: {np.shape(self.labels)}")
         self.emg = np.moveaxis(np.concatenate(self.emg,axis=0),2,1)
-        if VERBOSE : 
+        if VERBOSE :
             print(f"[Step 4 ==> scale] Shape of emg: {np.shape(self.emg)}")
             print(f"[Step 4 ==> scale] Shape of labels: {np.shape(self.labels)}")
         if scale:
             self.emg = scale(self.emg)
-    
-    # features can be an array if we need to pass back additional 
+
+    # features can be an array if we need to pass back additional
     # features with the emg data. could help recycle this
     # loader if we want to group by rerepetition later on.
     def _load_file(self, path, features=None):
         res = scipy.io.loadmat(path)
+        import pdb; pdb.set_trace()
         data = []
-        # Might need to start clipping emg segments here... RAM is 
+        # Might need to start clipping emg segments here... RAM is
         # struggling to keep up with massive sizes
-        emg = res['emg'][:MAX_SEQ,:8].copy()
-        lab = res['restimulus'][:MAX_SEQ].copy()
-        
+        emg = res['emg'][:self.max_size,:8].copy()
+        lab = res['restimulus'][:self.max_size].copy()
+
         data.append(emg)
         if features:
             for ft in features:
@@ -113,18 +115,18 @@ class NinaLoader(Loader):
             fileData, l = self._load_file(path, options)
             data.append(fileData)
             labs.append(l)
-            
-        return data, labs
+
+        return data, [sum(x)/len(x) for x in labs]
 
     def _read_group_to_lists(self):
         res = []
         labels = []
         for e in self.excercises:
             # In the papers the exercises are lettered not numbered
-            # Also watchout, the 'exercise' col in each .mat are 
-            # numbered weird. 
+            # Also watchout, the 'exercise' col in each .mat are
+            # numbered weird.
             # ex: /s1/S1_E1_A1.mat has says ['exercise'] is 3.
-            # 1 ==> 3 | 2 ==> 1 | 3 ==> 2 (I think)[again only if reading 
+            # 1 ==> 3 | 2 ==> 1 | 3 ==> 2 (I think)[again only if reading
             # column in raw .mat]
             if e == 'a':
                 e = 1
@@ -136,14 +138,15 @@ class NinaLoader(Loader):
             res+=exData
             labels+=l
             VERBOSE and print(f"[Step 0] \nexData {np.shape(exData.copy())}\nlabels {np.shape(labels.copy())}")
-        return np.hstack(res), np.hstack(labels)
+        return res, labels
 
 
-    
+
 
     def read_data(self):
         _emg, self.labels = self._read_group_to_lists()
-        return [pad_along_axis(x, 1000) for x in _emg]
+        maxlen = min([x.shape[0] for x in _emg])
+        return [pad_along_axis(x, min(self.max_size, maxlen)) for x in _emg]
 
     def process_data(self):
         for f in self.processors:
