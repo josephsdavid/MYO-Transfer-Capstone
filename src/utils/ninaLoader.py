@@ -58,23 +58,31 @@ class NinaLoader(Loader):
         self.processors = process_fns
         self.augmentors = augment_fns
         self.max_size=max_size
-        self.emg = self.read_data()
+        self.read_data()
         if VERBOSE :
             print(f"[Step 1 ==> processing] Shape of emg: {np.shape(self.emg.copy())}")
             print(f"[Step 1 ==> processing] Shape of labels: {np.shape(self.labels.copy())}")
+            print(f"[Step 1 ==> processing] Shape of reps: {np.shape(self.rep.copy())}")
+            print(f"[Step 1 ==> processing] Shape of subjects: {np.shape(self.subject.copy())}")
         self.process_data()
         if VERBOSE :
             print(f"[Step 2 ==> augment] Shape of emg: {np.shape(self.emg)}")
             print(f"[Step 2 ==> augment] Shape of labels: {np.shape(self.labels)}")
+            print(f"[Step 2 ==> augment] Shape of reps: {np.shape(self.rep.copy())}")
+            print(f"[Step 2 ==> augment] Shape of subjects: {np.shape(self.subject.copy())}")
         if augment_fns is not None:
             self.augment_data(step, window_size)
         if VERBOSE :
             print(f"[Step 3 ==> moveaxis] Shape of emg: {np.shape(self.emg)}")
             print(f"[Step 3 ==> moveaxis] Shape of labels: {np.shape(self.labels)}")
+            print(f"[Step 3 ==> moveaxis] Shape of reps: {np.shape(self.rep.copy())}")
+            print(f"[Step 3 ==> moveaxis] Shape of subjects: {np.shape(self.subject.copy())}")
         self.emg = np.moveaxis(np.concatenate(self.emg,axis=0),2,1)
         if VERBOSE :
             print(f"[Step 4 ==> scale] Shape of emg: {np.shape(self.emg)}")
             print(f"[Step 4 ==> scale] Shape of labels: {np.shape(self.labels)}")
+            print(f"[Step 3 ==> scale] Shape of reps: {np.shape(self.rep.copy())}")
+            print(f"[Step 3 ==> scale] Shape of subjects: {np.shape(self.subject.copy())}")
         if scale:
             self.emg = scale(self.emg)
 
@@ -83,12 +91,14 @@ class NinaLoader(Loader):
     # loader if we want to group by rerepetition later on.
     def _load_file(self, path, features=None):
         res = scipy.io.loadmat(path)
-        import pdb; pdb.set_trace()
         data = []
         # Might need to start clipping emg segments here... RAM is
         # struggling to keep up with massive sizes
+        rep = res['rerepetition'][:self.max_size].copy()
         emg = res['emg'][:self.max_size,:8].copy()
         lab = res['restimulus'][:self.max_size].copy()
+        subject = np.repeat(res['subject'], lab.shape[0])
+        subject = subject.reshape(subject.shape[0],1)
 
         data.append(emg)
         if features:
@@ -103,24 +113,32 @@ class NinaLoader(Loader):
                 data.append(newData)
 
         del res
-        return np.concatenate(data,axis=1), lab
+        return np.concatenate(data,axis=1), lab, rep, subject
 
     def _load_by_trial_raw(self, trial=1, options=None):
         data = []
         labs = []
         reps = []
+        subjects = []
         for i in range(1,11):
             VERBOSE and print(f"Starting load of {i}/10 .mat files")
             path = self.path + "/" + "s" + str(i) + "/S" + str(i) + "_E" + str(trial) + "_A1.mat"
-            fileData, l = self._load_file(path, options)
+            fileData, l, r, s = self._load_file(path, options)
             data.append(fileData)
             labs.append(l)
+            reps.append(r)
+            subjects.append(s)
 
-        return data, [sum(x)/len(x) for x in labs]
+        def meanlist(arr):
+        	return [sum(x)/len(x) for x in arr]
+        #import pdb; pdb.set_trace()
+        return data, meanlist(labs), meanlist(reps), meanlist(subjects)
 
     def _read_group_to_lists(self):
         res = []
         labels = []
+        reps = []
+        subjects = []
         for e in self.excercises:
             # In the papers the exercises are lettered not numbered
             # Also watchout, the 'exercise' col in each .mat are
@@ -134,19 +152,24 @@ class NinaLoader(Loader):
                 e = 2
             elif e == 'c':
                 e = 3
-            exData, l = self._load_by_trial_raw(trial=e)
+            exData, l ,r, s= self._load_by_trial_raw(trial=e)
             res+=exData
             labels+=l
+            reps+=r
+            subjects+=s
             VERBOSE and print(f"[Step 0] \nexData {np.shape(exData.copy())}\nlabels {np.shape(labels.copy())}")
-        return res, labels
+        return res, labels, reps, subjects
 
 
 
 
     def read_data(self):
-        _emg, self.labels = self._read_group_to_lists()
+        _emg, self.labels, self.rep, self.subject = self._read_group_to_lists()
         maxlen = min([x.shape[0] for x in _emg])
-        return [pad_along_axis(x, min(self.max_size, maxlen)) for x in _emg]
+        self.emg =  [pad_along_axis(x, min(self.max_size, maxlen)) for x in _emg]
+	# fix this, they need to be the same shape as labels
+        self.rep =  [x[:min(self.max_size, maxlen)] for x in self.rep]
+        self.subject =  [x[:min(self.max_size, maxlen)] for x in self.subject]
 
     def process_data(self):
         for f in self.processors:
@@ -155,9 +178,15 @@ class NinaLoader(Loader):
     def augment_data(self, step, window_size):
         for f in self.augmentors:
             self.emg, self.labels = f(self.emg, self.labels)
+            # this is slow but something wrong
+            self.rep, _ = f(self.emg, self.rep)
+            self.subject, _ = f(self.emg, self.subject)
 
         self.emg = [window_roll(x, step, window_size) for x in self.emg]
+        import pdb; pdb.set_trace
         self.labels = roll_labels(self.emg, self.labels)
+        self.rep = roll_labels(self.emg, self.rep)
+        self.subject = roll_labels(self.emg, self.subject)
 
 
 # x = NinaLoader("../../PreTrainingDataset", [pp.butter_highpass_filter], [aa.add_noise])
