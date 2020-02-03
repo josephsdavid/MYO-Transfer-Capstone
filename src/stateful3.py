@@ -5,17 +5,16 @@ import callbacks as cb
 from tensorflow.keras.layers import Input, Dense, LSTM
 from tensorflow.keras.optimizers import SGD
 from tensorflow.keras.models import Model
+from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.callbacks import Callback, EarlyStopping, ModelCheckpoint
 from tensorflow.keras import backend as K
 import matplotlib.pyplot as plt
 
 
 class ResetStatesCallback(Callback):
-        def on_train_batch_end(self, batch, logs={}):
+        def on_epoch_end(self, batch, logs={}):
                 self.model.reset_states()
 
-        def on_test_batch_end(self, batch, logs={}):
-                self.model.reset_states()
 
 batch=40
 def holder(a,b):
@@ -54,41 +53,15 @@ x_val = np.concatenate(x_val,0).astype(np.float16)
 y_val = np.concatenate(y_val,0).astype(np.float16)
 print(x_tr.shape)
 
-
-class DataGenerator(tf.keras.utils.Sequence):
-    def __init__(self, features, targets, batch_size = 400, dim = (53), n_channels = 8, shuffle=True, n_classes=7):
-        self.dim = dim
-        self.batch_size = batch_size
-        self.targets = targets
-        self.features=features
-        self.n_classes = n_classes
-        self.n_channels = n_channels
-        self.shuffle =shuffle
-        self.on_epoch_end()
-
-    def __len__(self):
-        'number of batches per epoch'
-        return int(np.floor(self.features.shape[0]/self.batch_size))
-
-    def on_epoch_end(self):
-        self.indexes=np.arange(self.features.shape[0])
-        if self.shuffle:
-            np.random.shuffle(self.indexes)
-
-    def __getitem__(self, index):
-        'generate a single batch'
-        indexes = self.indexes[index*self.batch_size:(index+1)*self.batch_size]
-        return self.features[indexes,:,:],  self.targets[indexes]
-
-t_set=DataGenerator(x_tr, y_tr, batch_size=batch, shuffle=False)
-v_set=DataGenerator(x_val, y_val, batch_size=batch, shuffle=False)
+y_val=to_categorical(y_val)
+y_tr=to_categorical(y_tr)
 
 dropout = 0.5
 rec_drop=0.5
 
-stopper = EarlyStopping(monitor = "val_loss", patience=10)
+stopper = EarlyStopping(monitor = "val_loss", patience=20)
 inputs = Input(batch_shape=(batch, 10, 8))
-x = LSTM(20, activation = 'tanh',
+x = LSTM(450, activation = 'tanh',
         	dropout=dropout, recurrent_dropout=rec_drop, stateful=True)(inputs)
 outputs = Dense(7, activation='softmax')(x)
 lstm = Model(inputs, outputs)
@@ -105,15 +78,15 @@ lstm.compile(loss='sparse_categorical_crossentropy', optimizer='rmsprop', metric
 #		lstm.reset_states()
 #	lstm.evaluate(v_set)
 
-lstm.fit(t_set, validation_data=v_set,  epochs=25,
-         callbacks=[ResetStatesCallback()])
+lstm.fit(t_set, validation_data=v_set,  epochs=150,
+         callbacks=[ResetStatesCallback(), stopper], steps_per_epoch=len(t_set)//15)
 lstm.evaluate(x_val, y_val, batch_size=batch)
 preds=lstm.predict(v_set)
 lstm.save("result/stateful_lstm_attempted.h5")
 
 from sklearn.metrics import accuracy_score
 
-preds=np.mean(preds.reshape(-1,batch), axis=1).round()
+preds=np.mean(np.argmax(preds,axis=1).reshape(-1,batch), axis=1).round()
 
 res = []
 for i in v_set:

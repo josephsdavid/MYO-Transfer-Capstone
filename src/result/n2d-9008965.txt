@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "dimred.py", line 19, in <module>
+    [holder], batch_size = batch, scale=True
+  File "/users/josephsd/MYO-Transfer-Capstone/src/utils/generators.py", line 34, in __init__
+    super(PreTrainGenerator, self).__init__(path, process_fns, augment_fns, scale, step, window_size)
+  File "/users/josephsd/MYO-Transfer-Capstone/src/utils/loaders.py", line 82, in __init__
+    self.emg = pp.scale(self.emg)
+NameError: name 'pp' is not defined

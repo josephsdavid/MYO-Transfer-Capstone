@@ -1,0 +1,174 @@
+2020-02-02 13:23:36.098442: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcuda.so.1
+2020-02-02 13:23:36.394166: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1618] Found device 0 with properties: 
+name: Tesla V100-SXM2-32GB major: 7 minor: 0 memoryClockRate(GHz): 1.53
+pciBusID: 0000:16:00.0
+2020-02-02 13:23:36.396224: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1618] Found device 1 with properties: 
+name: Tesla V100-SXM2-32GB major: 7 minor: 0 memoryClockRate(GHz): 1.53
+pciBusID: 0000:3a:00.0
+2020-02-02 13:23:36.398232: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1618] Found device 2 with properties: 
+name: Tesla V100-SXM2-32GB major: 7 minor: 0 memoryClockRate(GHz): 1.53
+pciBusID: 0000:3b:00.0
+2020-02-02 13:23:36.400210: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1618] Found device 3 with properties: 
+name: Tesla V100-SXM2-32GB major: 7 minor: 0 memoryClockRate(GHz): 1.53
+pciBusID: 0000:89:00.0
+2020-02-02 13:23:36.401136: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcudart.so.10.0
+2020-02-02 13:23:36.403387: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcublas.so.10.0
+2020-02-02 13:23:36.405944: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcufft.so.10.0
+2020-02-02 13:23:36.407192: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcurand.so.10.0
+2020-02-02 13:23:36.409655: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcusolver.so.10.0
+2020-02-02 13:23:36.411509: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcusparse.so.10.0
+2020-02-02 13:23:36.416242: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcudnn.so.7
+2020-02-02 13:23:36.432232: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1746] Adding visible gpu devices: 0, 1, 2, 3
+2020-02-02 13:23:36.432897: I tensorflow/core/platform/cpu_feature_guard.cc:142] Your CPU supports instructions that this TensorFlow binary was not compiled to use: SSE4.1 SSE4.2 AVX AVX2 AVX512F FMA
+2020-02-02 13:23:36.444094: I tensorflow/core/platform/profile_utils/cpu_utils.cc:94] CPU Frequency: 3000000000 Hz
+2020-02-02 13:23:36.445331: I tensorflow/compiler/xla/service/service.cc:168] XLA service 0x555559d47ba0 executing computations on platform Host. Devices:
+2020-02-02 13:23:36.445353: I tensorflow/compiler/xla/service/service.cc:175]   StreamExecutor device (0): Host, Default Version
+2020-02-02 13:23:37.062383: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1618] Found device 0 with properties: 
+name: Tesla V100-SXM2-32GB major: 7 minor: 0 memoryClockRate(GHz): 1.53
+pciBusID: 0000:16:00.0
+2020-02-02 13:23:37.064494: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1618] Found device 1 with properties: 
+name: Tesla V100-SXM2-32GB major: 7 minor: 0 memoryClockRate(GHz): 1.53
+pciBusID: 0000:3a:00.0
+2020-02-02 13:23:37.066488: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1618] Found device 2 with properties: 
+name: Tesla V100-SXM2-32GB major: 7 minor: 0 memoryClockRate(GHz): 1.53
+pciBusID: 0000:3b:00.0
+2020-02-02 13:23:37.068454: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1618] Found device 3 with properties: 
+name: Tesla V100-SXM2-32GB major: 7 minor: 0 memoryClockRate(GHz): 1.53
+pciBusID: 0000:89:00.0
+2020-02-02 13:23:37.068519: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcudart.so.10.0
+2020-02-02 13:23:37.068531: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcublas.so.10.0
+2020-02-02 13:23:37.068541: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcufft.so.10.0
+2020-02-02 13:23:37.068551: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcurand.so.10.0
+2020-02-02 13:23:37.068566: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcusolver.so.10.0
+2020-02-02 13:23:37.068576: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcusparse.so.10.0
+2020-02-02 13:23:37.068586: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcudnn.so.7
+2020-02-02 13:23:37.084315: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1746] Adding visible gpu devices: 0, 1, 2, 3
+2020-02-02 13:23:37.084358: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcudart.so.10.0
+2020-02-02 13:23:37.093759: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1159] Device interconnect StreamExecutor with strength 1 edge matrix:
+2020-02-02 13:23:37.093774: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1165]      0 1 2 3 
+2020-02-02 13:23:37.093783: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1178] 0:   N Y Y Y 
+2020-02-02 13:23:37.093788: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1178] 1:   Y N Y Y 
+2020-02-02 13:23:37.093793: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1178] 2:   Y Y N Y 
+2020-02-02 13:23:37.093797: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1178] 3:   Y Y Y N 
+2020-02-02 13:23:37.106047: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1304] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:0 with 30555 MB memory) -> physical GPU (device: 0, name: Tesla V100-SXM2-32GB, pci bus id: 0000:16:00.0, compute capability: 7.0)
+2020-02-02 13:23:37.110423: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1304] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:1 with 30555 MB memory) -> physical GPU (device: 1, name: Tesla V100-SXM2-32GB, pci bus id: 0000:3a:00.0, compute capability: 7.0)
+2020-02-02 13:23:37.114615: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1304] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:2 with 30555 MB memory) -> physical GPU (device: 2, name: Tesla V100-SXM2-32GB, pci bus id: 0000:3b:00.0, compute capability: 7.0)
+2020-02-02 13:23:37.118765: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1304] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:3 with 30555 MB memory) -> physical GPU (device: 3, name: Tesla V100-SXM2-32GB, pci bus id: 0000:89:00.0, compute capability: 7.0)
+2020-02-02 13:23:37.121864: I tensorflow/compiler/xla/service/service.cc:168] XLA service 0x55555d0717a0 executing computations on platform CUDA. Devices:
+2020-02-02 13:23:37.121882: I tensorflow/compiler/xla/service/service.cc:175]   StreamExecutor device (0): Tesla V100-SXM2-32GB, Compute Capability 7.0
+2020-02-02 13:23:37.121887: I tensorflow/compiler/xla/service/service.cc:175]   StreamExecutor device (1): Tesla V100-SXM2-32GB, Compute Capability 7.0
+2020-02-02 13:23:37.121892: I tensorflow/compiler/xla/service/service.cc:175]   StreamExecutor device (2): Tesla V100-SXM2-32GB, Compute Capability 7.0
+2020-02-02 13:23:37.121897: I tensorflow/compiler/xla/service/service.cc:175]   StreamExecutor device (3): Tesla V100-SXM2-32GB, Compute Capability 7.0
+2020-02-02 13:23:37.127634: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1618] Found device 0 with properties: 
+name: Tesla V100-SXM2-32GB major: 7 minor: 0 memoryClockRate(GHz): 1.53
+pciBusID: 0000:16:00.0
+2020-02-02 13:23:37.129616: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1618] Found device 1 with properties: 
+name: Tesla V100-SXM2-32GB major: 7 minor: 0 memoryClockRate(GHz): 1.53
+pciBusID: 0000:3a:00.0
+2020-02-02 13:23:37.131583: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1618] Found device 2 with properties: 
+name: Tesla V100-SXM2-32GB major: 7 minor: 0 memoryClockRate(GHz): 1.53
+pciBusID: 0000:3b:00.0
+2020-02-02 13:23:37.133521: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1618] Found device 3 with properties: 
+name: Tesla V100-SXM2-32GB major: 7 minor: 0 memoryClockRate(GHz): 1.53
+pciBusID: 0000:89:00.0
+2020-02-02 13:23:37.133552: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcudart.so.10.0
+2020-02-02 13:23:37.133564: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcublas.so.10.0
+2020-02-02 13:23:37.133573: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcufft.so.10.0
+2020-02-02 13:23:37.133583: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcurand.so.10.0
+2020-02-02 13:23:37.133592: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcusolver.so.10.0
+2020-02-02 13:23:37.133601: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcusparse.so.10.0
+2020-02-02 13:23:37.133611: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcudnn.so.7
+2020-02-02 13:23:37.149113: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1746] Adding visible gpu devices: 0, 1, 2, 3
+2020-02-02 13:23:37.149419: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1159] Device interconnect StreamExecutor with strength 1 edge matrix:
+2020-02-02 13:23:37.149426: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1165]      0 1 2 3 
+2020-02-02 13:23:37.149432: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1178] 0:   N Y Y Y 
+2020-02-02 13:23:37.149437: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1178] 1:   Y N Y Y 
+2020-02-02 13:23:37.149441: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1178] 2:   Y Y N Y 
+2020-02-02 13:23:37.149446: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1178] 3:   Y Y Y N 
+2020-02-02 13:23:37.159678: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1304] Created TensorFlow device (/device:GPU:0 with 30555 MB memory) -> physical GPU (device: 0, name: Tesla V100-SXM2-32GB, pci bus id: 0000:16:00.0, compute capability: 7.0)
+2020-02-02 13:23:37.161673: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1304] Created TensorFlow device (/device:GPU:1 with 30555 MB memory) -> physical GPU (device: 1, name: Tesla V100-SXM2-32GB, pci bus id: 0000:3a:00.0, compute capability: 7.0)
+2020-02-02 13:23:37.163647: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1304] Created TensorFlow device (/device:GPU:2 with 30555 MB memory) -> physical GPU (device: 2, name: Tesla V100-SXM2-32GB, pci bus id: 0000:3b:00.0, compute capability: 7.0)
+2020-02-02 13:23:37.165602: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1304] Created TensorFlow device (/device:GPU:3 with 30555 MB memory) -> physical GPU (device: 3, name: Tesla V100-SXM2-32GB, pci bus id: 0000:89:00.0, compute capability: 7.0)
+2020-02-02 13:24:19.253127: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcublas.so.10.0
+Traceback (most recent call last):
+  File "encdec.py", line 67, in <module>
+    joblib.dump(history, "result/best_history.obj")
+  File "/users/josephsd/.conda/envs/capstone/lib/python3.7/site-packages/joblib/numpy_pickle.py", line 505, in dump
+    NumpyPickler(f, protocol=protocol).dump(value)
+  File "/users/josephsd/.conda/envs/capstone/lib/python3.7/pickle.py", line 437, in dump
+    self.save(obj)
+  File "/users/josephsd/.conda/envs/capstone/lib/python3.7/site-packages/joblib/numpy_pickle.py", line 295, in save
+    return Pickler.save(self, obj)
+  File "/users/josephsd/.conda/envs/capstone/lib/python3.7/pickle.py", line 549, in save
+    self.save_reduce(obj=obj, *rv)
+  File "/users/josephsd/.conda/envs/capstone/lib/python3.7/pickle.py", line 662, in save_reduce
+    save(state)
+  File "/users/josephsd/.conda/envs/capstone/lib/python3.7/site-packages/joblib/numpy_pickle.py", line 295, in save
+    return Pickler.save(self, obj)
+  File "/users/josephsd/.conda/envs/capstone/lib/python3.7/pickle.py", line 504, in save
+    f(self, obj) # Call unbound method with explicit self
+  File "/users/josephsd/.conda/envs/capstone/lib/python3.7/pickle.py", line 859, in save_dict
+    self._batch_setitems(obj.items())
+  File "/users/josephsd/.conda/envs/capstone/lib/python3.7/pickle.py", line 885, in _batch_setitems
+    save(v)
+  File "/users/josephsd/.conda/envs/capstone/lib/python3.7/site-packages/joblib/numpy_pickle.py", line 295, in save
+    return Pickler.save(self, obj)
+  File "/users/josephsd/.conda/envs/capstone/lib/python3.7/pickle.py", line 549, in save
+    self.save_reduce(obj=obj, *rv)
+  File "/users/josephsd/.conda/envs/capstone/lib/python3.7/pickle.py", line 662, in save_reduce
+    save(state)
+  File "/users/josephsd/.conda/envs/capstone/lib/python3.7/site-packages/joblib/numpy_pickle.py", line 295, in save
+    return Pickler.save(self, obj)
+  File "/users/josephsd/.conda/envs/capstone/lib/python3.7/pickle.py", line 504, in save
+    f(self, obj) # Call unbound method with explicit self
+  File "/users/josephsd/.conda/envs/capstone/lib/python3.7/pickle.py", line 859, in save_dict
+    self._batch_setitems(obj.items())
+  File "/users/josephsd/.conda/envs/capstone/lib/python3.7/pickle.py", line 885, in _batch_setitems
+    save(v)
+  File "/users/josephsd/.conda/envs/capstone/lib/python3.7/site-packages/joblib/numpy_pickle.py", line 295, in save
+    return Pickler.save(self, obj)
+  File "/users/josephsd/.conda/envs/capstone/lib/python3.7/pickle.py", line 549, in save
+    self.save_reduce(obj=obj, *rv)
+  File "/users/josephsd/.conda/envs/capstone/lib/python3.7/pickle.py", line 662, in save_reduce
+    save(state)
+  File "/users/josephsd/.conda/envs/capstone/lib/python3.7/site-packages/joblib/numpy_pickle.py", line 295, in save
+    return Pickler.save(self, obj)
+  File "/users/josephsd/.conda/envs/capstone/lib/python3.7/pickle.py", line 504, in save
+    f(self, obj) # Call unbound method with explicit self
+  File "/users/josephsd/.conda/envs/capstone/lib/python3.7/pickle.py", line 859, in save_dict
+    self._batch_setitems(obj.items())
+  File "/users/josephsd/.conda/envs/capstone/lib/python3.7/pickle.py", line 885, in _batch_setitems
+    save(v)
+  File "/users/josephsd/.conda/envs/capstone/lib/python3.7/site-packages/joblib/numpy_pickle.py", line 295, in save
+    return Pickler.save(self, obj)
+  File "/users/josephsd/.conda/envs/capstone/lib/python3.7/pickle.py", line 549, in save
+    self.save_reduce(obj=obj, *rv)
+  File "/users/josephsd/.conda/envs/capstone/lib/python3.7/pickle.py", line 662, in save_reduce
+    save(state)
+  File "/users/josephsd/.conda/envs/capstone/lib/python3.7/site-packages/joblib/numpy_pickle.py", line 295, in save
+    return Pickler.save(self, obj)
+  File "/users/josephsd/.conda/envs/capstone/lib/python3.7/pickle.py", line 504, in save
+    f(self, obj) # Call unbound method with explicit self
+  File "/users/josephsd/.conda/envs/capstone/lib/python3.7/pickle.py", line 859, in save_dict
+    self._batch_setitems(obj.items())
+  File "/users/josephsd/.conda/envs/capstone/lib/python3.7/pickle.py", line 885, in _batch_setitems
+    save(v)
+  File "/users/josephsd/.conda/envs/capstone/lib/python3.7/site-packages/joblib/numpy_pickle.py", line 295, in save
+    return Pickler.save(self, obj)
+  File "/users/josephsd/.conda/envs/capstone/lib/python3.7/pickle.py", line 549, in save
+    self.save_reduce(obj=obj, *rv)
+  File "/users/josephsd/.conda/envs/capstone/lib/python3.7/pickle.py", line 662, in save_reduce
+    save(state)
+  File "/users/josephsd/.conda/envs/capstone/lib/python3.7/site-packages/joblib/numpy_pickle.py", line 295, in save
+    return Pickler.save(self, obj)
+  File "/users/josephsd/.conda/envs/capstone/lib/python3.7/pickle.py", line 504, in save
+    f(self, obj) # Call unbound method with explicit self
+  File "/users/josephsd/.conda/envs/capstone/lib/python3.7/pickle.py", line 859, in save_dict
+    self._batch_setitems(obj.items())
+  File "/users/josephsd/.conda/envs/capstone/lib/python3.7/pickle.py", line 885, in _batch_setitems
+    save(v)
+  File "/users/josephsd/.conda/envs/capstone/lib/python3.7/site-packages/joblib/numpy_pickle.py", line 295, in save
+    return Pickler.save(self, obj)
+  File "/users/josephsd/.conda/envs/capstone/lib/python3.7/pickle.py", line 524, in save
+    rv = reduce(self.proto)
+TypeError: can't pickle _thread.RLock objects
