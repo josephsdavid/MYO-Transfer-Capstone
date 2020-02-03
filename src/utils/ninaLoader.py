@@ -2,10 +2,30 @@ import tensorflow.keras as keras
 import numpy as np
 import scipy.io
 import abc
-from .helpers import read_file_validation, pad_along_axis
-from .augmentors import window_roll, roll_labels
-from .loaders import Loader
+import argparse
 
+from .helpers import read_file_validation, pad_along_axis
+from .augmentors import window_roll, roll_labels, add_noise
+from .loaders import Loader
+from .preprocessors import butter_highpass_filter
+
+parser = argparse.ArgumentParser(description='Config loader...')
+parser.add_argument('-v', dest='verbose', action='store_true', default=False,
+                    help='verbose mode')
+parser.add_argument('--max-size', dest='maxSize', action='store', default=1000,
+                    help='How long a single channel sequence can be (pre windowing)')
+
+parser.add_argument('-e','--excercise', dest='excercise', action='store', default='a',
+                    help='Excercise(s) can be string consisting of a-c (with combos)')
+parser.add_argument('-p','--path', dest='nPath', action='store', default="./../data/ninaPro",
+                    help='path to /data/ninaPro')
+
+args = parser.parse_args()
+
+VERBOSE = args.verbose
+MAX_SEQ = args.maxSize
+EXCERCISE = list(args.excercise.strip())
+NINA_BASE = args.nPath
 # This function returns two lists. basically groups on subject, then exercise
 # data: list of lists of 2D matrix (default emg data only)
 # labs: list of lists of arrays of which exercise trial 
@@ -20,7 +40,7 @@ def _load_by_subjects_raw(nina_path=".", subjects=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10
         subData = []
         subLabs = []
         for i in range(1,4):
-            path = nina_path + "/ninaPro/" + "s" + str(sub) + "/S" + str(sub) + "_E" + str(i) + "_A1.mat"
+            path = nina_path + "/s" + str(sub) + "/S" + str(sub) + "_E" + str(i) + "_A1.mat"
             fileData, l = _load_file(path, options)
             subData.append(fileData)
             subLabs+=l
@@ -39,8 +59,9 @@ class NinaLoader(Loader):
         self.augmentors = augment_fns
         self.read_data()
         self.process_data()
-        print(f"Shape of emg: {np.shape(self.emg)}")
-        print(f"Shape of labels: {np.shape(self.labels)}")
+        if VERBOSE : 
+            print(f"Shape of emg: {np.shape(self.emg)}")
+            print(f"Shape of labels: {np.shape(self.labels)}")
         if augment_fns is not None:
             self.augment_data(step, window_size)
         self.emg = np.moveaxis(np.concatenate(self.emg,axis=0),2,1)
@@ -55,8 +76,9 @@ class NinaLoader(Loader):
         data = []
         # Might need to start clipping emg segments here... RAM is 
         # struggling to keep up with massive sizes
-        emg = res['emg'][:,:8]
-        lab = res['restimulus'][:]
+        emg = res['emg'][:,:8].copy()
+        lab = res['restimulus'][:].copy()
+        del res
         data.append(emg)
         if features:
             for ft in features:
@@ -75,7 +97,7 @@ class NinaLoader(Loader):
         reps = []
         for i in range(1,11):
             print(f"Starting load of {i}/10 .mat files")
-            path = self.path + "/ninaPro/" + "s" + str(i) + "/S" + str(i) + "_E" + str(trial) + "_A1.mat"
+            path = self.path + "/" + "s" + str(i) + "/S" + str(i) + "_E" + str(trial) + "_A1.mat"
             fileData, l = self._load_file(path, options)
             data.append(fileData)
             labs.append(l)
@@ -123,3 +145,13 @@ class NinaLoader(Loader):
 
 
 # x = NinaLoader("../../PreTrainingDataset", [pp.butter_highpass_filter], [aa.add_noise])
+if __name__ == '__main__':
+    if VERBOSE:
+        print('Processing NinaData')
+        import os
+        print(os.getcwd())
+        print(NINA_BASE)
+        print(__file__)
+    NinaLoader(NINA_BASE, EXCERCISE, [butter_highpass_filter], [add_noise])
+
+
