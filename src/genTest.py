@@ -97,7 +97,6 @@ for i in range(len(abc)):
             lstm = Model(inputs, outputs)
             lstm.compile(optimizer=optim, loss='sparse_categorical_crossentropy', metrics=['accuracy'])
 
-
         lstm.fit(train, epochs=50,
                 callbacks=[clr, EarlyStopping(patience=20, monitor='val_loss')],
                 validation_data=test, shuffle = False)
