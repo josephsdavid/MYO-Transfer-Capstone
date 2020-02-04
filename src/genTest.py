@@ -1,4 +1,3 @@
-import json
 import tensorflow as tf
 import numpy as np
 import utils as u
@@ -66,8 +65,8 @@ with strategy.scope():
 #	# https://r2rt.com/non-zero-initial-states-for-recurrent-neural-networks.html
 
 print(source_model.summary())
-stopper = EarlyStopping(monitor = "val_loss", patience=100)
-history = source_model.fit(train_set, epochs=50, validation_data=val_set, callbacks=[stopper, clr], workers=16, use_multiprocessing=True, steps_per_epoch=len(train_set)//4)
+stopper = EarlyStopping(monitor = "val_loss", patience=20)
+history = source_model.fit(train_set, epochs=50, validation_data=val_set, callbacks=[stopper, clr], workers=16, use_multiprocessing=True, steps_per_epoch=len(train_set)//4, shuffle = False)
 
 abc = ['a','b','c']
 subject=[False, True]
@@ -100,14 +99,17 @@ for i in range(len(abc)):
 
 
         lstm.fit(train, epochs=50,
-                callbacks=[clr, EarlyStopping(patience=100, monitor='val_loss')],
-                validation_data=test)
+                callbacks=[clr, EarlyStopping(patience=20, monitor='val_loss')],
+                validation_data=test, shuffle = False)
         sub = 'subject' if s else 'repetition'
         loc = 'notransfer_'+sub+'_'+abc[i]
         results[loc] = lstm.evaluate(test)
 
 
 
+with open("result/transfer_results_no_shuffle1.txt","w") as f:
+    f.write(str(results))
+    f.close()
 
 for i in range(len(abc)):
     for s in subject:
@@ -122,14 +124,17 @@ for i in range(len(abc)):
             lstm = Model(transfer_model.input, out)
             lstm.compile(optimizer=optim, loss='sparse_categorical_crossentropy', metrics=['accuracy'])
         lstm.fit(train, epochs=50,
-                callbacks=[clr, EarlyStopping(patience=100, monitor='val_loss')],
-                validation_data=test)
+                callbacks=[clr, EarlyStopping(patience=20, monitor='val_loss')],
+                validation_data=test, shuffle = False)
         sub = 'subject' if s else 'repetition'
         loc = 'unfrozen_'+sub+'_'+abc[i]
         results[loc] = lstm.evaluate(test)
 
 
 
+with open("result/transfer_results_no_shuffle2.txt","w") as f:
+    f.write(str(results))
+    f.close()
 
 
 
@@ -147,15 +152,15 @@ for i in range(len(abc)):
             lstm = Model(transfer_model.input, out)
             lstm.compile(optimizer=optim, loss='sparse_categorical_crossentropy', metrics=['accuracy'])
         lstm.fit(train, epochs=50,
-                callbacks=[clr, EarlyStopping(patience=100, monitor='val_loss')],
-                validation_data=test)
+                callbacks=[clr, EarlyStopping(patience=20, monitor='val_loss')],
+                validation_data=test, shuffle=False)
         sub = 'subject' if s else 'repetition'
         loc = 'frozen_'+sub+'_'+abc[i]
         results[loc] = lstm.evaluate(test)
 
 
 
-
-with open("result/transfer_results.json","w") as f:
-	json.dump(result, f)
+with open("result/transfer_results_no_shuffle3.txt","w") as f:
+    f.write(str(results))
+    f.close()
 

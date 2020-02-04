@@ -45,8 +45,7 @@ with strategy.scope():
 	seq=[True, True, False]
 	for i in range(3):
 		x = LSTM(units[i], activation="tanh", dropout=drop, recurrent_dropout=rec_drop, return_sequences=seq[i], name = "lstm_{}".format(i))(x)
-	outputs = Dense(150, activation='relu')(x)
-	outputs = Dense(7, activation='softmax')(outputs)
+	outputs = Dense(7, activation='softmax')(x)
 	lstm = Model(inputs, outputs)
 
 #	ls = (LSTM(450, activation="tanh", dropout=0.5,
@@ -68,5 +67,5 @@ with strategy.scope():
 print(lstm.summary())
 stopper = EarlyStopping(monitor = "val_loss", patience=100)
 history = lstm.fit(train_set, epochs=100, validation_data=val_set, callbacks=[stopper, clr], workers=16, use_multiprocessing=True, steps_per_epoch=len(train_set)//4)
-lstm.save("result/fancy_training.h5")
+lstm.save("result/source_net")
 
