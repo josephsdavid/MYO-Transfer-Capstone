@@ -1,0 +1,700 @@
+2020-02-03 06:11:55.791613: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcuda.so.1
+2020-02-03 06:11:56.395548: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1618] Found device 0 with properties: 
+name: Tesla V100-SXM2-32GB major: 7 minor: 0 memoryClockRate(GHz): 1.53
+pciBusID: 0000:15:00.0
+2020-02-03 06:11:56.397575: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1618] Found device 1 with properties: 
+name: Tesla V100-SXM2-32GB major: 7 minor: 0 memoryClockRate(GHz): 1.53
+pciBusID: 0000:16:00.0
+2020-02-03 06:11:56.399561: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1618] Found device 2 with properties: 
+name: Tesla V100-SXM2-32GB major: 7 minor: 0 memoryClockRate(GHz): 1.53
+pciBusID: 0000:3a:00.0
+2020-02-03 06:11:56.401519: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1618] Found device 3 with properties: 
+name: Tesla V100-SXM2-32GB major: 7 minor: 0 memoryClockRate(GHz): 1.53
+pciBusID: 0000:3b:00.0
+2020-02-03 06:11:56.403510: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1618] Found device 4 with properties: 
+name: Tesla V100-SXM2-32GB major: 7 minor: 0 memoryClockRate(GHz): 1.53
+pciBusID: 0000:89:00.0
+2020-02-03 06:11:56.405499: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1618] Found device 5 with properties: 
+name: Tesla V100-SXM2-32GB major: 7 minor: 0 memoryClockRate(GHz): 1.53
+pciBusID: 0000:8a:00.0
+2020-02-03 06:11:56.407507: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1618] Found device 6 with properties: 
+name: Tesla V100-SXM2-32GB major: 7 minor: 0 memoryClockRate(GHz): 1.53
+pciBusID: 0000:b2:00.0
+2020-02-03 06:11:56.409490: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1618] Found device 7 with properties: 
+name: Tesla V100-SXM2-32GB major: 7 minor: 0 memoryClockRate(GHz): 1.53
+pciBusID: 0000:b3:00.0
+2020-02-03 06:11:56.410494: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcudart.so.10.0
+2020-02-03 06:11:56.412968: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcublas.so.10.0
+2020-02-03 06:11:56.415596: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcufft.so.10.0
+2020-02-03 06:11:56.416901: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcurand.so.10.0
+2020-02-03 06:11:56.419289: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcusolver.so.10.0
+2020-02-03 06:11:56.421561: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcusparse.so.10.0
+2020-02-03 06:11:56.426291: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcudnn.so.7
+2020-02-03 06:11:56.457403: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1746] Adding visible gpu devices: 0, 1, 2, 3, 4, 5, 6, 7
+2020-02-03 06:11:56.458110: I tensorflow/core/platform/cpu_feature_guard.cc:142] Your CPU supports instructions that this TensorFlow binary was not compiled to use: SSE4.1 SSE4.2 AVX AVX2 AVX512F FMA
+2020-02-03 06:11:56.465999: I tensorflow/core/platform/profile_utils/cpu_utils.cc:94] CPU Frequency: 3000000000 Hz
+2020-02-03 06:11:56.467152: I tensorflow/compiler/xla/service/service.cc:168] XLA service 0x555559731450 executing computations on platform Host. Devices:
+2020-02-03 06:11:56.467172: I tensorflow/compiler/xla/service/service.cc:175]   StreamExecutor device (0): Host, Default Version
+2020-02-03 06:11:57.789912: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1618] Found device 0 with properties: 
+name: Tesla V100-SXM2-32GB major: 7 minor: 0 memoryClockRate(GHz): 1.53
+pciBusID: 0000:15:00.0
+2020-02-03 06:11:57.791996: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1618] Found device 1 with properties: 
+name: Tesla V100-SXM2-32GB major: 7 minor: 0 memoryClockRate(GHz): 1.53
+pciBusID: 0000:16:00.0
+2020-02-03 06:11:57.793973: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1618] Found device 2 with properties: 
+name: Tesla V100-SXM2-32GB major: 7 minor: 0 memoryClockRate(GHz): 1.53
+pciBusID: 0000:3a:00.0
+2020-02-03 06:11:57.795962: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1618] Found device 3 with properties: 
+name: Tesla V100-SXM2-32GB major: 7 minor: 0 memoryClockRate(GHz): 1.53
+pciBusID: 0000:3b:00.0
+2020-02-03 06:11:57.797922: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1618] Found device 4 with properties: 
+name: Tesla V100-SXM2-32GB major: 7 minor: 0 memoryClockRate(GHz): 1.53
+pciBusID: 0000:89:00.0
+2020-02-03 06:11:57.799887: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1618] Found device 5 with properties: 
+name: Tesla V100-SXM2-32GB major: 7 minor: 0 memoryClockRate(GHz): 1.53
+pciBusID: 0000:8a:00.0
+2020-02-03 06:11:57.801857: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1618] Found device 6 with properties: 
+name: Tesla V100-SXM2-32GB major: 7 minor: 0 memoryClockRate(GHz): 1.53
+pciBusID: 0000:b2:00.0
+2020-02-03 06:11:57.803811: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1618] Found device 7 with properties: 
+name: Tesla V100-SXM2-32GB major: 7 minor: 0 memoryClockRate(GHz): 1.53
+pciBusID: 0000:b3:00.0
+2020-02-03 06:11:57.803874: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcudart.so.10.0
+2020-02-03 06:11:57.803886: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcublas.so.10.0
+2020-02-03 06:11:57.803901: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcufft.so.10.0
+2020-02-03 06:11:57.803911: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcurand.so.10.0
+2020-02-03 06:11:57.803921: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcusolver.so.10.0
+2020-02-03 06:11:57.803930: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcusparse.so.10.0
+2020-02-03 06:11:57.803940: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcudnn.so.7
+2020-02-03 06:11:57.834831: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1746] Adding visible gpu devices: 0, 1, 2, 3, 4, 5, 6, 7
+2020-02-03 06:11:57.834874: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcudart.so.10.0
+2020-02-03 06:11:57.853410: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1159] Device interconnect StreamExecutor with strength 1 edge matrix:
+2020-02-03 06:11:57.853427: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1165]      0 1 2 3 4 5 6 7 
+2020-02-03 06:11:57.853440: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1178] 0:   N Y Y Y Y Y Y Y 
+2020-02-03 06:11:57.853445: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1178] 1:   Y N Y Y Y Y Y Y 
+2020-02-03 06:11:57.853451: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1178] 2:   Y Y N Y Y Y Y Y 
+2020-02-03 06:11:57.853456: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1178] 3:   Y Y Y N Y Y Y Y 
+2020-02-03 06:11:57.853461: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1178] 4:   Y Y Y Y N Y Y Y 
+2020-02-03 06:11:57.853466: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1178] 5:   Y Y Y Y Y N Y Y 
+2020-02-03 06:11:57.853471: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1178] 6:   Y Y Y Y Y Y N Y 
+2020-02-03 06:11:57.853476: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1178] 7:   Y Y Y Y Y Y Y N 
+2020-02-03 06:11:57.873911: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1304] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:0 with 30553 MB memory) -> physical GPU (device: 0, name: Tesla V100-SXM2-32GB, pci bus id: 0000:15:00.0, compute capability: 7.0)
+2020-02-03 06:11:57.878604: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1304] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:1 with 30553 MB memory) -> physical GPU (device: 1, name: Tesla V100-SXM2-32GB, pci bus id: 0000:16:00.0, compute capability: 7.0)
+2020-02-03 06:11:57.883164: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1304] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:2 with 30553 MB memory) -> physical GPU (device: 2, name: Tesla V100-SXM2-32GB, pci bus id: 0000:3a:00.0, compute capability: 7.0)
+2020-02-03 06:11:57.887715: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1304] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:3 with 30553 MB memory) -> physical GPU (device: 3, name: Tesla V100-SXM2-32GB, pci bus id: 0000:3b:00.0, compute capability: 7.0)
+2020-02-03 06:11:57.892235: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1304] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:4 with 30553 MB memory) -> physical GPU (device: 4, name: Tesla V100-SXM2-32GB, pci bus id: 0000:89:00.0, compute capability: 7.0)
+2020-02-03 06:11:57.896692: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1304] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:5 with 30553 MB memory) -> physical GPU (device: 5, name: Tesla V100-SXM2-32GB, pci bus id: 0000:8a:00.0, compute capability: 7.0)
+2020-02-03 06:11:57.901104: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1304] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:6 with 30553 MB memory) -> physical GPU (device: 6, name: Tesla V100-SXM2-32GB, pci bus id: 0000:b2:00.0, compute capability: 7.0)
+2020-02-03 06:11:57.905586: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1304] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:7 with 30553 MB memory) -> physical GPU (device: 7, name: Tesla V100-SXM2-32GB, pci bus id: 0000:b3:00.0, compute capability: 7.0)
+2020-02-03 06:11:57.909308: I tensorflow/compiler/xla/service/service.cc:168] XLA service 0x55555e92f8f0 executing computations on platform CUDA. Devices:
+2020-02-03 06:11:57.909325: I tensorflow/compiler/xla/service/service.cc:175]   StreamExecutor device (0): Tesla V100-SXM2-32GB, Compute Capability 7.0
+2020-02-03 06:11:57.909331: I tensorflow/compiler/xla/service/service.cc:175]   StreamExecutor device (1): Tesla V100-SXM2-32GB, Compute Capability 7.0
+2020-02-03 06:11:57.909336: I tensorflow/compiler/xla/service/service.cc:175]   StreamExecutor device (2): Tesla V100-SXM2-32GB, Compute Capability 7.0
+2020-02-03 06:11:57.909340: I tensorflow/compiler/xla/service/service.cc:175]   StreamExecutor device (3): Tesla V100-SXM2-32GB, Compute Capability 7.0
+2020-02-03 06:11:57.909345: I tensorflow/compiler/xla/service/service.cc:175]   StreamExecutor device (4): Tesla V100-SXM2-32GB, Compute Capability 7.0
+2020-02-03 06:11:57.909350: I tensorflow/compiler/xla/service/service.cc:175]   StreamExecutor device (5): Tesla V100-SXM2-32GB, Compute Capability 7.0
+2020-02-03 06:11:57.909355: I tensorflow/compiler/xla/service/service.cc:175]   StreamExecutor device (6): Tesla V100-SXM2-32GB, Compute Capability 7.0
+2020-02-03 06:11:57.909360: I tensorflow/compiler/xla/service/service.cc:175]   StreamExecutor device (7): Tesla V100-SXM2-32GB, Compute Capability 7.0
+2020-02-03 06:11:57.915537: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1618] Found device 0 with properties: 
+name: Tesla V100-SXM2-32GB major: 7 minor: 0 memoryClockRate(GHz): 1.53
+pciBusID: 0000:15:00.0
+2020-02-03 06:11:57.917502: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1618] Found device 1 with properties: 
+name: Tesla V100-SXM2-32GB major: 7 minor: 0 memoryClockRate(GHz): 1.53
+pciBusID: 0000:16:00.0
+2020-02-03 06:11:57.919455: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1618] Found device 2 with properties: 
+name: Tesla V100-SXM2-32GB major: 7 minor: 0 memoryClockRate(GHz): 1.53
+pciBusID: 0000:3a:00.0
+2020-02-03 06:11:57.921409: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1618] Found device 3 with properties: 
+name: Tesla V100-SXM2-32GB major: 7 minor: 0 memoryClockRate(GHz): 1.53
+pciBusID: 0000:3b:00.0
+2020-02-03 06:11:57.923346: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1618] Found device 4 with properties: 
+name: Tesla V100-SXM2-32GB major: 7 minor: 0 memoryClockRate(GHz): 1.53
+pciBusID: 0000:89:00.0
+2020-02-03 06:11:57.925278: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1618] Found device 5 with properties: 
+name: Tesla V100-SXM2-32GB major: 7 minor: 0 memoryClockRate(GHz): 1.53
+pciBusID: 0000:8a:00.0
+2020-02-03 06:11:57.927213: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1618] Found device 6 with properties: 
+name: Tesla V100-SXM2-32GB major: 7 minor: 0 memoryClockRate(GHz): 1.53
+pciBusID: 0000:b2:00.0
+2020-02-03 06:11:57.929152: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1618] Found device 7 with properties: 
+name: Tesla V100-SXM2-32GB major: 7 minor: 0 memoryClockRate(GHz): 1.53
+pciBusID: 0000:b3:00.0
+2020-02-03 06:11:57.929176: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcudart.so.10.0
+2020-02-03 06:11:57.929187: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcublas.so.10.0
+2020-02-03 06:11:57.929196: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcufft.so.10.0
+2020-02-03 06:11:57.929205: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcurand.so.10.0
+2020-02-03 06:11:57.929215: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcusolver.so.10.0
+2020-02-03 06:11:57.929224: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcusparse.so.10.0
+2020-02-03 06:11:57.929233: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcudnn.so.7
+2020-02-03 06:11:57.960222: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1746] Adding visible gpu devices: 0, 1, 2, 3, 4, 5, 6, 7
+2020-02-03 06:11:57.961234: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1159] Device interconnect StreamExecutor with strength 1 edge matrix:
+2020-02-03 06:11:57.961243: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1165]      0 1 2 3 4 5 6 7 
+2020-02-03 06:11:57.961250: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1178] 0:   N Y Y Y Y Y Y Y 
+2020-02-03 06:11:57.961255: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1178] 1:   Y N Y Y Y Y Y Y 
+2020-02-03 06:11:57.961260: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1178] 2:   Y Y N Y Y Y Y Y 
+2020-02-03 06:11:57.961265: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1178] 3:   Y Y Y N Y Y Y Y 
+2020-02-03 06:11:57.961270: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1178] 4:   Y Y Y Y N Y Y Y 
+2020-02-03 06:11:57.961275: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1178] 5:   Y Y Y Y Y N Y Y 
+2020-02-03 06:11:57.961280: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1178] 6:   Y Y Y Y Y Y N Y 
+2020-02-03 06:11:57.961285: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1178] 7:   Y Y Y Y Y Y Y N 
+2020-02-03 06:11:57.979618: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1304] Created TensorFlow device (/device:GPU:0 with 30553 MB memory) -> physical GPU (device: 0, name: Tesla V100-SXM2-32GB, pci bus id: 0000:15:00.0, compute capability: 7.0)
+2020-02-03 06:11:57.981591: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1304] Created TensorFlow device (/device:GPU:1 with 30553 MB memory) -> physical GPU (device: 1, name: Tesla V100-SXM2-32GB, pci bus id: 0000:16:00.0, compute capability: 7.0)
+2020-02-03 06:11:57.983557: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1304] Created TensorFlow device (/device:GPU:2 with 30553 MB memory) -> physical GPU (device: 2, name: Tesla V100-SXM2-32GB, pci bus id: 0000:3a:00.0, compute capability: 7.0)
+2020-02-03 06:11:57.985515: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1304] Created TensorFlow device (/device:GPU:3 with 30553 MB memory) -> physical GPU (device: 3, name: Tesla V100-SXM2-32GB, pci bus id: 0000:3b:00.0, compute capability: 7.0)
+2020-02-03 06:11:57.987459: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1304] Created TensorFlow device (/device:GPU:4 with 30553 MB memory) -> physical GPU (device: 4, name: Tesla V100-SXM2-32GB, pci bus id: 0000:89:00.0, compute capability: 7.0)
+2020-02-03 06:11:57.989427: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1304] Created TensorFlow device (/device:GPU:5 with 30553 MB memory) -> physical GPU (device: 5, name: Tesla V100-SXM2-32GB, pci bus id: 0000:8a:00.0, compute capability: 7.0)
+2020-02-03 06:11:57.991389: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1304] Created TensorFlow device (/device:GPU:6 with 30553 MB memory) -> physical GPU (device: 6, name: Tesla V100-SXM2-32GB, pci bus id: 0000:b2:00.0, compute capability: 7.0)
+2020-02-03 06:11:57.993337: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1304] Created TensorFlow device (/device:GPU:7 with 30553 MB memory) -> physical GPU (device: 7, name: Tesla V100-SXM2-32GB, pci bus id: 0000:b3:00.0, compute capability: 7.0)
+2020-02-03 06:12:51.112707: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcublas.so.10.0
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+starting transfer phase!!
+Model: "model"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+input_1 (InputLayer)         [(None, 52, 8)]           0         
+_________________________________________________________________
+lstm_0 (LSTM)                (None, 52, 450)           826200    
+_________________________________________________________________
+lstm_1 (LSTM)                (None, 52, 150)           360600    
+_________________________________________________________________
+lstm_2 (LSTM)                (None, 400)               881600    
+_________________________________________________________________
+dense (Dense)                (None, 7)                 2807      
+=================================================================
+Total params: 2,071,207
+Trainable params: 2,071,207
+Non-trainable params: 0
+_________________________________________________________________
+None
+Train for 45 steps, validate for 33 steps
+Epoch 1/50
+ 1/45 [..............................] - ETA: 30:35 - loss: 1.9424 - accuracy: 0.1533 2/45 [>.............................] - ETA: 15:07 - loss: 1.9386 - accuracy: 0.1683 3/45 [=>............................] - ETA: 9:57 - loss: 1.9345 - accuracy: 0.1804  4/45 [=>............................] - ETA: 7:22 - loss: 1.9297 - accuracy: 0.1937 5/45 [==>...........................] - ETA: 5:48 - loss: 1.9238 - accuracy: 0.2135 6/45 [===>..........................] - ETA: 4:46 - loss: 1.9168 - accuracy: 0.2370 7/45 [===>..........................] - ETA: 4:01 - loss: 1.9092 - accuracy: 0.2570 8/45 [====>.........................] - ETA: 3:28 - loss: 1.9008 - accuracy: 0.2746 9/45 [=====>........................] - ETA: 3:01 - loss: 1.8920 - accuracy: 0.290210/45 [=====>........................] - ETA: 2:40 - loss: 1.8824 - accuracy: 0.304311/45 [======>.......................] - ETA: 2:23 - loss: 1.8719 - accuracy: 0.317712/45 [=======>......................] - ETA: 2:08 - loss: 1.8610 - accuracy: 0.330113/45 [=======>......................] - ETA: 1:56 - loss: 1.8492 - accuracy: 0.342314/45 [========>.....................] - ETA: 1:45 - loss: 1.8361 - accuracy: 0.353715/45 [=========>....................] - ETA: 1:36 - loss: 1.8228 - accuracy: 0.363016/45 [=========>....................] - ETA: 1:28 - loss: 1.8086 - accuracy: 0.372917/45 [==========>...................] - ETA: 1:20 - loss: 1.7933 - accuracy: 0.381418/45 [===========>..................] - ETA: 1:14 - loss: 1.7770 - accuracy: 0.389619/45 [===========>..................] - ETA: 1:08 - loss: 1.7602 - accuracy: 0.396820/45 [============>.................] - ETA: 1:03 - loss: 1.7423 - accuracy: 0.403521/45 [=============>................] - ETA: 58s - loss: 1.7237 - accuracy: 0.4100 22/45 [=============>................] - ETA: 53s - loss: 1.7050 - accuracy: 0.415823/45 [==============>...............] - ETA: 49s - loss: 1.6857 - accuracy: 0.421524/45 [===============>..............] - ETA: 45s - loss: 1.6664 - accuracy: 0.427425/45 [===============>..............] - ETA: 42s - loss: 1.6485 - accuracy: 0.431526/45 [================>.............] - ETA: 38s - loss: 1.6304 - accuracy: 0.436427/45 [=================>............] - ETA: 35s - loss: 1.6111 - accuracy: 0.442028/45 [=================>............] - ETA: 32s - loss: 1.5929 - accuracy: 0.446929/45 [==================>...........] - ETA: 30s - loss: 1.5749 - accuracy: 0.451530/45 [===================>..........] - ETA: 27s - loss: 1.5577 - accuracy: 0.455931/45 [===================>..........] - ETA: 25s - loss: 1.5408 - accuracy: 0.460532/45 [====================>.........] - ETA: 22s - loss: 1.5243 - accuracy: 0.464733/45 [=====================>........] - ETA: 20s - loss: 1.5088 - accuracy: 0.469434/45 [=====================>........] - ETA: 18s - loss: 1.4926 - accuracy: 0.474535/45 [======================>.......] - ETA: 16s - loss: 1.4763 - accuracy: 0.479636/45 [=======================>......] - ETA: 14s - loss: 1.4609 - accuracy: 0.484637/45 [=======================>......] - ETA: 12s - loss: 1.4462 - accuracy: 0.488938/45 [========================>.....] - ETA: 10s - loss: 1.4316 - accuracy: 0.493239/45 [=========================>....] - ETA: 9s - loss: 1.4170 - accuracy: 0.4978 40/45 [=========================>....] - ETA: 7s - loss: 1.4033 - accuracy: 0.502041/45 [==========================>...] - ETA: 5s - loss: 1.3894 - accuracy: 0.506242/45 [===========================>..] - ETA: 4s - loss: 1.3752 - accuracy: 0.510843/45 [===========================>..] - ETA: 2s - loss: 1.3617 - accuracy: 0.515244/45 [============================>.] - ETA: 1s - loss: 1.3487 - accuracy: 0.5192 - lr: 0.01391 - momentum: 0.95 
+45/45 [==============================] - 69s 2s/step - loss: 1.3360 - accuracy: 0.5231 - val_loss: 0.8341 - val_accuracy: 0.6968
+Epoch 2/50
+ 1/45 [..............................] - ETA: 1:36 - loss: 0.7786 - accuracy: 0.6967 2/45 [>.............................] - ETA: 56s - loss: 0.7530 - accuracy: 0.7140  3/45 [=>............................] - ETA: 43s - loss: 0.7403 - accuracy: 0.7198 4/45 [=>............................] - ETA: 37s - loss: 0.7265 - accuracy: 0.7233 5/45 [==>...........................] - ETA: 33s - loss: 0.7230 - accuracy: 0.7251 6/45 [===>..........................] - ETA: 30s - loss: 0.7128 - accuracy: 0.7303 7/45 [===>..........................] - ETA: 28s - loss: 0.7029 - accuracy: 0.7358 8/45 [====>.........................] - ETA: 26s - loss: 0.6961 - accuracy: 0.7391 9/45 [=====>........................] - ETA: 24s - loss: 0.6897 - accuracy: 0.742010/45 [=====>........................] - ETA: 23s - loss: 0.6839 - accuracy: 0.746111/45 [======>.......................] - ETA: 22s - loss: 0.6780 - accuracy: 0.749312/45 [=======>......................] - ETA: 21s - loss: 0.6705 - accuracy: 0.752113/45 [=======>......................] - ETA: 20s - loss: 0.6628 - accuracy: 0.755814/45 [========>.....................] - ETA: 19s - loss: 0.6547 - accuracy: 0.759515/45 [=========>....................] - ETA: 18s - loss: 0.6468 - accuracy: 0.763016/45 [=========>....................] - ETA: 17s - loss: 0.6413 - accuracy: 0.765817/45 [==========>...................] - ETA: 16s - loss: 0.6355 - accuracy: 0.767918/45 [===========>..................] - ETA: 16s - loss: 0.6291 - accuracy: 0.771019/45 [===========>..................] - ETA: 15s - loss: 0.6216 - accuracy: 0.774620/45 [============>.................] - ETA: 14s - loss: 0.6167 - accuracy: 0.777421/45 [=============>................] - ETA: 13s - loss: 0.6108 - accuracy: 0.779722/45 [=============>................] - ETA: 13s - loss: 0.6053 - accuracy: 0.782023/45 [==============>...............] - ETA: 12s - loss: 0.5993 - accuracy: 0.784224/45 [===============>..............] - ETA: 11s - loss: 0.5936 - accuracy: 0.786325/45 [===============>..............] - ETA: 11s - loss: 0.5892 - accuracy: 0.788126/45 [================>.............] - ETA: 10s - loss: 0.5843 - accuracy: 0.790227/45 [=================>............] - ETA: 10s - loss: 0.5804 - accuracy: 0.791928/45 [=================>............] - ETA: 9s - loss: 0.5758 - accuracy: 0.7936 29/45 [==================>...........] - ETA: 8s - loss: 0.5718 - accuracy: 0.795330/45 [===================>..........] - ETA: 8s - loss: 0.5670 - accuracy: 0.797031/45 [===================>..........] - ETA: 7s - loss: 0.5621 - accuracy: 0.799132/45 [====================>.........] - ETA: 7s - loss: 0.5586 - accuracy: 0.800633/45 [=====================>........] - ETA: 6s - loss: 0.5559 - accuracy: 0.801734/45 [=====================>........] - ETA: 6s - loss: 0.5551 - accuracy: 0.802435/45 [======================>.......] - ETA: 5s - loss: 0.5539 - accuracy: 0.803036/45 [=======================>......] - ETA: 4s - loss: 0.5555 - accuracy: 0.802437/45 [=======================>......] - ETA: 4s - loss: 0.5535 - accuracy: 0.803138/45 [========================>.....] - ETA: 3s - loss: 0.5497 - accuracy: 0.804439/45 [=========================>....] - ETA: 3s - loss: 0.5451 - accuracy: 0.806240/45 [=========================>....] - ETA: 2s - loss: 0.5411 - accuracy: 0.807941/45 [==========================>...] - ETA: 2s - loss: 0.5371 - accuracy: 0.809542/45 [===========================>..] - ETA: 1s - loss: 0.5327 - accuracy: 0.811143/45 [===========================>..] - ETA: 1s - loss: 0.5286 - accuracy: 0.812744/45 [============================>.] - ETA: 0s - loss: 0.5246 - accuracy: 0.8142 - lr: 0.01792 - momentum: 0.94 
+45/45 [==============================] - 26s 568ms/step - loss: 0.5207 - accuracy: 0.8157 - val_loss: 0.6749 - val_accuracy: 0.7840
+Epoch 3/50
+ 1/45 [..............................] - ETA: 1:34 - loss: 0.3484 - accuracy: 0.8803 2/45 [>.............................] - ETA: 56s - loss: 0.3508 - accuracy: 0.8778  3/45 [=>............................] - ETA: 43s - loss: 0.3441 - accuracy: 0.8813 4/45 [=>............................] - ETA: 36s - loss: 0.3408 - accuracy: 0.8829 5/45 [==>...........................] - ETA: 32s - loss: 0.3391 - accuracy: 0.8840 6/45 [===>..........................] - ETA: 29s - loss: 0.3380 - accuracy: 0.8852 7/45 [===>..........................] - ETA: 27s - loss: 0.3390 - accuracy: 0.8849 8/45 [====>.........................] - ETA: 25s - loss: 0.3349 - accuracy: 0.8863 9/45 [=====>........................] - ETA: 24s - loss: 0.3343 - accuracy: 0.886610/45 [=====>........................] - ETA: 22s - loss: 0.3299 - accuracy: 0.887611/45 [======>.......................] - ETA: 21s - loss: 0.3279 - accuracy: 0.888112/45 [=======>......................] - ETA: 20s - loss: 0.3242 - accuracy: 0.889713/45 [=======>......................] - ETA: 19s - loss: 0.3228 - accuracy: 0.890314/45 [========>.....................] - ETA: 18s - loss: 0.3206 - accuracy: 0.891015/45 [=========>....................] - ETA: 17s - loss: 0.3192 - accuracy: 0.891116/45 [=========>....................] - ETA: 17s - loss: 0.3176 - accuracy: 0.891517/45 [==========>...................] - ETA: 16s - loss: 0.3165 - accuracy: 0.892318/45 [===========>..................] - ETA: 15s - loss: 0.3136 - accuracy: 0.893519/45 [===========>..................] - ETA: 14s - loss: 0.3115 - accuracy: 0.894320/45 [============>.................] - ETA: 14s - loss: 0.3105 - accuracy: 0.894621/45 [=============>................] - ETA: 13s - loss: 0.3092 - accuracy: 0.895022/45 [=============>................] - ETA: 12s - loss: 0.3070 - accuracy: 0.895723/45 [==============>...............] - ETA: 12s - loss: 0.3056 - accuracy: 0.896324/45 [===============>..............] - ETA: 11s - loss: 0.3044 - accuracy: 0.896825/45 [===============>..............] - ETA: 11s - loss: 0.3023 - accuracy: 0.897426/45 [================>.............] - ETA: 10s - loss: 0.3008 - accuracy: 0.897927/45 [=================>............] - ETA: 9s - loss: 0.2989 - accuracy: 0.8986 28/45 [=================>............] - ETA: 9s - loss: 0.2975 - accuracy: 0.899129/45 [==================>...........] - ETA: 8s - loss: 0.2958 - accuracy: 0.899830/45 [===================>..........] - ETA: 8s - loss: 0.2952 - accuracy: 0.899931/45 [===================>..........] - ETA: 7s - loss: 0.2943 - accuracy: 0.900232/45 [====================>.........] - ETA: 7s - loss: 0.2927 - accuracy: 0.900633/45 [=====================>........] - ETA: 6s - loss: 0.2916 - accuracy: 0.901034/45 [=====================>........] - ETA: 5s - loss: 0.2904 - accuracy: 0.901235/45 [======================>.......] - ETA: 5s - loss: 0.2894 - accuracy: 0.901536/45 [=======================>......] - ETA: 4s - loss: 0.2880 - accuracy: 0.901937/45 [=======================>......] - ETA: 4s - loss: 0.2878 - accuracy: 0.902138/45 [========================>.....] - ETA: 3s - loss: 0.2862 - accuracy: 0.902639/45 [=========================>....] - ETA: 3s - loss: 0.2858 - accuracy: 0.902840/45 [=========================>....] - ETA: 2s - loss: 0.2854 - accuracy: 0.902941/45 [==========================>...] - ETA: 2s - loss: 0.2844 - accuracy: 0.903242/45 [===========================>..] - ETA: 1s - loss: 0.2840 - accuracy: 0.903343/45 [===========================>..] - ETA: 1s - loss: 0.2838 - accuracy: 0.903444/45 [============================>.] - ETA: 0s - loss: 0.2830 - accuracy: 0.9037 - lr: 0.02192 - momentum: 0.94 
+45/45 [==============================] - 25s 558ms/step - loss: 0.2820 - accuracy: 0.9039 - val_loss: 0.7152 - val_accuracy: 0.7963
+Epoch 4/50
+ 1/45 [..............................] - ETA: 1:30 - loss: 0.2153 - accuracy: 0.9213 2/45 [>.............................] - ETA: 55s - loss: 0.2191 - accuracy: 0.9202  3/45 [=>............................] - ETA: 43s - loss: 0.2144 - accuracy: 0.9227 4/45 [=>............................] - ETA: 36s - loss: 0.2134 - accuracy: 0.9256 5/45 [==>...........................] - ETA: 32s - loss: 0.2138 - accuracy: 0.9249 6/45 [===>..........................] - ETA: 29s - loss: 0.2150 - accuracy: 0.9246 7/45 [===>..........................] - ETA: 27s - loss: 0.2196 - accuracy: 0.9234 8/45 [====>.........................] - ETA: 25s - loss: 0.2235 - accuracy: 0.9219 9/45 [=====>........................] - ETA: 24s - loss: 0.2245 - accuracy: 0.921910/45 [=====>........................] - ETA: 23s - loss: 0.2266 - accuracy: 0.921611/45 [======>.......................] - ETA: 21s - loss: 0.2247 - accuracy: 0.922312/45 [=======>......................] - ETA: 20s - loss: 0.2227 - accuracy: 0.923613/45 [=======>......................] - ETA: 20s - loss: 0.2225 - accuracy: 0.923514/45 [========>.....................] - ETA: 19s - loss: 0.2226 - accuracy: 0.923715/45 [=========>....................] - ETA: 18s - loss: 0.2228 - accuracy: 0.923516/45 [=========>....................] - ETA: 17s - loss: 0.2229 - accuracy: 0.923517/45 [==========>...................] - ETA: 16s - loss: 0.2219 - accuracy: 0.924018/45 [===========>..................] - ETA: 15s - loss: 0.2236 - accuracy: 0.923719/45 [===========>..................] - ETA: 15s - loss: 0.2233 - accuracy: 0.923920/45 [============>.................] - ETA: 14s - loss: 0.2251 - accuracy: 0.923721/45 [=============>................] - ETA: 13s - loss: 0.2264 - accuracy: 0.923322/45 [=============>................] - ETA: 13s - loss: 0.2258 - accuracy: 0.923423/45 [==============>...............] - ETA: 12s - loss: 0.2256 - accuracy: 0.923324/45 [===============>..............] - ETA: 11s - loss: 0.2241 - accuracy: 0.923925/45 [===============>..............] - ETA: 11s - loss: 0.2229 - accuracy: 0.924326/45 [================>.............] - ETA: 10s - loss: 0.2223 - accuracy: 0.924527/45 [=================>............] - ETA: 10s - loss: 0.2221 - accuracy: 0.924528/45 [=================>............] - ETA: 9s - loss: 0.2224 - accuracy: 0.9241 29/45 [==================>...........] - ETA: 8s - loss: 0.2225 - accuracy: 0.924230/45 [===================>..........] - ETA: 8s - loss: 0.2233 - accuracy: 0.923831/45 [===================>..........] - ETA: 7s - loss: 0.2232 - accuracy: 0.923932/45 [====================>.........] - ETA: 7s - loss: 0.2230 - accuracy: 0.923933/45 [=====================>........] - ETA: 6s - loss: 0.2228 - accuracy: 0.924034/45 [=====================>........] - ETA: 6s - loss: 0.2220 - accuracy: 0.924335/45 [======================>.......] - ETA: 5s - loss: 0.2215 - accuracy: 0.924536/45 [=======================>......] - ETA: 4s - loss: 0.2204 - accuracy: 0.924737/45 [=======================>......] - ETA: 4s - loss: 0.2195 - accuracy: 0.925238/45 [========================>.....] - ETA: 3s - loss: 0.2183 - accuracy: 0.925639/45 [=========================>....] - ETA: 3s - loss: 0.2170 - accuracy: 0.926240/45 [=========================>....] - ETA: 2s - loss: 0.2163 - accuracy: 0.926441/45 [==========================>...] - ETA: 2s - loss: 0.2152 - accuracy: 0.926942/45 [===========================>..] - ETA: 1s - loss: 0.2143 - accuracy: 0.927243/45 [===========================>..] - ETA: 1s - loss: 0.2136 - accuracy: 0.927544/45 [============================>.] - ETA: 0s - loss: 0.2127 - accuracy: 0.9280 - lr: 0.02592 - momentum: 0.93 
+45/45 [==============================] - 25s 563ms/step - loss: 0.2119 - accuracy: 0.9282 - val_loss: 0.7734 - val_accuracy: 0.7909
+Epoch 5/50
+ 1/45 [..............................] - ETA: 1:41 - loss: 0.1872 - accuracy: 0.9333 2/45 [>.............................] - ETA: 1:01 - loss: 0.1822 - accuracy: 0.9382 3/45 [=>............................] - ETA: 46s - loss: 0.1739 - accuracy: 0.9414  4/45 [=>............................] - ETA: 39s - loss: 0.1704 - accuracy: 0.9438 5/45 [==>...........................] - ETA: 34s - loss: 0.1716 - accuracy: 0.9431 6/45 [===>..........................] - ETA: 31s - loss: 0.1727 - accuracy: 0.9428 7/45 [===>..........................] - ETA: 29s - loss: 0.1722 - accuracy: 0.9438 8/45 [====>.........................] - ETA: 27s - loss: 0.1718 - accuracy: 0.9440 9/45 [=====>........................] - ETA: 25s - loss: 0.1714 - accuracy: 0.944110/45 [=====>........................] - ETA: 24s - loss: 0.1728 - accuracy: 0.943611/45 [======>.......................] - ETA: 23s - loss: 0.1768 - accuracy: 0.941912/45 [=======>......................] - ETA: 21s - loss: 0.1848 - accuracy: 0.939113/45 [=======>......................] - ETA: 20s - loss: 0.2002 - accuracy: 0.934214/45 [========>.....................] - ETA: 19s - loss: 0.2269 - accuracy: 0.926515/45 [=========>....................] - ETA: 19s - loss: 0.2372 - accuracy: 0.922316/45 [=========>....................] - ETA: 18s - loss: 0.2443 - accuracy: 0.919517/45 [==========>...................] - ETA: 17s - loss: 0.2500 - accuracy: 0.917118/45 [===========>..................] - ETA: 16s - loss: 0.2485 - accuracy: 0.917419/45 [===========>..................] - ETA: 15s - loss: 0.2468 - accuracy: 0.917520/45 [============>.................] - ETA: 15s - loss: 0.2463 - accuracy: 0.917421/45 [=============>................] - ETA: 14s - loss: 0.2453 - accuracy: 0.917922/45 [=============>................] - ETA: 13s - loss: 0.2444 - accuracy: 0.918423/45 [==============>...............] - ETA: 12s - loss: 0.2428 - accuracy: 0.918924/45 [===============>..............] - ETA: 12s - loss: 0.2411 - accuracy: 0.919425/45 [===============>..............] - ETA: 11s - loss: 0.2401 - accuracy: 0.919426/45 [================>.............] - ETA: 10s - loss: 0.2398 - accuracy: 0.919527/45 [=================>............] - ETA: 10s - loss: 0.2389 - accuracy: 0.919828/45 [=================>............] - ETA: 9s - loss: 0.2386 - accuracy: 0.9201 29/45 [==================>...........] - ETA: 9s - loss: 0.2372 - accuracy: 0.920530/45 [===================>..........] - ETA: 8s - loss: 0.2361 - accuracy: 0.920831/45 [===================>..........] - ETA: 7s - loss: 0.2353 - accuracy: 0.921132/45 [====================>.........] - ETA: 7s - loss: 0.2342 - accuracy: 0.921333/45 [=====================>........] - ETA: 6s - loss: 0.2329 - accuracy: 0.921734/45 [=====================>........] - ETA: 6s - loss: 0.2321 - accuracy: 0.921935/45 [======================>.......] - ETA: 5s - loss: 0.2309 - accuracy: 0.922336/45 [=======================>......] - ETA: 5s - loss: 0.2299 - accuracy: 0.922837/45 [=======================>......] - ETA: 4s - loss: 0.2291 - accuracy: 0.923038/45 [========================>.....] - ETA: 3s - loss: 0.2291 - accuracy: 0.923139/45 [=========================>....] - ETA: 3s - loss: 0.2285 - accuracy: 0.923540/45 [=========================>....] - ETA: 2s - loss: 0.2274 - accuracy: 0.923941/45 [==========================>...] - ETA: 2s - loss: 0.2261 - accuracy: 0.924242/45 [===========================>..] - ETA: 1s - loss: 0.2250 - accuracy: 0.924543/45 [===========================>..] - ETA: 1s - loss: 0.2243 - accuracy: 0.924744/45 [============================>.] - ETA: 0s - loss: 0.2231 - accuracy: 0.9252 - lr: 0.02992 - momentum: 0.93 
+45/45 [==============================] - 26s 570ms/step - loss: 0.2221 - accuracy: 0.9255 - val_loss: 0.7578 - val_accuracy: 0.7959
+Epoch 6/50
+ 1/45 [..............................] - ETA: 1:42 - loss: 0.1727 - accuracy: 0.9457 2/45 [>.............................] - ETA: 1:00 - loss: 0.1860 - accuracy: 0.9378 3/45 [=>............................] - ETA: 46s - loss: 0.1849 - accuracy: 0.9390  4/45 [=>............................] - ETA: 38s - loss: 0.1809 - accuracy: 0.9401 5/45 [==>...........................] - ETA: 34s - loss: 0.1783 - accuracy: 0.9409 6/45 [===>..........................] - ETA: 31s - loss: 0.1785 - accuracy: 0.9399 7/45 [===>..........................] - ETA: 28s - loss: 0.1779 - accuracy: 0.9405 8/45 [====>.........................] - ETA: 26s - loss: 0.1795 - accuracy: 0.9408 9/45 [=====>........................] - ETA: 25s - loss: 0.1782 - accuracy: 0.940910/45 [=====>........................] - ETA: 23s - loss: 0.1791 - accuracy: 0.940311/45 [======>.......................] - ETA: 22s - loss: 0.1771 - accuracy: 0.941212/45 [=======>......................] - ETA: 21s - loss: 0.1763 - accuracy: 0.941413/45 [=======>......................] - ETA: 20s - loss: 0.1750 - accuracy: 0.942114/45 [========>.....................] - ETA: 19s - loss: 0.1763 - accuracy: 0.941715/45 [=========>....................] - ETA: 18s - loss: 0.1762 - accuracy: 0.941916/45 [=========>....................] - ETA: 17s - loss: 0.1747 - accuracy: 0.942317/45 [==========>...................] - ETA: 16s - loss: 0.1742 - accuracy: 0.942318/45 [===========>..................] - ETA: 16s - loss: 0.1739 - accuracy: 0.942519/45 [===========>..................] - ETA: 15s - loss: 0.1745 - accuracy: 0.942420/45 [============>.................] - ETA: 14s - loss: 0.1744 - accuracy: 0.942421/45 [=============>................] - ETA: 13s - loss: 0.1741 - accuracy: 0.942422/45 [=============>................] - ETA: 13s - loss: 0.1730 - accuracy: 0.942823/45 [==============>...............] - ETA: 12s - loss: 0.1725 - accuracy: 0.942924/45 [===============>..............] - ETA: 11s - loss: 0.1720 - accuracy: 0.943125/45 [===============>..............] - ETA: 11s - loss: 0.1719 - accuracy: 0.943226/45 [================>.............] - ETA: 10s - loss: 0.1715 - accuracy: 0.943527/45 [=================>............] - ETA: 10s - loss: 0.1707 - accuracy: 0.943828/45 [=================>............] - ETA: 9s - loss: 0.1703 - accuracy: 0.9438 29/45 [==================>...........] - ETA: 8s - loss: 0.1696 - accuracy: 0.944030/45 [===================>..........] - ETA: 8s - loss: 0.1687 - accuracy: 0.944231/45 [===================>..........] - ETA: 7s - loss: 0.1691 - accuracy: 0.944032/45 [====================>.........] - ETA: 7s - loss: 0.1696 - accuracy: 0.943833/45 [=====================>........] - ETA: 6s - loss: 0.1697 - accuracy: 0.943734/45 [=====================>........] - ETA: 6s - loss: 0.1692 - accuracy: 0.943835/45 [======================>.......] - ETA: 5s - loss: 0.1691 - accuracy: 0.943836/45 [=======================>......] - ETA: 4s - loss: 0.1687 - accuracy: 0.943937/45 [=======================>......] - ETA: 4s - loss: 0.1686 - accuracy: 0.944038/45 [========================>.....] - ETA: 3s - loss: 0.1683 - accuracy: 0.944239/45 [=========================>....] - ETA: 3s - loss: 0.1678 - accuracy: 0.944240/45 [=========================>....] - ETA: 2s - loss: 0.1676 - accuracy: 0.944241/45 [==========================>...] - ETA: 2s - loss: 0.1677 - accuracy: 0.944042/45 [===========================>..] - ETA: 1s - loss: 0.1681 - accuracy: 0.943943/45 [===========================>..] - ETA: 1s - loss: 0.1679 - accuracy: 0.943944/45 [============================>.] - ETA: 0s - loss: 0.1678 - accuracy: 0.9439 - lr: 0.03392 - momentum: 0.92 
+45/45 [==============================] - 25s 560ms/step - loss: 0.1672 - accuracy: 0.9440 - val_loss: 0.8317 - val_accuracy: 0.7852
+Epoch 7/50
+ 1/45 [..............................] - ETA: 1:28 - loss: 0.1541 - accuracy: 0.9523 2/45 [>.............................] - ETA: 54s - loss: 0.1587 - accuracy: 0.9498  3/45 [=>............................] - ETA: 42s - loss: 0.1511 - accuracy: 0.9520 4/45 [=>............................] - ETA: 36s - loss: 0.1519 - accuracy: 0.9518 5/45 [==>...........................] - ETA: 32s - loss: 0.1481 - accuracy: 0.9523 6/45 [===>..........................] - ETA: 29s - loss: 0.1463 - accuracy: 0.9522 7/45 [===>..........................] - ETA: 27s - loss: 0.1446 - accuracy: 0.9525 8/45 [====>.........................] - ETA: 25s - loss: 0.1449 - accuracy: 0.9524 9/45 [=====>........................] - ETA: 24s - loss: 0.1440 - accuracy: 0.952710/45 [=====>........................] - ETA: 22s - loss: 0.1438 - accuracy: 0.952611/45 [======>.......................] - ETA: 21s - loss: 0.1447 - accuracy: 0.952712/45 [=======>......................] - ETA: 20s - loss: 0.1452 - accuracy: 0.952613/45 [=======>......................] - ETA: 19s - loss: 0.1445 - accuracy: 0.952614/45 [========>.....................] - ETA: 18s - loss: 0.1448 - accuracy: 0.952615/45 [=========>....................] - ETA: 18s - loss: 0.1446 - accuracy: 0.952516/45 [=========>....................] - ETA: 17s - loss: 0.1451 - accuracy: 0.952317/45 [==========>...................] - ETA: 16s - loss: 0.1446 - accuracy: 0.952618/45 [===========>..................] - ETA: 15s - loss: 0.1443 - accuracy: 0.952919/45 [===========>..................] - ETA: 15s - loss: 0.1437 - accuracy: 0.953020/45 [============>.................] - ETA: 14s - loss: 0.1435 - accuracy: 0.953121/45 [=============>................] - ETA: 13s - loss: 0.1432 - accuracy: 0.953222/45 [=============>................] - ETA: 13s - loss: 0.1434 - accuracy: 0.953023/45 [==============>...............] - ETA: 12s - loss: 0.1434 - accuracy: 0.953024/45 [===============>..............] - ETA: 11s - loss: 0.1435 - accuracy: 0.952925/45 [===============>..............] - ETA: 11s - loss: 0.1428 - accuracy: 0.953226/45 [================>.............] - ETA: 10s - loss: 0.1419 - accuracy: 0.953627/45 [=================>............] - ETA: 9s - loss: 0.1412 - accuracy: 0.9537 28/45 [=================>............] - ETA: 9s - loss: 0.1407 - accuracy: 0.953829/45 [==================>...........] - ETA: 8s - loss: 0.1412 - accuracy: 0.953630/45 [===================>..........] - ETA: 8s - loss: 0.1412 - accuracy: 0.953631/45 [===================>..........] - ETA: 7s - loss: 0.1421 - accuracy: 0.953332/45 [====================>.........] - ETA: 7s - loss: 0.1421 - accuracy: 0.953333/45 [=====================>........] - ETA: 6s - loss: 0.1422 - accuracy: 0.953234/45 [=====================>........] - ETA: 5s - loss: 0.1427 - accuracy: 0.953035/45 [======================>.......] - ETA: 5s - loss: 0.1436 - accuracy: 0.952736/45 [=======================>......] - ETA: 4s - loss: 0.1447 - accuracy: 0.952237/45 [=======================>......] - ETA: 4s - loss: 0.1452 - accuracy: 0.952038/45 [========================>.....] - ETA: 3s - loss: 0.1451 - accuracy: 0.952039/45 [=========================>....] - ETA: 3s - loss: 0.1446 - accuracy: 0.952240/45 [=========================>....] - ETA: 2s - loss: 0.1440 - accuracy: 0.952441/45 [==========================>...] - ETA: 2s - loss: 0.1432 - accuracy: 0.952742/45 [===========================>..] - ETA: 1s - loss: 0.1427 - accuracy: 0.952843/45 [===========================>..] - ETA: 1s - loss: 0.1422 - accuracy: 0.953144/45 [============================>.] - ETA: 0s - loss: 0.1418 - accuracy: 0.9533 - lr: 0.03792 - momentum: 0.92 
+45/45 [==============================] - 25s 553ms/step - loss: 0.1415 - accuracy: 0.9533 - val_loss: 0.8181 - val_accuracy: 0.7869
+Epoch 8/50
+ 1/45 [..............................] - ETA: 1:28 - loss: 0.1384 - accuracy: 0.9537 2/45 [>.............................] - ETA: 53s - loss: 0.1429 - accuracy: 0.9523  3/45 [=>............................] - ETA: 41s - loss: 0.1426 - accuracy: 0.9527 4/45 [=>............................] - ETA: 35s - loss: 0.1411 - accuracy: 0.9529 5/45 [==>...........................] - ETA: 32s - loss: 0.1386 - accuracy: 0.9535 6/45 [===>..........................] - ETA: 29s - loss: 0.1428 - accuracy: 0.9525 7/45 [===>..........................] - ETA: 27s - loss: 0.1443 - accuracy: 0.9519 8/45 [====>.........................] - ETA: 25s - loss: 0.1460 - accuracy: 0.9516 9/45 [=====>........................] - ETA: 24s - loss: 0.1434 - accuracy: 0.951910/45 [=====>........................] - ETA: 22s - loss: 0.1410 - accuracy: 0.952911/45 [======>.......................] - ETA: 21s - loss: 0.1395 - accuracy: 0.953512/45 [=======>......................] - ETA: 20s - loss: 0.1382 - accuracy: 0.953913/45 [=======>......................] - ETA: 19s - loss: 0.1375 - accuracy: 0.954414/45 [========>.....................] - ETA: 18s - loss: 0.1356 - accuracy: 0.955215/45 [=========>....................] - ETA: 17s - loss: 0.1348 - accuracy: 0.955816/45 [=========>....................] - ETA: 17s - loss: 0.1345 - accuracy: 0.956117/45 [==========>...................] - ETA: 16s - loss: 0.1333 - accuracy: 0.956518/45 [===========>..................] - ETA: 15s - loss: 0.1325 - accuracy: 0.956819/45 [===========>..................] - ETA: 14s - loss: 0.1314 - accuracy: 0.957420/45 [============>.................] - ETA: 14s - loss: 0.1303 - accuracy: 0.957721/45 [=============>................] - ETA: 13s - loss: 0.1295 - accuracy: 0.957922/45 [=============>................] - ETA: 13s - loss: 0.1291 - accuracy: 0.958123/45 [==============>...............] - ETA: 12s - loss: 0.1284 - accuracy: 0.958224/45 [===============>..............] - ETA: 11s - loss: 0.1273 - accuracy: 0.958825/45 [===============>..............] - ETA: 11s - loss: 0.1269 - accuracy: 0.958926/45 [================>.............] - ETA: 10s - loss: 0.1268 - accuracy: 0.958927/45 [=================>............] - ETA: 10s - loss: 0.1259 - accuracy: 0.959228/45 [=================>............] - ETA: 9s - loss: 0.1252 - accuracy: 0.9595 29/45 [==================>...........] - ETA: 8s - loss: 0.1246 - accuracy: 0.959630/45 [===================>..........] - ETA: 8s - loss: 0.1247 - accuracy: 0.959531/45 [===================>..........] - ETA: 7s - loss: 0.1244 - accuracy: 0.959532/45 [====================>.........] - ETA: 7s - loss: 0.1241 - accuracy: 0.959733/45 [=====================>........] - ETA: 6s - loss: 0.1233 - accuracy: 0.960134/45 [=====================>........] - ETA: 5s - loss: 0.1226 - accuracy: 0.960335/45 [======================>.......] - ETA: 5s - loss: 0.1229 - accuracy: 0.960136/45 [=======================>......] - ETA: 4s - loss: 0.1235 - accuracy: 0.959937/45 [=======================>......] - ETA: 4s - loss: 0.1238 - accuracy: 0.959838/45 [========================>.....] - ETA: 3s - loss: 0.1245 - accuracy: 0.959639/45 [=========================>....] - ETA: 3s - loss: 0.1254 - accuracy: 0.959240/45 [=========================>....] - ETA: 2s - loss: 0.1276 - accuracy: 0.958541/45 [==========================>...] - ETA: 2s - loss: 0.1338 - accuracy: 0.956642/45 [===========================>..] - ETA: 1s - loss: 0.1452 - accuracy: 0.954143/45 [===========================>..] - ETA: 1s - loss: 0.1456 - accuracy: 0.954044/45 [============================>.] - ETA: 0s - loss: 0.1458 - accuracy: 0.9539 - lr: 0.04193 - momentum: 0.91 
+45/45 [==============================] - 25s 558ms/step - loss: 0.1457 - accuracy: 0.9539 - val_loss: 0.7177 - val_accuracy: 0.8026
+Epoch 9/50
+ 1/45 [..............................] - ETA: 1:30 - loss: 0.1273 - accuracy: 0.9623 2/45 [>.............................] - ETA: 54s - loss: 0.1378 - accuracy: 0.9582  3/45 [=>............................] - ETA: 42s - loss: 0.1492 - accuracy: 0.9551 4/45 [=>............................] - ETA: 36s - loss: 0.1453 - accuracy: 0.9561 5/45 [==>...........................] - ETA: 31s - loss: 0.1452 - accuracy: 0.9559 6/45 [===>..........................] - ETA: 29s - loss: 0.1443 - accuracy: 0.9564 7/45 [===>..........................] - ETA: 27s - loss: 0.1430 - accuracy: 0.9571 8/45 [====>.........................] - ETA: 25s - loss: 0.1413 - accuracy: 0.9572 9/45 [=====>........................] - ETA: 23s - loss: 0.1414 - accuracy: 0.957010/45 [=====>........................] - ETA: 22s - loss: 0.1402 - accuracy: 0.957111/45 [======>.......................] - ETA: 21s - loss: 0.1397 - accuracy: 0.956912/45 [=======>......................] - ETA: 20s - loss: 0.1390 - accuracy: 0.957113/45 [=======>......................] - ETA: 19s - loss: 0.1374 - accuracy: 0.957514/45 [========>.....................] - ETA: 18s - loss: 0.1359 - accuracy: 0.958015/45 [=========>....................] - ETA: 17s - loss: 0.1360 - accuracy: 0.958016/45 [=========>....................] - ETA: 17s - loss: 0.1362 - accuracy: 0.957917/45 [==========>...................] - ETA: 16s - loss: 0.1364 - accuracy: 0.957618/45 [===========>..................] - ETA: 15s - loss: 0.1368 - accuracy: 0.957419/45 [===========>..................] - ETA: 14s - loss: 0.1361 - accuracy: 0.957620/45 [============>.................] - ETA: 14s - loss: 0.1358 - accuracy: 0.957721/45 [=============>................] - ETA: 13s - loss: 0.1342 - accuracy: 0.958122/45 [=============>................] - ETA: 12s - loss: 0.1336 - accuracy: 0.958423/45 [==============>...............] - ETA: 12s - loss: 0.1325 - accuracy: 0.958724/45 [===============>..............] - ETA: 11s - loss: 0.1312 - accuracy: 0.959225/45 [===============>..............] - ETA: 11s - loss: 0.1300 - accuracy: 0.959726/45 [================>.............] - ETA: 10s - loss: 0.1292 - accuracy: 0.959827/45 [=================>............] - ETA: 9s - loss: 0.1282 - accuracy: 0.9600 28/45 [=================>............] - ETA: 9s - loss: 0.1272 - accuracy: 0.960329/45 [==================>...........] - ETA: 8s - loss: 0.1262 - accuracy: 0.960530/45 [===================>..........] - ETA: 8s - loss: 0.1256 - accuracy: 0.960831/45 [===================>..........] - ETA: 7s - loss: 0.1251 - accuracy: 0.961032/45 [====================>.........] - ETA: 7s - loss: 0.1242 - accuracy: 0.961333/45 [=====================>........] - ETA: 6s - loss: 0.1239 - accuracy: 0.961234/45 [=====================>........] - ETA: 5s - loss: 0.1240 - accuracy: 0.961135/45 [======================>.......] - ETA: 5s - loss: 0.1235 - accuracy: 0.961336/45 [=======================>......] - ETA: 4s - loss: 0.1229 - accuracy: 0.961537/45 [=======================>......] - ETA: 4s - loss: 0.1225 - accuracy: 0.961638/45 [========================>.....] - ETA: 3s - loss: 0.1222 - accuracy: 0.961639/45 [=========================>....] - ETA: 3s - loss: 0.1226 - accuracy: 0.961440/45 [=========================>....] - ETA: 2s - loss: 0.1237 - accuracy: 0.961041/45 [==========================>...] - ETA: 2s - loss: 0.1290 - accuracy: 0.959842/45 [===========================>..] - ETA: 1s - loss: 0.1415 - accuracy: 0.956543/45 [===========================>..] - ETA: 1s - loss: 0.1514 - accuracy: 0.953944/45 [============================>.] - ETA: 0s - loss: 0.1701 - accuracy: 0.9496 - lr: 0.04593 - momentum: 0.91 
+45/45 [==============================] - 25s 557ms/step - loss: 0.1758 - accuracy: 0.9474 - val_loss: 0.9873 - val_accuracy: 0.7675
+Epoch 10/50
+ 1/45 [..............................] - ETA: 1:31 - loss: 0.4438 - accuracy: 0.8720 2/45 [>.............................] - ETA: 56s - loss: 0.3541 - accuracy: 0.8923  3/45 [=>............................] - ETA: 43s - loss: 0.3070 - accuracy: 0.9073 4/45 [=>............................] - ETA: 36s - loss: 0.2912 - accuracy: 0.9096 5/45 [==>...........................] - ETA: 32s - loss: 0.2780 - accuracy: 0.9136 6/45 [===>..........................] - ETA: 29s - loss: 0.2655 - accuracy: 0.9173 7/45 [===>..........................] - ETA: 27s - loss: 0.2573 - accuracy: 0.9194 8/45 [====>.........................] - ETA: 25s - loss: 0.2514 - accuracy: 0.9214 9/45 [=====>........................] - ETA: 24s - loss: 0.2459 - accuracy: 0.922810/45 [=====>........................] - ETA: 22s - loss: 0.2403 - accuracy: 0.924811/45 [======>.......................] - ETA: 21s - loss: 0.2378 - accuracy: 0.925512/45 [=======>......................] - ETA: 20s - loss: 0.2344 - accuracy: 0.926613/45 [=======>......................] - ETA: 19s - loss: 0.2302 - accuracy: 0.927814/45 [========>.....................] - ETA: 18s - loss: 0.2264 - accuracy: 0.928515/45 [=========>....................] - ETA: 17s - loss: 0.2231 - accuracy: 0.929416/45 [=========>....................] - ETA: 17s - loss: 0.2203 - accuracy: 0.930217/45 [==========>...................] - ETA: 16s - loss: 0.2169 - accuracy: 0.931518/45 [===========>..................] - ETA: 15s - loss: 0.2145 - accuracy: 0.932119/45 [===========>..................] - ETA: 15s - loss: 0.2116 - accuracy: 0.933020/45 [============>.................] - ETA: 14s - loss: 0.2090 - accuracy: 0.933721/45 [=============>................] - ETA: 13s - loss: 0.2071 - accuracy: 0.934022/45 [=============>................] - ETA: 13s - loss: 0.2045 - accuracy: 0.934623/45 [==============>...............] - ETA: 12s - loss: 0.2022 - accuracy: 0.935324/45 [===============>..............] - ETA: 11s - loss: 0.2000 - accuracy: 0.935925/45 [===============>..............] - ETA: 11s - loss: 0.1994 - accuracy: 0.935826/45 [================>.............] - ETA: 10s - loss: 0.1973 - accuracy: 0.936427/45 [=================>............] - ETA: 9s - loss: 0.1961 - accuracy: 0.9368 28/45 [=================>............] - ETA: 9s - loss: 0.1940 - accuracy: 0.937329/45 [==================>...........] - ETA: 8s - loss: 0.1919 - accuracy: 0.938130/45 [===================>..........] - ETA: 8s - loss: 0.1900 - accuracy: 0.938831/45 [===================>..........] - ETA: 7s - loss: 0.1881 - accuracy: 0.939432/45 [====================>.........] - ETA: 7s - loss: 0.1862 - accuracy: 0.940033/45 [=====================>........] - ETA: 6s - loss: 0.1848 - accuracy: 0.940434/45 [=====================>........] - ETA: 5s - loss: 0.1835 - accuracy: 0.940735/45 [======================>.......] - ETA: 5s - loss: 0.1820 - accuracy: 0.941136/45 [=======================>......] - ETA: 4s - loss: 0.1804 - accuracy: 0.941537/45 [=======================>......] - ETA: 4s - loss: 0.1791 - accuracy: 0.941938/45 [========================>.....] - ETA: 3s - loss: 0.1776 - accuracy: 0.942439/45 [=========================>....] - ETA: 3s - loss: 0.1763 - accuracy: 0.942740/45 [=========================>....] - ETA: 2s - loss: 0.1756 - accuracy: 0.943041/45 [==========================>...] - ETA: 2s - loss: 0.1741 - accuracy: 0.943442/45 [===========================>..] - ETA: 1s - loss: 0.1730 - accuracy: 0.943843/45 [===========================>..] - ETA: 1s - loss: 0.1720 - accuracy: 0.944144/45 [============================>.] - ETA: 0s - loss: 0.1712 - accuracy: 0.9443 - lr: 0.04993 - momentum: 0.91 
+45/45 [==============================] - 25s 556ms/step - loss: 0.1700 - accuracy: 0.9448 - val_loss: 0.8457 - val_accuracy: 0.7912
+Epoch 11/50
+ 1/45 [..............................] - ETA: 1:39 - loss: 0.1233 - accuracy: 0.9633 2/45 [>.............................] - ETA: 59s - loss: 0.1245 - accuracy: 0.9612  3/45 [=>............................] - ETA: 45s - loss: 0.1197 - accuracy: 0.9623 4/45 [=>............................] - ETA: 38s - loss: 0.1201 - accuracy: 0.9617 5/45 [==>...........................] - ETA: 34s - loss: 0.1217 - accuracy: 0.9611 6/45 [===>..........................] - ETA: 30s - loss: 0.1237 - accuracy: 0.9612 7/45 [===>..........................] - ETA: 28s - loss: 0.1248 - accuracy: 0.9608 8/45 [====>.........................] - ETA: 26s - loss: 0.1235 - accuracy: 0.9612 9/45 [=====>........................] - ETA: 25s - loss: 0.1224 - accuracy: 0.961610/45 [=====>........................] - ETA: 23s - loss: 0.1203 - accuracy: 0.962111/45 [======>.......................] - ETA: 22s - loss: 0.1200 - accuracy: 0.962012/45 [=======>......................] - ETA: 21s - loss: 0.1190 - accuracy: 0.962213/45 [=======>......................] - ETA: 20s - loss: 0.1169 - accuracy: 0.962914/45 [========>.....................] - ETA: 19s - loss: 0.1145 - accuracy: 0.963715/45 [=========>....................] - ETA: 18s - loss: 0.1133 - accuracy: 0.964016/45 [=========>....................] - ETA: 17s - loss: 0.1124 - accuracy: 0.964417/45 [==========>...................] - ETA: 17s - loss: 0.1123 - accuracy: 0.964418/45 [===========>..................] - ETA: 16s - loss: 0.1118 - accuracy: 0.964719/45 [===========>..................] - ETA: 15s - loss: 0.1108 - accuracy: 0.965120/45 [============>.................] - ETA: 14s - loss: 0.1101 - accuracy: 0.965221/45 [=============>................] - ETA: 14s - loss: 0.1099 - accuracy: 0.965122/45 [=============>................] - ETA: 13s - loss: 0.1096 - accuracy: 0.965323/45 [==============>...............] - ETA: 12s - loss: 0.1095 - accuracy: 0.965324/45 [===============>..............] - ETA: 12s - loss: 0.1090 - accuracy: 0.965525/45 [===============>..............] - ETA: 11s - loss: 0.1085 - accuracy: 0.965526/45 [================>.............] - ETA: 10s - loss: 0.1074 - accuracy: 0.966027/45 [=================>............] - ETA: 10s - loss: 0.1074 - accuracy: 0.966028/45 [=================>............] - ETA: 9s - loss: 0.1075 - accuracy: 0.9659 29/45 [==================>...........] - ETA: 9s - loss: 0.1071 - accuracy: 0.966030/45 [===================>..........] - ETA: 8s - loss: 0.1071 - accuracy: 0.966031/45 [===================>..........] - ETA: 7s - loss: 0.1069 - accuracy: 0.966032/45 [====================>.........] - ETA: 7s - loss: 0.1067 - accuracy: 0.966133/45 [=====================>........] - ETA: 6s - loss: 0.1067 - accuracy: 0.966034/45 [=====================>........] - ETA: 6s - loss: 0.1065 - accuracy: 0.966235/45 [======================>.......] - ETA: 5s - loss: 0.1066 - accuracy: 0.966036/45 [=======================>......] - ETA: 4s - loss: 0.1060 - accuracy: 0.966237/45 [=======================>......] - ETA: 4s - loss: 0.1062 - accuracy: 0.966138/45 [========================>.....] - ETA: 3s - loss: 0.1057 - accuracy: 0.966139/45 [=========================>....] - ETA: 3s - loss: 0.1054 - accuracy: 0.966240/45 [=========================>....] - ETA: 2s - loss: 0.1053 - accuracy: 0.966341/45 [==========================>...] - ETA: 2s - loss: 0.1049 - accuracy: 0.966542/45 [===========================>..] - ETA: 1s - loss: 0.1046 - accuracy: 0.966643/45 [===========================>..] - ETA: 1s - loss: 0.1045 - accuracy: 0.966644/45 [============================>.] - ETA: 0s - loss: 0.1045 - accuracy: 0.9667slurmstepd: error: *** JOB 9011234 ON va003 CANCELLED AT 2020-02-03T06:17:35 ***

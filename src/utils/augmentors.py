@@ -23,7 +23,7 @@ arguments should be (X, y)
 """
 
 
-def _add_noise_snr(signal, snr = 25):
+def add_noise_snr(signal, snr = 25):
     # convert signal to db
     sgn_db = np.log10((signal ** 2).mean(axis = 0))  * 10
     # noise in db
@@ -37,7 +37,7 @@ def _add_noise_snr(signal, snr = 25):
 def add_noise(x, y, snr=25):
     x2 = []
     for i in range(len(x)):
-        x2.append(_add_noise_snr(x[i]))
+        x2.append(add_noise_snr(x[i]))
     x = x + x2
     y = y*2
     return x, y
