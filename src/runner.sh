@@ -7,5 +7,6 @@
 #SBATCH -n 32
 #SBATCH --mail-user josephsd@smu.edu
 #SBATCH --mail-type=ALL
+#SBATCH -s
 
 python genTest.py
