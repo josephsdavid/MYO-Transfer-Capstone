@@ -21,8 +21,8 @@ while read LOSS; do
 			val_loss="$(awk '{print $(NF-3)}' <<< "$i" )"
 			t_loss="$(awk '{print $(NF-9)}' <<< "$i" )"
 
-			printf "%s,%s,%s,%s\n" "$val_acc" "$val_loss" "$t_acc" "$t_loss" >> history/model_"$count".csv
-			printf "%s,%s,%s,%s\n" "$val_acc" "$val_loss" "$t_acc" "$t_loss" >> history/model_"$count".csv
+			printf "%d,%d,%d,%d\n" "$val_acc" "$val_loss" "$t_acc" "$t_loss" >> history/model_"$count".csv
+			printf "%d,%d,%d,%d\n" "$val_acc" "$val_loss" "$t_acc" "$t_loss" >> history/model_"$count".csv
 		done
 	fi
 done <<< "$x"
