@@ -11,9 +11,9 @@ import matplotlib.pyplot as plt
 
 print("beginning initial training")
 
-batch=6000
+batch=4000
 clr=cb.OneCycleLR(
-                 max_lr=1.5,
+                 max_lr=0.7,
                  end_percentage=0.2,
                  scale_percentage=None,
                  maximum_momentum=0.95,
@@ -43,7 +43,7 @@ with strategy.scope():
 	units=[450, 150, 400]
 	seq=[True, True, False]
 	for i in range(3):
-		x = LSTM(units[i], activation="tanh", dropout=0.5, recurrent_dropout=0.5, return_sequences=seq[i], name = "lstm_{}".format(i))(x)
+		x = LSTM(units[i], activation="tanh", dropout=drop, recurrent_dropout=rec_drop, return_sequences=seq[i], name = "lstm_{}".format(i))(x)
 	outputs = Dense(7, activation='softmax')(x)
 	source_model = Model(inputs, outputs)
 

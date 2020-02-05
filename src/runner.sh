@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#SBATCH -J mtask
+#SBATCH -J batched
 #SBATCH -e result/batched-%j.txt
 #SBATCH -o result/batched-%j.txt
 #SBATCH -p  v100x8 --gres=gpu:4 --mem=60G
