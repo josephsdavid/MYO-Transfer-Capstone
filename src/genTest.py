@@ -9,13 +9,12 @@ from tensorflow.keras.callbacks import EarlyStopping
 import tensorflow.keras.backend as K
 import matplotlib.pyplot as plt
 
-for i in range(500):
-    print("starting transfer phase!!")
+print("beginning initial training")
 
-batch=3000
+batch=6000
 clr=cb.OneCycleLR(
-                 max_lr=.1,
-                 end_percentage=0.1,
+                 max_lr=1.5,
+                 end_percentage=0.2,
                  scale_percentage=None,
                  maximum_momentum=0.95,
                  minimum_momentum=0.85,
@@ -44,7 +43,7 @@ with strategy.scope():
 	units=[450, 150, 400]
 	seq=[True, True, False]
 	for i in range(3):
-		x = LSTM(units[i], activation="tanh", dropout=drop, recurrent_dropout=rec_drop, return_sequences=seq[i], name = "lstm_{}".format(i))(x)
+		x = LSTM(units[i], activation="tanh", dropout=0.5, recurrent_dropout=0.5, return_sequences=seq[i], name = "lstm_{}".format(i))(x)
 	outputs = Dense(7, activation='softmax')(x)
 	source_model = Model(inputs, outputs)
 
@@ -65,15 +64,14 @@ with strategy.scope():
 #	# https://r2rt.com/non-zero-initial-states-for-recurrent-neural-networks.html
 
 print(source_model.summary())
-stopper = EarlyStopping(monitor = "val_loss", patience=20)
-history = source_model.fit(train_set, epochs=50, validation_data=val_set, callbacks=[stopper, clr], workers=16, use_multiprocessing=True, steps_per_epoch=len(train_set)//4, shuffle = False)
+stopper = EarlyStopping(monitor = "val_loss", patience=1000)
+history = source_model.fit(train_set, epochs=300, validation_data=val_set, callbacks=[stopper, clr], workers=16, use_multiprocessing=True, steps_per_epoch=len(train_set)//4, shuffle = False)
 
 abc = ['a','b','c']
 subject=[False, True]
 ex = [12, 17, 23]
 
 results = {}
-
 
 
 for i in range(len(abc)):
@@ -97,11 +95,12 @@ for i in range(len(abc)):
             lstm = Model(inputs, outputs)
             lstm.compile(optimizer=optim, loss='sparse_categorical_crossentropy', metrics=['accuracy'])
 
-        lstm.fit(train, epochs=50,
-                callbacks=[clr, EarlyStopping(patience=20, monitor='val_loss')],
-                validation_data=test, shuffle = False)
         sub = 'subject' if s else 'repetition'
         loc = 'notransfer_'+sub+'_'+abc[i]
+        print('beginning ' +loc )
+        lstm.fit(train, epochs=300,
+                callbacks=[clr, EarlyStopping(patience=1000, monitor='val_loss')],
+                validation_data=test, shuffle = False)
         results[loc] = lstm.evaluate(test)
 
 
@@ -122,11 +121,12 @@ for i in range(len(abc)):
             out=Dense(ex[i], activation='softmax')(hidden)
             lstm = Model(transfer_model.input, out)
             lstm.compile(optimizer=optim, loss='sparse_categorical_crossentropy', metrics=['accuracy'])
-        lstm.fit(train, epochs=50,
-                callbacks=[clr, EarlyStopping(patience=20, monitor='val_loss')],
-                validation_data=test, shuffle = False)
         sub = 'subject' if s else 'repetition'
         loc = 'unfrozen_'+sub+'_'+abc[i]
+        print('beginning '+ loc)
+        lstm.fit(train, epochs=300,
+                callbacks=[clr, EarlyStopping(patience=1000, monitor='val_loss')],
+                validation_data=test, shuffle = False)
         results[loc] = lstm.evaluate(test)
 
 
@@ -150,11 +150,12 @@ for i in range(len(abc)):
             out=Dense(ex[i], activation='softmax')(hidden)
             lstm = Model(transfer_model.input, out)
             lstm.compile(optimizer=optim, loss='sparse_categorical_crossentropy', metrics=['accuracy'])
-        lstm.fit(train, epochs=50,
-                callbacks=[clr, EarlyStopping(patience=20, monitor='val_loss')],
-                validation_data=test, shuffle=False)
         sub = 'subject' if s else 'repetition'
         loc = 'frozen_'+sub+'_'+abc[i]
+        print('beginning ' + loc)
+        lstm.fit(train, epochs=300,
+                callbacks=[clr, EarlyStopping(patience=1000, monitor='val_loss')],
+                validation_data=test, shuffle=False)
         results[loc] = lstm.evaluate(test)
 
 

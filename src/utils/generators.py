@@ -2,6 +2,7 @@ import tensorflow as tf
 import numpy as np
 from .loaders import *
 from .ninaLoader import NinaLoader
+from .preprocessors import scale
 
 class PreValGenerator(PreValidationLoader, tf.keras.utils.Sequence):
     def __init__(self, path: str, process_fns: list, augment_fns: list, scale=False,
@@ -61,6 +62,7 @@ class NinaGenerator(NinaLoader, tf.keras.utils.Sequence):
             validation=False,
             by_subject=False):
         super(NinaGenerator, self).__init__(path, excercises,process_fns, augment_fns, scale, step, window_size)
+        self.scale=scale
         self.batch_size = batch_size
         self.shuffle =shuffle
         act = np.where(self.rep!=0)
@@ -102,5 +104,7 @@ class NinaGenerator(NinaLoader, tf.keras.utils.Sequence):
             for f in self.augmentors:
                 for i in range(out.shape[0]):
                     out[i,:,:]=f(out[i,:,:])
+        if self.scale:
+            out = scale(out)
         return out,  self.labels[indexes]
 

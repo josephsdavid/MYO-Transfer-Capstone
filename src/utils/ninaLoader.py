@@ -88,8 +88,8 @@ class NinaLoader(Loader):
         print(f"[Step 4 ==> scale] Shape of labels: {np.shape(self.labels)}")
         print(f"[Step 3 ==> scale] Shape of reps: {np.shape(self.rep.copy())}")
         print(f"[Step 3 ==> scale] Shape of subjects: {np.shape(self.subject.copy())}")
-        if scale:
-            self.emg = scale(self.emg)
+        #if scale:
+        #    self.emg = scale(self.emg)
 
     # features can be an array if we need to pass back additional
     # features with the emg data. could help recycle this
