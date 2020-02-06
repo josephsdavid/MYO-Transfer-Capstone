@@ -98,19 +98,24 @@ lab = np.vstack(train.flat[1]).flatten()
 emg = np.vstack(train.flat[0])
 
 # plot all labels
-rest = np.where(lab==0)
-print(tf.keras.utils.to_categorical(lab).shape)
-notrest=np.where(lab==1)
-sub1, emg1, lab1 = (x[rest] for x in [sub, emg, lab])
-sub2, emg2, lab2 = (x[notrest] for x in [sub, emg, lab])
-fig = plt.figure(figsize=(20,20))
-for i in range(np.unique(sub1).shape[0]):
-    ax = fig.add_subplot(np.unique(sub1).shape[0],2, i+1)
-    #c = cm.Paired(i/len(imps.keys()), 1)
-    ax.plot(emg[np.where(sub1==np.unique(sub1)[i])])
-    ax.set_title(i)
-fig.tight_layout()
-plt.show()
+for l in np.unique(lab):
+    print(str(l))
+    rest = np.where((lab==l) | (lab == 0))
+    #rest = np.where(lab==l)
+    print(rest)
+    sub1, emg1, lab1 = (x[rest] for x in [sub, emg, lab])
+    fig = plt.figure(figsize=(20,30))
+    for i in range(np.unique(sub1).shape[0]):
+        ax = fig.add_subplot(np.unique(sub1).shape[0],2, i+1)
+        #c = cm.Paired(i/len(imps.keys()), 1)
+        ax.plot(emg[np.where(sub1==np.unique(sub1)[i])])
+        ax.set_title(i)
+    #fig.tight_layout()
+    plt.title("label: {}".format(l))
+    plt.show()
+    #plt.savefig("{}.png".format(l) ,bbox_inches="tight")
+    #plt.clf()
+
 
 
 #print(lab)
