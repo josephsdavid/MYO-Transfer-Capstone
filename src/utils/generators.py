@@ -1,4 +1,5 @@
 import tensorflow as tf
+import matplotlib.pyplot as plt
 import numpy as np
 from .loaders import *
 from .ninaLoader import NinaLoader
@@ -52,6 +53,12 @@ class PreTrainGenerator(PreTrainLoader, tf.keras.utils.Sequence):
         indexes = self.indexes[index*self.batch_size:(index+1)*self.batch_size]
         return self.emg[indexes,:,:],  self.labels[indexes]
 
+
+
+
+
+
+
 class NinaGenerator(NinaLoader, tf.keras.utils.Sequence):
     def __init__(self, path: str, excercises: list,
             process_fns: list,
@@ -65,7 +72,8 @@ class NinaGenerator(NinaLoader, tf.keras.utils.Sequence):
         self.scale=scale
         self.batch_size = batch_size
         self.shuffle =shuffle
-        act = np.where(self.rep!=0)
+        print(min(self.labels))
+        print(max(self.labels))
         self._indexer(np.where(self.rep!=0))
         v_subjects = np.array((9,10))
         v_reps = np.array((4,5,6))
@@ -76,7 +84,9 @@ class NinaGenerator(NinaLoader, tf.keras.utils.Sequence):
                 (True, True):np.where(np.isin(self.subject, v_subjects))
                 }
         case=case_dict[(validation, by_subject)]
-        self._indexer(case)
+        # fix!!
+#        self._indexer(case)
+        self.act = np.where(self.rep==0)
         self.on_epoch_end()
 
 

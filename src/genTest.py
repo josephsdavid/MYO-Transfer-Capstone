@@ -7,6 +7,7 @@ from tensorflow.keras.optimizers import RMSprop, Adam, SGD
 from tensorflow.keras.models import Model, load_model
 from tensorflow.keras.callbacks import EarlyStopping
 import tensorflow.keras.backend as K
+from tensorflow.keras.utils import to_categorical
 import matplotlib.pyplot as plt
 
 print("beginning initial training")
@@ -69,7 +70,6 @@ history = source_model.fit(train_set, epochs=150, validation_data=val_set, callb
 
 abc = ['a','b','c']
 subject=[False, True]
-ex = [12, 17, 23]
 
 results = {}
 
@@ -82,6 +82,7 @@ for i in range(len(abc)):
                 None, validation=True, by_subject = s, batch_size=batch)
         sub = 'subject' if s else 'repetition'
         loc = 'notransfer_'+sub+'_'+abc[i]
+        out_shape = to_categorical(train.labels).shape[-1]
         print('beginning ' +loc )
         with strategy.scope():
             inputs = Input((52,8))
@@ -94,7 +95,7 @@ for i in range(len(abc)):
             	x = LSTM(units[i], activation="tanh", dropout=drop, recurrent_dropout=rec_drop, return_sequences=seq[i], name = "lstm_{}".format(i))(x)
 
             outputs = Dense(150)(x)
-            outputs = Dense(ex[i], activation='softmax')(outputs)
+            outputs = Dense(out_shape, activation='softmax')(outputs)
             lstm = Model(inputs, outputs)
             lstm.compile(optimizer=optim, loss='sparse_categorical_crossentropy', metrics=['accuracy'])
 
@@ -115,10 +116,11 @@ for i in range(len(abc)):
                 [u.add_noise_snr], validation=False, by_subject = s, batch_size=batch)
         test = u.NinaGenerator("../data/ninaPro", [abc[i]], [u.butter_highpass_filter],
                 None, validation=True, by_subject = s, batch_size=batch)
+        out_shape = to_categorical(train.labels).shape[-1]
         with strategy.scope():
             transfer_model = tf.keras.models.clone_model(source_model)
             hidden = Dense(120)(transfer_model.layers[-2].output)
-            out=Dense(ex[i], activation='softmax')(hidden)
+            out=Dense(out_shape, activation='softmax')(hidden)
             lstm = Model(transfer_model.input, out)
             lstm.compile(optimizer=optim, loss='sparse_categorical_crossentropy', metrics=['accuracy'])
         sub = 'subject' if s else 'repetition'
@@ -143,11 +145,12 @@ for i in range(len(abc)):
                 [u.add_noise_snr], validation=False, by_subject = s, batch_size=batch)
         test = u.NinaGenerator("../data/ninaPro", [abc[i]], [u.butter_highpass_filter],
                 None, validation=True, by_subject = s, batch_size=batch)
+        out_shape = to_categorical(train.labels).shape[-1]
         with strategy.scope():
             transfer_model = tf.keras.models.clone_model(source_model)
             transfer_model.trainable=True
             hidden = Dense(120)(transfer_model.layers[-2].output)
-            out=Dense(ex[i], activation='softmax')(hidden)
+            out=Dense(out.shape, activation='softmax')(hidden)
             lstm = Model(transfer_model.input, out)
             lstm.compile(optimizer=optim, loss='sparse_categorical_crossentropy', metrics=['accuracy'])
         sub = 'subject' if s else 'repetition'

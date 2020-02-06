@@ -99,7 +99,7 @@ class NinaLoader(Loader):
         data = []
         # Might need to start clipping emg segments here... RAM is
         # struggling to keep up with massive sizes
-        self.maxlen = 130000
+        self.maxlen = 1030000
         rep = res['rerepetition'][:self.maxlen].copy()
         emg = res['emg'][:self.maxlen,:8].copy()
         lab = res['restimulus'][:self.maxlen].copy()
@@ -186,7 +186,7 @@ class NinaLoader(Loader):
             ## this is slow but something wrong
             #self.rep, _ = f(self.emg, self.rep)
             #self.subject, _ = f(self.emg, self.subject)
-
+        self.flat = [self.emg, self.labels, self.rep, self.subject]
         self.emg = [window_roll(x, step, window_size) for x in self.emg]
         self.labels = [window_roll(x, step, window_size) for x in self.labels]
         self.rep = [window_roll(x, step, window_size) for x in self.rep]
