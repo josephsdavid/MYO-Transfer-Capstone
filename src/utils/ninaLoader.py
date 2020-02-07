@@ -84,6 +84,7 @@ class NinaLoader(Loader):
         self.rep = np.moveaxis(np.concatenate(self.rep,axis=0),2,1).mean(axis=1).round()[:,0]
         self.subject = np.moveaxis(np.concatenate(self.subject,axis=0),2,1).mean(axis=1)[:,0]
         #if VERBOSE :
+        self.emg = self.emg.astype(np.float16)
         print(f"[Step 4 ==> scale] Shape of emg: {np.shape(self.emg)}")
         print(f"[Step 4 ==> scale] Shape of labels: {np.shape(self.labels)}")
         print(f"[Step 3 ==> scale] Shape of reps: {np.shape(self.rep.copy())}")
@@ -99,7 +100,7 @@ class NinaLoader(Loader):
         data = []
         # Might need to start clipping emg segments here... RAM is
         # struggling to keep up with massive sizes
-        self.maxlen = 1030000
+        self.maxlen = 10030000
         rep = res['rerepetition'][:self.maxlen].copy()
         emg = res['emg'][:self.maxlen,:8].copy()
         lab = res['restimulus'][:self.maxlen].copy()

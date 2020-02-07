@@ -75,7 +75,7 @@ class NinaGenerator(NinaLoader, tf.keras.utils.Sequence):
         print(min(self.labels))
         print(max(self.labels))
         self._indexer(np.where(self.rep!=0))
-        v_subjects = np.array((9,10))
+        v_subjects = np.array((9, 10, 11))
         v_reps = np.array((4,5,6))
         case_dict = {
                 (False, False):np.where(np.isin(self.rep, v_reps, invert=True)),
@@ -85,7 +85,7 @@ class NinaGenerator(NinaLoader, tf.keras.utils.Sequence):
                 }
         case=case_dict[(validation, by_subject)]
         # fix!!
-#        self._indexer(case)
+        self._indexer(case)
         self.act = np.where(self.rep==0)
         self.on_epoch_end()
 

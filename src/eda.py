@@ -50,6 +50,7 @@ for l in np.unique(lab):
     fig.suptitle("label: {}".format(l), fontsize=48)
     #plt.show()
     plt.savefig("{}.png".format(l) ,bbox_inches="tight")
-    plt.clf()
+
+plt.show()
 
 
