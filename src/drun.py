@@ -2,7 +2,7 @@ import tensorflow as tf
 import numpy as np
 import utils as u
 import callbacks as cb
-from tensorflow.keras.layers import Input, Dense, LSTM, Bidirectional
+from tensorflow.keras.layers import Input, Dense, LSTM, Bidirectional, PReLU
 from tensorflow.keras.optimizers import RMSprop, Adam, SGD
 from tensorflow.keras.models import Model, load_model
 from tensorflow.keras.callbacks import EarlyStopping
@@ -10,10 +10,10 @@ import tensorflow.keras.backend as K
 from tensorflow.keras.utils import to_categorical
 import matplotlib.pyplot as plt
 
-batch=5000
+batch=3000
 
 clr=cb.OneCycleLR(
-                 max_lr=1,
+                 max_lr=0.5,
                  end_percentage=0.1,
                  scale_percentage=None,
                  maximum_momentum=0.95,
@@ -21,30 +21,31 @@ clr=cb.OneCycleLR(
                  verbose=True)
 
 
-optim = SGD(momentum=0.9, nesterov=True, clipnorm=1., clipvalue=0.5)
+optim = SGD(momentum=0.9, nesterov=True)
 
 
 abc = ['a','b','c']
 subject=[False, True]
+rec_drop = 0.2
+drop=0.2
 
 results = {}
 
 for i in range(len(abc)):
     for s in subject:
         train = u.NinaGenerator("../data/ninaPro", [abc[i]], [u.butter_highpass_filter],
-                [u.add_noise_snr], validation=False, by_subject = s, batch_size=batch)
+                [u.add_noise_snr], validation=False, by_subject = s, batch_size=batch, scale = False)
         print(np.unique(train.subject))
         print(np.unique(train.rep))
         test = u.NinaGenerator("../data/ninaPro", [abc[i]], [u.butter_highpass_filter],
-                None, validation=True, by_subject = s, batch_size=batch)
+                None, validation=True, by_subject = s, batch_size=batch, scale = False)
         sub = 'subject' if s else 'repetition'
         loc = 'notransfer_'+sub+'_'+abc[i]
         out_shape = to_categorical(train.labels).shape[-1]
         print('beginning ' +loc )
         inputs = Input((52,8))
-        rec_drop = 0.14
-        drop=0.02
-        x = Bidirectional(LSTM(85, dropout = drop, recurrent_dropout=rec_drop, activation="tanh"))(inputs)
+        x = Bidirectional(LSTM(128, dropout = drop, recurrent_dropout=rec_drop))(inputs)
+        x = PReLU()(x)
         #outputs = Dense(150)(x)
         outputs = Dense(out_shape, activation='softmax')(x)
         lstm = Model(inputs, outputs)

@@ -3,7 +3,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 from .loaders import *
 from .ninaLoader import NinaLoader
-from .preprocessors import scale
+#from .preprocessors import scale
+def scale(arr3d):
+    for i in range(arr3d.shape[0]):
+        arr3d[i,:,:] /= arr3d[i,:,:].max(axis=0)
+    return arr3d
+
 
 class PreValGenerator(PreValidationLoader, tf.keras.utils.Sequence):
     def __init__(self, path: str, process_fns: list, augment_fns: list, scale=False,
