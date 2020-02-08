@@ -5,15 +5,15 @@ import callbacks as cb
 from tensorflow.keras.layers import Input, Dense, LSTM, Bidirectional, PReLU
 from tensorflow.keras.optimizers import RMSprop, Adam, SGD
 from tensorflow.keras.models import Model, load_model
-from tensorflow.keras.callbacks import EarlyStopping
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 import tensorflow.keras.backend as K
 from tensorflow.keras.utils import to_categorical
 import matplotlib.pyplot as plt
 
-batch=3000
+batch=1000
 
 clr=cb.OneCycleLR(
-                 max_lr=0.5,
+                 max_lr=1,
                  end_percentage=0.1,
                  scale_percentage=None,
                  maximum_momentum=0.95,
@@ -22,12 +22,13 @@ clr=cb.OneCycleLR(
 
 
 optim = SGD(momentum=0.9, nesterov=True)
+#optim = Adam(learning_rate=0.0005)
 
 
-abc = ['a','b','c']
-subject=[False, True]
-rec_drop = 0.2
-drop=0.2
+abc = ['b','a','c']
+subject=[True, False]
+rec_drop = 0.1
+drop=0.01
 
 results = {}
 
@@ -44,15 +45,16 @@ for i in range(len(abc)):
         out_shape = to_categorical(train.labels).shape[-1]
         print('beginning ' +loc )
         inputs = Input((52,8))
-        x = Bidirectional(LSTM(128, dropout = drop, recurrent_dropout=rec_drop))(inputs)
+        x, s1, s2, s3, s4 = Bidirectional(LSTM(64, dropout = drop, recurrent_dropout=rec_drop, return_sequences=True, return_state=True))(inputs)
         x = PReLU()(x)
-        #outputs = Dense(150)(x)
+        x = Bidirectional(LSTM(64, dropout = drop, recurrent_dropout=rec_drop, return_sequences=False))(x, initial_state = [s1,s2,s3,s4])
+        x = PReLU()(x)
         outputs = Dense(out_shape, activation='softmax')(x)
         lstm = Model(inputs, outputs)
         lstm.compile(optimizer=optim, loss='sparse_categorical_crossentropy', metrics=['accuracy'])
 
-        lstm.fit(train, epochs=100,
-                callbacks=[clr, EarlyStopping(patience=1000, monitor='val_loss')],
+        history = lstm.fit(train, epochs=50,
+                callbacks=[EarlyStopping(patience=100, monitor='val_loss'), clr ],
                 validation_data=test, shuffle = False, workers=12, use_multiprocessing=True)
         results[loc] = lstm.evaluate(test)
         lstm.save("models/lstm_{}.h5".format(loc))
@@ -75,6 +77,9 @@ for i in range(len(abc)):
         Size = F.get_size_inches()
         F.set_size_inches(Size[0]*2, Size[1]*2)
         plt.savefig("training_{}.png".format(loc))
+        del(history)
         print(results)
 
-
+import json
+with open('result.json', 'w') as fp:
+    json.dump(results, fp)

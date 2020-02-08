@@ -72,7 +72,9 @@ class NinaGenerator(NinaLoader, tf.keras.utils.Sequence):
             step =5, window_size=52,
             batch_size=400, shuffle=True,
             validation=False,
-            by_subject=False):
+            by_subject=False,
+            sample_0=True):
+
         super(NinaGenerator, self).__init__(path, excercises,process_fns, augment_fns, scale, step, window_size)
         self.scale=scale
         self.batch_size = batch_size
@@ -80,7 +82,13 @@ class NinaGenerator(NinaLoader, tf.keras.utils.Sequence):
         print(min(self.labels))
         print(max(self.labels))
         self._indexer(np.where(self.rep!=0))
-        v_subjects = np.array((9, 10, 11))
+        if sample_0:
+            ids = np.where(self.labels==0)[0]
+            ids2 = np.random.permutation(ids)
+            #print(ids[0].shape[0] - ids[0][::18].shape[0])
+            #ids2=tuple(ids[0][::18], )
+            self._deleter((ids2[:-13000],))
+        v_subjects = np.array((7,8,9, 10, 11))
         v_reps = np.array((4,5,6))
         case_dict = {
                 (False, False):np.where(np.isin(self.rep, v_reps, invert=True)),
@@ -88,10 +96,18 @@ class NinaGenerator(NinaLoader, tf.keras.utils.Sequence):
                 (False, True):np.where(np.isin(self.subject, v_subjects, invert=True)),
                 (True, True):np.where(np.isin(self.subject, v_subjects))
                 }
-        case=case_dict[(validation, by_subject)]
+        #print("number in rep 0: {}".format(self.emg[np.where(self.rep==0)].shape[0]))
+        #print("number in label 0 : {}".format(self.emg[np.where(self.labels==0)].shape[0]))
+        #print("number in label 1 : {}".format(self.emg[np.where(self.labels==1)].shape[0]))
+        #print("number in label 2 : {}".format(self.emg[np.where(self.labels==2)].shape[0]))
+        #print("number in label 3 : {}".format(self.emg[np.where(self.labels==3)].shape[0]))
+        #print("number in label 4 : {}".format(self.emg[np.where(self.labels==4)].shape[0]))
+        #print("number in label 5 : {}".format(self.emg[np.where(self.labels==5)].shape[0]))
+        #print("number minlabel labe1 :: {}".format(self.emg[np.where(self.labels==lab10)].shape[0] / self.emg[np.where(self.rep!=1)].shape[0]))
+        #print(1/18label1 :[(validation, by_subject)]
         # fix!!
+        case = case_dict[(validation, by_subject)]
         self._indexer(case)
-        self.act = np.where(self.rep==0)
         self.on_epoch_end()
 
 
@@ -101,6 +117,15 @@ class NinaGenerator(NinaLoader, tf.keras.utils.Sequence):
         self.rep = self.rep[id]
         self.labels=self.labels[id]
         self.subject=self.subject[id]
+
+    def _deleter(self, id):
+        self.emg = np.delete(self.emg, id)
+        self.rep = np.delete(self.rep,id)
+        self.labels=np.delete(self.labels, id)
+        self.subject=np.delete(self.subject, id)
+
+
+
 
     def __len__(self):
         'number of batches per epoch'
