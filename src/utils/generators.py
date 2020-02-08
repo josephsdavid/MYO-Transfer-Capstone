@@ -87,7 +87,7 @@ class NinaGenerator(NinaLoader, tf.keras.utils.Sequence):
             ids2 = np.random.permutation(ids)
             #print(ids[0].shape[0] - ids[0][::18].shape[0])
             #ids2=tuple(ids[0][::18], )
-            self._deleter((ids2[:-13000],))
+            self._deleter(ids2[:-13000])
         v_subjects = np.array((7,8,9, 10, 11))
         v_reps = np.array((4,5,6))
         case_dict = {
@@ -108,6 +108,7 @@ class NinaGenerator(NinaLoader, tf.keras.utils.Sequence):
         # fix!!
         case = case_dict[(validation, by_subject)]
         self._indexer(case)
+        print(self.emg.shape)
         self.on_epoch_end()
 
 
@@ -119,11 +120,10 @@ class NinaGenerator(NinaLoader, tf.keras.utils.Sequence):
         self.subject=self.subject[id]
 
     def _deleter(self, id):
-        self.emg = np.delete(self.emg, id)
-        self.rep = np.delete(self.rep,id)
-        self.labels=np.delete(self.labels, id)
-        self.subject=np.delete(self.subject, id)
-
+        self.emg = self.emg[~id]
+        self.rep = self.rep[~id]
+        self.labels=self.labels[~id]
+        self.subject=self.subject[~id]
 
 
 
