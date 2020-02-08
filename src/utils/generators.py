@@ -69,6 +69,7 @@ class NinaGenerator(NinaLoader, tf.keras.utils.Sequence):
             process_fns: list,
             augment_fns: list,
             scale=False,
+            rectify=False,
             step =5, window_size=52,
             batch_size=400, shuffle=True,
             validation=False,
@@ -76,6 +77,7 @@ class NinaGenerator(NinaLoader, tf.keras.utils.Sequence):
             sample_0=True):
 
         super(NinaGenerator, self).__init__(path, excercises,process_fns, augment_fns, scale, step, window_size)
+        self.rectify=rectify
         self.scale=scale
         self.batch_size = batch_size
         self.shuffle =shuffle
@@ -85,6 +87,7 @@ class NinaGenerator(NinaLoader, tf.keras.utils.Sequence):
         if sample_0:
             ids = np.where(self.labels==0)[0]
             ids2 = np.random.permutation(ids)
+            print(ids - ids2)
             #print(ids[0].shape[0] - ids[0][::18].shape[0])
             #ids2=tuple(ids[0][::18], )
             self._deleter(ids2[:-13000])
@@ -144,6 +147,8 @@ class NinaGenerator(NinaLoader, tf.keras.utils.Sequence):
             for f in self.augmentors:
                 for i in range(out.shape[0]):
                     out[i,:,:]=f(out[i,:,:])
+        if self.rectify:
+            out = np.abs(out)
         if self.scale:
             out = scale(out)
         return out,  self.labels[indexes]
