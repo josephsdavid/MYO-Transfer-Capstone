@@ -21,15 +21,37 @@ train = u.NinaGenerator("../data/ninaPro", ['b'], [u.butter_highpass_filter],
 #print(train.act)
 #
 #print(train.emg.shape)
-train.act
+#:train.act
 
 
 nplots = np.unique(train.subject).shape[0]
 #        self.flat = [self.emg, self.labels, self.rep, self.subject]
-sub = np.vstack(train.flat[-1]).flatten()
-rep = np.vstack(train.flat[-2]).flatten()
-lab = np.vstack(train.flat[1]).flatten()
-emg = np.vstack(train.flat[0])
+sub = np.vstack(train.flat[-1]).flatten()[:130000]
+rep = np.vstack(train.flat[-2]).flatten()[:130000]
+lab = np.vstack(train.flat[1]).flatten()[:130000]
+emg = np.vstack(train.flat[0])[:130000,:]
+import pdb; pdb.set_trace()  # XXX BREAKPOINT
+
+
+
+
+other=np.where(lab==0)
+#rest = np.where(lab==l)
+print(other)
+emg[other]=0.0
+sub1, emg1  = (x for x in [sub, emg])
+fig = plt.figure(figsize=(10,20))
+for i in range(emg1.shape[1]):
+    ax = fig.add_subplot(emg1.shape[1],1, i+1)
+    #c = cm.Paired(i/len(imps.keys()), 1)
+    for i2 in range(3):
+        ax.plot(emg1[np.where(sub1==np.unique(sub1)[i2]),i].T)
+    ax.set_title(i)
+fig.tight_layout()
+# fig.suptitle("label: {}".format(l), fontsize=20)
+plt.show()
+# plt.savefig("{}.png".format(l) ,bbox_inches="tight")
+plt.clf()
 
 # plot all labels
 for l in np.unique(lab):

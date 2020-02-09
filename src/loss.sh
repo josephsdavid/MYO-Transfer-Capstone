@@ -22,9 +22,9 @@ outpath=0
 # read in the cleaned result variable as LOSS (The cleaned result is backpiped in at the bottom, because bash = dumb)
 while read LOSS; do
 	if [[ $LOSS == *"begin"* ]]; then
-		outpath=$((outpath+1))
+		#outpath=$((outpath+1))
 		# use this for getting a better model output
-		#outpath=$(awk '{print $(NF)}' <<< "$LOSS")
+		outpath=$(awk '{print $(NF)}' <<< "$LOSS")
 		# if you have print("beginning UNIQUE_MODEL_NAME")
 		# for every fit statement in your python script, this will nicely name the
 		# csvs
