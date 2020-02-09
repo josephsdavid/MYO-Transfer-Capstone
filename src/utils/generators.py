@@ -6,7 +6,7 @@ from .ninaLoader import NinaLoader
 #from .preprocessors import scale
 def scale(arr3d):
     for i in range(arr3d.shape[0]):
-        arr3d[i,:,:] /= arr3d[i,:,:].max(axis=0)
+        arr3d[i,:,:] /= np.abs(arr3d[i,:,:]).max(axis=0)
     return arr3d
 
 
