@@ -12,33 +12,52 @@ from tensorflow.keras.utils import to_categorical
 import matplotlib.pyplot as plt
 
 batch=1000
+
+## Weird CUDA things... 
+## https://github.com/tensorflow/tensorflow/issues/24496
+from tensorflow.compat.v1 import ConfigProto
+from tensorflow.compat.v1 import InteractiveSession
+
+config = ConfigProto()
+config.gpu_options.allow_growth = True
+session = InteractiveSession(config=config)
+## END CUDA FIX
 #%%
 train = u.NinaGenerator("../data/ninaPro", ['b'], [u.butter_highpass_filter],
-        [u.add_noise_snr], validation=False, batch_size=batch, scale = False)
+        [u.add_noise_snr], validation=False, batch_size=100, scale = True)
 x_tr = []
 y_tr = []
 for t in train:
     x_tr.append(t[0])
     y_tr.append(t[1])
 
-x_tr = np.concatenate(x_tr,0).astype(np.float16)
+x_tr = np.abs(np.concatenate(x_tr,0)).astype(np.float16)
 y_tr = np.concatenate(y_tr,0).astype(np.float16)
 
 
 #%%
-inputs_ae = Input(shape=(52, 8))
-encoded_ae = LSTM(128, return_sequences=True, dropout=0.3)(inputs_ae, training=True)
-encoded_ae = LSTM(32, return_sequences=False, dropout=0.3)(encoded_ae, training=True)
-encoded = RepeatVector(52)(encoded_ae)
-decoded_ae = LSTM(32, return_sequences=True, dropout=0.3)(encoded, training=True)
-decoded_ae = LSTM(128, return_sequences=True, dropout=0.3)(decoded_ae, training=True)
-out_ae = TimeDistributed(Dense(8))(decoded_ae)
-sequence_autoencoder = Model(inputs_ae, out_ae)
-sequence_autoencoder.compile(optimizer='adam', loss='mse', metrics=['mse'])
-sequence_autoencoder.summary()
+latent_dim=100
+inputs = Input(shape=(52, 8))
+o = LSTM(400, activation = 'tanh', return_sequences=True)(inputs)
+o2 = LSTM(200, activation = 'tanh', return_sequences=True)(o)
+encoder = LSTM(latent_dim, return_state=True, activation='tanh')
+encoder_outputs, state_h, state_c = encoder(o2)
+# We discard `encoder_outputs` and only keep the states.
+encoder_states = [state_h, state_c]
+decoded = RepeatVector(52)(encoder_outputs)
+# Set up the decoder, using `encoder_states` as initial state.
+decoder_lstm = LSTM(latent_dim, return_sequences=True, activation='tanh')
+decoder_outputs = decoder_lstm(decoded, initial_state=encoder_states)
+decoder_outputs =LSTM(200, activation='tanh', return_sequences=True)(decoder_outputs)
+decoder_outputs =LSTM(400, activation='tanh', return_sequences=True)(decoder_outputs)
+decoder_dense = TimeDistributed(Dense(8, activation='sigmoid'))
+decoder_outputs = decoder_dense(decoder_outputs)
+ae = Model(inputs, decoder_outputs)
+ae.compile('adam', 'mse')
+ae.summary();
+ae.fit(x_tr, x_tr, batch_size=100, shuffle=False, epochs = 100)
 
 #%%
-sequence_autoencoder.fit(x_tr, x_tr, batch_size=1000, epochs=100, verbose=2)
 
 # Encoder
 # lstm_autoencoder.add(LSTM(32, activation='relu', input_shape=(timesteps, n_features), return_sequences=True))
