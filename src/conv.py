@@ -1,17 +1,25 @@
 #%%
+#%%
+%load_ext autoreload
+%autoreload 2
+
+#%%
 import tensorflow as tf
 import numpy as np
 import utils as u
+# from utils import NinaGenerator
 import callbacks as cb
-from tensorflow.keras.layers import Input, Dense, LSTM, Bidirectional, PReLU, RepeatVector, TimeDistributed
+from tensorflow.keras.layers import Input, Dense, LSTM, Bidirectional, PReLU, RepeatVector, TimeDistributed, Flatten
 from tensorflow.keras.optimizers import RMSprop, Adam, SGD
 from tensorflow.keras.models import Model, load_model
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Conv3D, Dropout, Conv1D
+from tensorflow.keras.layers import ConvLSTM2D
+from tensorflow.keras.layers import BatchNormalization, MaxPooling1D
 import tensorflow.keras.backend as K
 from tensorflow.keras.utils import to_categorical
 import matplotlib.pyplot as plt
-
-batch=1000
 
 ## Weird CUDA things... 
 ## https://github.com/tensorflow/tensorflow/issues/24496
@@ -23,55 +31,98 @@ config.gpu_options.allow_growth = True
 session = InteractiveSession(config=config)
 ## END CUDA FIX
 #%%
+batch = 200
+
+s = True
 train = u.NinaGenerator("../data/ninaPro", ['b'], [u.butter_highpass_filter],
-        [u.add_noise_snr], validation=False, batch_size=100, scale = True)
-x_tr = []
-y_tr = []
-for t in train:
-    x_tr.append(t[0])
-    y_tr.append(t[1])
+        [u.add_noise_snr], validation=False, by_subject = s, batch_size=batch, scale = False, sample_0=True)
 
-x_tr = np.abs(np.concatenate(x_tr,0)).astype(np.float16)
-y_tr = np.concatenate(y_tr,0).astype(np.float16)
-
-
-#%%
-from keras.models import Sequential
-from keras.layers.convolutional import Conv3D
-from keras.layers.convolutional_recurrent import ConvLSTM2D
-from keras.layers.normalization import BatchNormalization
-import numpy as np
-import pylab as plt
-
-# We create a layer which take as input movies of shape
-# (n_frames, width, height, channels) and returns a movie
-# of identical shape.
-
-seq = Sequential()
-seq.add(ConvLSTM2D(filters=40, kernel_size=(3, 3),
-                   input_shape=(None, 40, 40, 1),
-                   padding='same', return_sequences=True))
-seq.add(BatchNormalization())
-
-seq.add(ConvLSTM2D(filters=40, kernel_size=(3, 3),
-                   padding='same', return_sequences=True))
-seq.add(BatchNormalization())
-
-seq.add(ConvLSTM2D(filters=40, kernel_size=(3, 3),
-                   padding='same', return_sequences=True))
-seq.add(BatchNormalization())
-
-seq.add(ConvLSTM2D(filters=40, kernel_size=(3, 3),
-                   padding='same', return_sequences=True))
-seq.add(BatchNormalization())
-
-seq.add(Conv3D(filters=1, kernel_size=(3, 3, 3),
-               activation='sigmoid',
-               padding='same', data_format='channels_last'))
-seq.compile(loss='binary_crossentropy', optimizer='adadelta')
+test = u.NinaGenerator("../data/ninaPro", ['b'], [u.butter_highpass_filter],
+        None, validation=True, by_subject = s, batch_size=batch, scale = False)
 
 #%%
 
+
+
+#%%
+clr=cb.OneCycleLR(
+                 max_lr=0.4,
+                 end_percentage=0.2,
+                 scale_percentage=None,
+                 maximum_momentum=0.95,
+                 minimum_momentum=0.85,
+                 verbose=True)
+optim = SGD(momentum=0.9, nesterov=True)
+#%%
+
+
+inputs = Input((52,8))
+c_layer = Conv1D(filters=20, kernel_size=7, activation='relu')(inputs)
+c_layer = Conv1D(filters=64, kernel_size=5, activation='relu')(c_layer)
+c_layer = Conv1D(filters=64, kernel_size=5, activation='relu')(c_layer)
+c_layer = Conv1D(filters=64, kernel_size=5, activation='relu')(c_layer)
+do1 = Dropout(0.5)(c_layer)
+mp1 = MaxPooling1D(pool_size=2)(do1)
+fl1 = Flatten()(mp1)
+do2 = Dropout(0.5)(fl1)
+dense1 = Dense(100, activation='relu')(do2)
+outputs = Dense(18, activation='softmax')(dense1)
+model = Model(inputs, outputs)
+model.compile(loss='sparse_categorical_crossentropy', 
+            optimizer='adam', metrics=['accuracy'])
+
+#%%
+model.summary()
 
 
 # %%
+history = model.fit(train, epochs=50, #callbacks=[clr ],
+        shuffle = False)
+
+# %%
+
+def evaluate_model(_train, _test):
+    verbose, epochs = 1, 25
+    inputs = Input((52,8))
+    c_layer = Conv1D(filters=20, kernel_size=7, activation='relu')(inputs)
+    c_layer = Conv1D(filters=64, kernel_size=5, activation='relu')(c_layer)
+    c_layer = Conv1D(filters=64, kernel_size=5, activation='relu')(c_layer)
+    c_layer = Conv1D(filters=64, kernel_size=5, activation='relu')(c_layer)
+    do1 = Dropout(0.5)(c_layer)
+    mp1 = MaxPooling1D(pool_size=2)(do1)
+    fl1 = Flatten()(mp1)
+    do2 = Dropout(0.5)(fl1)
+    dense1 = Dense(100, activation='relu')(do2)
+    outputs = Dense(18, activation='softmax')(dense1)
+    model = Model(inputs, outputs)
+    model.compile(loss='sparse_categorical_crossentropy', 
+                optimizer='adam', metrics=['accuracy'])
+    model.fit(_train, epochs=epochs, #callbacks=[clr ],
+        shuffle = False, verbose=verbose)
+    _, accuracy = model.evaluate(test, verbose=verbose)
+    return accuracy
+
+# summarize scores
+def summarize_results(scores):
+	print(scores)
+	m, s = mean(scores), std(scores)
+	print('Accuracy: %.3f%% (+/-%.3f)' % (m, s))
+ 
+# run an experiment
+def run_experiment(repeats=10):
+	# load data
+	# repeat experiment
+	scores = list()
+	for r in range(repeats):
+		score = evaluate_model(train, test)
+		score = score * 100.0
+		print('>#%d: %.3f' % (r+1, score))
+		scores.append(score)
+	# summarize results
+	summarize_results(scores)
+ 
+# run the experiment
+
+
+# %%
+run_experiment()

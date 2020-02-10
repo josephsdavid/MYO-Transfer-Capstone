@@ -6,7 +6,7 @@ from .ninaLoader import NinaLoader
 #from .preprocessors import scale
 def scale(arr3d):
     for i in range(arr3d.shape[0]):
-        arr3d[i,:,:] /= arr3d[i,:,:].max(axis=0)
+        arr3d[i,:,:] /= np.abs(arr3d[i,:,:]).max(axis=0)
     return arr3d
 
 
@@ -85,8 +85,8 @@ class NinaGenerator(NinaLoader, tf.keras.utils.Sequence):
         if sample_0:
             ids = np.where(self.labels==0)[0]
             ids2 = np.random.permutation(ids)
-            #print(ids[0].shape[0] - ids[0][::18].shape[0])
-            #ids2=tuple(ids[0][::18], )
+            # print(ids.shape)
+            # ids2=tuple(ids[0][::18], )
             self._deleter(ids2[:-13000])
         v_subjects = np.array((7,8,9, 10, 11))
         v_reps = np.array((4,5,6))
@@ -96,15 +96,15 @@ class NinaGenerator(NinaLoader, tf.keras.utils.Sequence):
                 (False, True):np.where(np.isin(self.subject, v_subjects, invert=True)),
                 (True, True):np.where(np.isin(self.subject, v_subjects))
                 }
-        #print("number in rep 0: {}".format(self.emg[np.where(self.rep==0)].shape[0]))
-        #print("number in label 0 : {}".format(self.emg[np.where(self.labels==0)].shape[0]))
-        #print("number in label 1 : {}".format(self.emg[np.where(self.labels==1)].shape[0]))
-        #print("number in label 2 : {}".format(self.emg[np.where(self.labels==2)].shape[0]))
-        #print("number in label 3 : {}".format(self.emg[np.where(self.labels==3)].shape[0]))
-        #print("number in label 4 : {}".format(self.emg[np.where(self.labels==4)].shape[0]))
-        #print("number in label 5 : {}".format(self.emg[np.where(self.labels==5)].shape[0]))
-        #print("number minlabel labe1 :: {}".format(self.emg[np.where(self.labels==lab10)].shape[0] / self.emg[np.where(self.rep!=1)].shape[0]))
-        #print(1/18label1 :[(validation, by_subject)]
+        print("number in    rep 0: {}".format(self.emg[np.where(self.rep==0)].shape[0]))
+        print("number in label 0 : {}".format(self.emg[np.where(self.labels==0)].shape[0]))
+        print("number in label 1 : {}".format(self.emg[np.where(self.labels==1)].shape[0]))
+        print("number in label 2 : {}".format(self.emg[np.where(self.labels==2)].shape[0]))
+        print("number in label 3 : {}".format(self.emg[np.where(self.labels==3)].shape[0]))
+        print("number in label 4 : {}".format(self.emg[np.where(self.labels==4)].shape[0]))
+        print("number in label 5 : {}".format(self.emg[np.where(self.labels==5)].shape[0]))
+        print("number in label 6 : {}".format(self.emg[np.where(self.labels==6)].shape[0]))
+        # print(1/18label1 :[(validation, by_subject)]
         # fix!!
         case = case_dict[(validation, by_subject)]
         self._indexer(case)
@@ -148,3 +148,41 @@ class NinaGenerator(NinaLoader, tf.keras.utils.Sequence):
             out = scale(out)
         return out,  self.labels[indexes]
 
+class NinaGeneratorConv(NinaGenerator):
+    def __init__(self, path: str, excercises: list,
+            process_fns: list,
+            augment_fns: list,
+            scale=False,
+            step =5, window_size=52,
+            batch_size=400, shuffle=True,
+            validation=False,
+            by_subject=False,
+            sample_0=True,
+            shape_option=1):
+            self.shape_option = shape_option
+            super().__init__(path, excercises,
+            process_fns,
+            augment_fns,
+            scale,
+            step, window_size,
+            batch_size, shuffle,
+            validation,
+            by_subject,
+            sample_0)
+    def __getitem__(self, index):
+        'generate a single batch'
+        indexes = self.indexes[index*self.batch_size:(index+1)*self.batch_size]
+        out = self.emg[indexes,:,:]
+        if self.augmentors is not None:
+            for f in self.augmentors:
+                for i in range(out.shape[0]):
+                    out[i,:,:]=f(out[i,:,:])
+        if self.scale:
+            out = scale(out)
+        if self.shape_option == 1:
+            out= out.reshape(out.shape[0], 52, 1, 8)
+            out= out.reshape(out.shape[0], 2, 1, 26, 8)
+        elif self.shape_option ==2:
+            # out= out.reshape(out.shape[0], 52, 1, 8)
+            out= out.reshape(out.shape[0], 2, 26, 8)
+        return out,  self.labels[indexes]
