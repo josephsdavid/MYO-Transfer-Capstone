@@ -3,6 +3,7 @@ import numpy as np
 import scipy.io
 import abc
 import argparse
+import matplotlib.pyplot as plt
 
 from .helpers import read_file_validation, pad_along_axis
 from .augmentors import window_roll, roll_labels, add_noise
@@ -105,6 +106,10 @@ class NinaLoader(Loader):
         rep = res['rerepetition'][:self.maxlen].copy()
         emg = res['emg'][:self.maxlen,:8].copy()
         lab = res['restimulus'][:self.maxlen].copy()
+
+        #plt.plot(rep[0:400])
+        #plt.show()
+
         subject = np.repeat(res['subject'], lab.shape[0])
         subject = subject.reshape(subject.shape[0],1)
 

@@ -16,19 +16,7 @@ def butter_highpass_filter(data, cutoff=2, fs=200, order=3):
     return y
 
 
-def scale(X):
-    '''
-    Scale 3D array.
-
-    Inputs
-    X            A 3D array for lstm, where the array is sample x timesteps x features.
-    scaler       A scaler object, e.g., sklearn.preprocessing.StandardScaler, sklearn.preprocessing.normalize
-
-    Output
-    X            Scaled 3D array.
-    '''
-    for i in range(X.shape[0]):
-        X[i, :, :] = StandardScaler().fit_transform(X[i, :, :])
-
-    return X
-
+def scale(arr3d):
+    for i in range(arr3d.shape[0]):
+        arr3d[i,:,:] /= arr3d[i,:,:].max(axis=0)
+    return arr3d
