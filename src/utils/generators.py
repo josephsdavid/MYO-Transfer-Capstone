@@ -81,18 +81,18 @@ class NinaGenerator(NinaLoader, tf.keras.utils.Sequence):
         self.scale=scale
         self.batch_size = batch_size
         self.shuffle =shuffle
-        print(min(self.labels))
-        print(max(self.labels))
         self._indexer(np.where(self.rep!=0))
         if sample_0:
             ids = np.where(self.labels==0)[0]
             ids2 = np.random.permutation(ids)
-            print(ids - ids2)
+            #print(ids - ids2)
             #print(ids[0].shape[0] - ids[0][::18].shape[0])
             #ids2=tuple(ids[0][::18], )
             self._deleter(ids2[:-13000])
-        v_subjects = np.array((7,8,9, 10, 11))
-        v_reps = np.array((4,5,6))
+        v_subjects = np.array(np.unique(self.subject)[3:5])
+        v_reps = np.array(np.unique(self.rep)[-2:])
+        print("v_subjects: {}".format(v_subjects))
+        print("v_reps: {}".format(v_reps))
         case_dict = {
                 (False, False):np.where(np.isin(self.rep, v_reps, invert=True)),
                 (True, False):np.where(np.isin(self.rep, v_reps)),
