@@ -34,12 +34,10 @@ batch = 200
 
 s = True
 train = u.NinaGeneratorConv("../data/ninaPro", ['b'], [u.butter_highpass_filter],
-        [u.add_noise_snr], validation=False, by_subject = s, batch_size=batch, scale = False)
+        [u.add_noise_snr], validation=False, by_subject = s, batch_size=batch, scale = False, sample_0=False)
 
 test = u.NinaGeneratorConv("../data/ninaPro", ['b'], [u.butter_highpass_filter],
-        None, validation=True, by_subject = s, batch_size=batch, scale = False)
-
-#%%
+        None, validation=True, by_subject = s, batch_size=batch, scale = False, sample_0=False)
 
 
 
@@ -59,24 +57,16 @@ optim = SGD(momentum=0.9, nesterov=True)
 # of identical shape.
 
 seq = Sequential()
-seq.add(ConvLSTM2D(filters=6, kernel_size=(1, 7),data_format='channels_last',
+seq.add(ConvLSTM2D(filters=12, kernel_size=(1, 5),data_format='channels_last',
                    input_shape=(None, 1, 26, 8),
                    padding='same', return_sequences=True))
 seq.add(BatchNormalization())
 
-seq.add(ConvLSTM2D(filters=12, kernel_size=(1, 5),data_format='channels_last',
+seq.add(ConvLSTM2D(filters=24, kernel_size=(1, 3),data_format='channels_last',
                    padding='same', return_sequences=True))
 seq.add(BatchNormalization())
-seq.add(ConvLSTM2D(filters=12, kernel_size=(1, 3),data_format='channels_last',
+seq.add(ConvLSTM2D(filters=24, kernel_size=(1, 3),data_format='channels_last',
                    padding='same', return_sequences=False))
-# seq.add(BatchNormalization())
-# seq.add(ConvLSTM2D(filters=12, kernel_size=(1, 5),data_format='channels_last',
-#                    padding='valid', return_sequences=False))
-
-
-# seq.add(Conv3D(filters=8, kernel_size=(8, 4, 4),
-#                activation='sigmoid',
-#                padding='same', data_format='channels_last'))
 seq.add(Flatten())
 seq.add(Dense(512, activation='relu'))
 seq.add(Dropout(0.5))

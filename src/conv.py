@@ -34,12 +34,10 @@ session = InteractiveSession(config=config)
 batch = 200
 
 s = True
-train = NinaGenerator("../data/ninaPro", ['b'], [u.butter_highpass_filter],
+train = u.NinaGenerator("../data/ninaPro", ['b'], [u.butter_highpass_filter],
         [u.add_noise_snr], validation=False, by_subject = s, batch_size=batch, scale = False, sample_0=False)
-train2 = NinaGenerator("../data/ninaPro", ['b'], [u.butter_highpass_filter],
-        [u.add_noise_snr], validation=False, by_subject = s, batch_size=batch, scale = False, sample_0=True)
-#%%
-test = NinaGenerator("../data/ninaPro", ['b'], [u.butter_highpass_filter],
+
+test = u.NinaGenerator("../data/ninaPro", ['b'], [u.butter_highpass_filter],
         None, validation=True, by_subject = s, batch_size=batch, scale = False)
 
 #%%
@@ -84,7 +82,7 @@ history = model.fit(train, epochs=50, #callbacks=[clr ],
 # %%
 
 def evaluate_model(_train, _test):
-    verbose, epochs = 1, 25
+    verbose, epochs = 1, 15
     inputs = Input((52,8))
     c_layer = Conv1D(filters=20, kernel_size=7, activation='relu')(inputs)
     c_layer = Conv1D(filters=64, kernel_size=5, activation='relu')(c_layer)
@@ -128,3 +126,5 @@ def run_experiment(repeats=10):
 
 # %%
 run_experiment()
+
+# %%

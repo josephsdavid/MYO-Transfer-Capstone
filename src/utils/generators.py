@@ -162,6 +162,7 @@ class NinaGeneratorConv(NinaGenerator):
             process_fns: list,
             augment_fns: list,
             scale=False,
+            rectify=False,
             step =5, window_size=52,
             batch_size=400, shuffle=True,
             validation=False,
@@ -173,6 +174,7 @@ class NinaGeneratorConv(NinaGenerator):
             process_fns,
             augment_fns,
             scale,
+            rectify,
             step, window_size,
             batch_size, shuffle,
             validation,
@@ -186,9 +188,12 @@ class NinaGeneratorConv(NinaGenerator):
             for f in self.augmentors:
                 for i in range(out.shape[0]):
                     out[i,:,:]=f(out[i,:,:])
+        if self.rectify:
+            out = np.abs(out)
         if self.scale:
             out = scale(out)
         if self.shape_option == 1:
+            
             out= out.reshape(out.shape[0], 52, 1, 8)
             out= out.reshape(out.shape[0], 2, 1, 26, 8)
         elif self.shape_option ==2:

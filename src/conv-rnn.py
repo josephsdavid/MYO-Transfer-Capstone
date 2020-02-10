@@ -39,8 +39,6 @@ train = u.NinaGeneratorConv("../data/ninaPro", ['b'], [u.butter_highpass_filter]
 test = u.NinaGeneratorConv("../data/ninaPro", ['b'], [u.butter_highpass_filter],
         None, validation=True, by_subject = s, batch_size=batch, scale = False, shape_option=2)
 
-#%%
-
 
 
 #%%
