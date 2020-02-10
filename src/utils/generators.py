@@ -81,14 +81,14 @@ class NinaGenerator(NinaLoader, tf.keras.utils.Sequence):
         self.scale=scale
         self.batch_size = batch_size
         self.shuffle =shuffle
-        self._indexer(np.where(self.rep!=0))
+        #self._indexer(np.where(self.rep!=0))
         if sample_0:
             ids = np.where(self.labels==0)[0]
-            ids2 = np.random.permutation(ids)
+            np.random.shuffle(ids)
             #print(ids - ids2)
             #print(ids[0].shape[0] - ids[0][::18].shape[0])
             #ids2=tuple(ids[0][::18], )
-            self._deleter(ids2[:-13000])
+            self._deleter(ids[:-13000])
         v_subjects = np.array(np.unique(self.subject)[3:5])
         v_reps = np.array(np.unique(self.rep)[-2:])
         print("v_subjects: {}".format(v_subjects))
@@ -99,14 +99,14 @@ class NinaGenerator(NinaLoader, tf.keras.utils.Sequence):
                 (False, True):np.where(np.isin(self.subject, v_subjects, invert=True)),
                 (True, True):np.where(np.isin(self.subject, v_subjects))
                 }
-        #print("number in rep 0: {}".format(self.emg[np.where(self.rep==0)].shape[0]))
-        #print("number in label 0 : {}".format(self.emg[np.where(self.labels==0)].shape[0]))
-        #print("number in label 1 : {}".format(self.emg[np.where(self.labels==1)].shape[0]))
-        #print("number in label 2 : {}".format(self.emg[np.where(self.labels==2)].shape[0]))
-        #print("number in label 3 : {}".format(self.emg[np.where(self.labels==3)].shape[0]))
-        #print("number in label 4 : {}".format(self.emg[np.where(self.labels==4)].shape[0]))
-        #print("number in label 5 : {}".format(self.emg[np.where(self.labels==5)].shape[0]))
-        #print("number minlabel labe1 :: {}".format(self.emg[np.where(self.labels==lab10)].shape[0] / self.emg[np.where(self.rep!=1)].shape[0]))
+        print("number in rep 0: {}".format(self.emg[np.where(self.rep==0)].shape[0]))
+        print("number in label 0 : {}".format(self.emg[np.where(self.labels==0)].shape[0]))
+        print("number in label 1 : {}".format(self.emg[np.where(self.labels==1)].shape[0]))
+        print("number in label 2 : {}".format(self.emg[np.where(self.labels==2)].shape[0]))
+        print("number in label 3 : {}".format(self.emg[np.where(self.labels==3)].shape[0]))
+        print("number in label 4 : {}".format(self.emg[np.where(self.labels==4)].shape[0]))
+        print("number in label 5 : {}".format(self.emg[np.where(self.labels==5)].shape[0]))
+  #      print("number minlabel labe1 :: {}".format(self.emg[np.where(self.labels==lab10)].shape[0] / self.emg[np.where(self.rep!=1)].shape[0]))
         #print(1/18label1 :[(validation, by_subject)]
         # fix!!
         case = case_dict[(validation, by_subject)]
@@ -122,12 +122,11 @@ class NinaGenerator(NinaLoader, tf.keras.utils.Sequence):
         self.labels=self.labels[id]
         self.subject=self.subject[id]
 
-    def _deleter(self, id):
-        self.emg = self.emg[~id]
-        self.rep = self.rep[~id]
-        self.labels=self.labels[~id]
-        self.subject=self.subject[~id]
-
+    def _deleter(self, loc):
+        self.emg = np.delete(self.emg, loc, axis=0 )
+        self.rep = np.delete(self.rep, loc, axis=0 )
+        self.labels = np.delete(self.labels, loc, axis=0 )
+        self.subject = np.delete(self.subject, loc, axis=0 )
 
 
     def __len__(self):
