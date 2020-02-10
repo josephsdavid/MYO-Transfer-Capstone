@@ -193,10 +193,13 @@ class NinaGeneratorConv(NinaGenerator):
         if self.scale:
             out = scale(out)
         if self.shape_option == 1:
-            
             out= out.reshape(out.shape[0], 52, 1, 8)
             out= out.reshape(out.shape[0], 2, 1, 26, 8)
-        elif self.shape_option ==2:
+        elif self.shape_option == 2:
             # out= out.reshape(out.shape[0], 52, 1, 8)
             out= out.reshape(out.shape[0], 2, 26, 8)
+        elif self.shape_option == 3:
+            out= out.reshape(out.shape[0], 1, 52, 8)
+        else:
+            pass
         return out,  self.labels[indexes]

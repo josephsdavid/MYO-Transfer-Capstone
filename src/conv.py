@@ -33,12 +33,13 @@ session = InteractiveSession(config=config)
 #%%
 batch = 200
 
-s = True
+s = False
+scale = False
 train = u.NinaGenerator("../data/ninaPro", ['b'], [u.butter_highpass_filter],
-        [u.add_noise_snr], validation=False, by_subject = s, batch_size=batch, scale = False, sample_0=False)
+        [u.add_noise_snr], validation=False, by_subject = s, batch_size=batch, scale = scale,rectify=True)
 
 test = u.NinaGenerator("../data/ninaPro", ['b'], [u.butter_highpass_filter],
-        None, validation=True, by_subject = s, batch_size=batch, scale = False)
+        None, validation=True, by_subject = s, batch_size=batch, scale = scale,rectify=True)
 
 #%%
 
@@ -85,18 +86,24 @@ optim = SGD(momentum=0.9, nesterov=True)
 def evaluate_model(_train, _test):
     verbose, epochs = 1, 15
     inputs = Input((52,8))
-    c_layer = Conv1D(filters=64, kernel_size=7, activation='relu')(inputs)
-    c_layer = Conv1D(filters=128, kernel_size=5, activation='relu')(c_layer)
-    c_layer = Conv1D(filters=128, kernel_size=5, activation='relu')(c_layer)
-    c_layer = Conv1D(filters=128, kernel_size=3, activation='relu')(c_layer)
-    c_layer = Conv1D(filters=128, kernel_size=3, activation='relu')(c_layer)
-    do1 = Dropout(0.5)(c_layer)
-    mp1 = MaxPooling1D(pool_size=2)(do1)
+    c_layer = Conv1D(filters=32, kernel_size=1, activation='relu')(inputs)
+    c_layer = Conv1D(filters=32, kernel_size=1, activation='relu')(c_layer)
+    c_layer = Conv1D(filters=32, kernel_size=1, activation='relu')(c_layer)
+    c_layer = MaxPooling1D(pool_size=2)(c_layer)
+    c_layer = Conv1D(filters=64, kernel_size=3, activation='relu')(c_layer)
+    c_layer = Conv1D(filters=64, kernel_size=3, activation='relu')(c_layer)
+    c_layer = Conv1D(filters=64, kernel_size=3, activation='relu')(c_layer)
+    # c_layer = MaxPooling1D(pool_size=2)(c_layer)
+    # c_layer = Conv1D(filters=64, kernel_size=3, activation='relu')(c_layer)
+    # c_layer = MaxPooling1D(pool_size=2)(c_layer)
+    # c_layer = Conv1D(filters=128, kernel_size=3, activation='relu')(c_layer)
+    mp1 = MaxPooling1D(pool_size=2)(c_layer)
     fl1 = Flatten()(mp1)
-    dense1 = Dense(100, activation='relu')(fl1)
+    dense1 = Dense(128, activation='relu')(fl1)
     do2 = Dropout(0.5)(dense1)
     outputs = Dense(18, activation='softmax')(do2)
     model = Model(inputs, outputs)
+    model.summary()
     model.compile(loss='sparse_categorical_crossentropy', 
                 optimizer='adam', metrics=['accuracy'])
     model.fit(_train, epochs=epochs, #callbacks=[clr ],
@@ -129,4 +136,4 @@ def run_experiment(repeats=10):
 # %%
 run_experiment()
 
-# %%
+ # %%

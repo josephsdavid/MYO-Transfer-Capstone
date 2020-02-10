@@ -15,13 +15,13 @@ from .augmentors import window_roll, roll_labels, add_noise
 from .loaders import Loader
 from .preprocessors import butter_highpass_filter, scale
 
-@memory.cache
+
 def mode0(x):
     values, counts = np.unique(x, return_counts=True)
     m = counts.argmax()
     return values[m]
 
-@memory.cache
+
 def mode(arr):
     res =  [mode0(arr[i]) for i in range(arr.shape[0])]
     return np.asarray(res)

@@ -54,7 +54,7 @@ optim = SGD(momentum=0.9, nesterov=True)
 
 
 model = Sequential()
-model.add(TimeDistributed(Conv1D(filters=20, kernel_size=5, activation='relu'), input_shape=(None,26,8)))
+model.add(TimeDistributed(Conv1D(filters=20, kernel_size=3, activation='relu'), input_shape=(None,26,8)))
 model.add(TimeDistributed(Conv1D(filters=64, kernel_size=3, activation='relu')))
 model.add(TimeDistributed(Conv1D(filters=64, kernel_size=3, activation='relu')))
 model.add(TimeDistributed(Conv1D(filters=64, kernel_size=3, activation='relu')))

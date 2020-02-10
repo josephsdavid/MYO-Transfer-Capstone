@@ -25,6 +25,8 @@ import matplotlib.pyplot as plt
 from tensorflow.compat.v1 import ConfigProto
 from tensorflow.compat.v1 import InteractiveSession
 
+#%%
+
 config = ConfigProto()
 config.gpu_options.allow_growth = True
 session = InteractiveSession(config=config)
@@ -34,17 +36,17 @@ batch = 800
 
 s = False
 train = u.NinaGeneratorConv("../data/ninaPro", ['b'], [u.butter_highpass_filter],
-        [u.add_noise_snr], validation=False, by_subject = s, batch_size=batch, scale = True, sample_0=True)
+        [u.add_noise_snr], validation=False, by_subject = s, batch_size=batch, scale = False, sample_0=False)
 
 test = u.NinaGeneratorConv("../data/ninaPro", ['b'], [u.butter_highpass_filter],
-        None, validation=True, by_subject = s, batch_size=batch, scale = True, sample_0=False)
+        None, validation=True, by_subject = s, batch_size=batch, scale = False, sample_0=False)
 
 
 
 #%%
 clr=cb.OneCycleLR(
-                 max_lr=0.4,
-                 end_percentage=0.2,
+                 max_lr=.1,
+                 end_percentage=0.1,
                  scale_percentage=None,
                  maximum_momentum=0.95,
                  minimum_momentum=0.85,
@@ -57,19 +59,18 @@ optim = SGD(momentum=0.9, nesterov=True)
 # of identical shape.
 
 seq = Sequential()
-seq.add(ConvLSTM2D(filters=32, kernel_size=(1, 5),data_format='channels_last',
+seq.add(ConvLSTM2D(filters=32, kernel_size=(1, 3),data_format='channels_last',
                    input_shape=(None, 1, 26, 8),
                    padding='same', return_sequences=True))
-seq.add(BatchNormalization())
-
+seq.add(ConvLSTM2D(filters=32, kernel_size=(1, 3),data_format='channels_last',
+                   padding='same', return_sequences=True))
 seq.add(ConvLSTM2D(filters=64, kernel_size=(1, 3),data_format='channels_last',
                    padding='same', return_sequences=True))
-seq.add(BatchNormalization())
 seq.add(ConvLSTM2D(filters=64, kernel_size=(1, 3),data_format='channels_last',
                    padding='same', return_sequences=False))
 seq.add(Flatten())
 seq.add(Dense(512, activation='relu'))
-seq.add(Dropout(0.5))
+seq.add(Dense(512, activation='relu'))
 seq.add(Dense(18, activation='softmax'))
 seq.compile(loss='sparse_categorical_crossentropy', 
             optimizer=optim, metrics=['accuracy'])
@@ -79,7 +80,7 @@ seq.summary()
 
 
 # %%
-history = seq.fit(train, epochs=50, callbacks=[clr ],
+history = seq.fit(train, epochs=100, callbacks=[clr ],
         validation_data=test, shuffle = False)
 
 # %%# %%
