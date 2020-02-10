@@ -2,7 +2,7 @@ import tensorflow as tf
 import numpy as np
 import utils as u
 import callbacks as cb
-from tensorflow.keras.layers import Input, Dense, LSTM, Bidirectional, PReLU, Flatten, BatchNormalization, RepeatVector, TimeDistributed
+from tensorflow.keras.layers import Input, Dense, GRU, Bidirectional, PReLU, Flatten, BatchNormalization, RepeatVector, TimeDistributed, LSTM
 from tensorflow.keras.utils import plot_model
 from tensorflow.keras.optimizers import RMSprop, Adam, SGD, Nadam
 from tensorflow.keras.models import Model, load_model
@@ -11,7 +11,7 @@ import tensorflow.keras.backend as K
 from tensorflow.keras.utils import to_categorical
 import matplotlib.pyplot as plt
 
-batch=16
+batch=300
 
 
 def noise(snr):
@@ -29,8 +29,8 @@ optim = SGD(momentum=0.9, nesterov=True)
 
 abc = ['b','a','c']
 subject=[True, False]
-rec_drop = 0.5
-drop=0.5
+rec_drop = 0.2
+drop=0.2
 
 results = {}
 hl = []
@@ -38,7 +38,7 @@ hl = []
 for i in range(len(abc)):
     for s in subject:
         clr=cb.OneCycleLR(
-            max_lr=1,
+            max_lr=0.01,
             end_percentage=0.1,
             scale_percentage=None,
             maximum_momentum=0.95,
@@ -46,73 +46,62 @@ for i in range(len(abc)):
             verbose=True)
         train = u.NinaGenerator("../data/ninaPro", [abc[i]], [u.butter_highpass_filter],
                 [u.add_noise_snr], validation=False, by_subject = s, batch_size=batch,
-                scale = False, rectify=False, step=52)
+                scale = True, rectify=False, sample_0=False)
         print(train[0][1])
         print(np.unique(train.subject))
         print(np.unique(train.rep))
         test = u.NinaGenerator("../data/ninaPro", [abc[i]], [u.butter_highpass_filter],
                 None, validation=True, by_subject = s, batch_size=batch,
-                scale = False, rectify = False, step=52)
+                scale = True, rectify = False, sample_0=False)
 
-        #x_tr = []
-        #y_tr = []
-        #for t in train:
-        #    x_tr.append(t[0])
-        #    y_tr.append(t[1])
 
-        #x_val = []
-        #y_val = []
-        #for t in test:
-        #    x_val.append(t[0])
-        #    y_val.append(t[1])
-        #x_tr, y_tr, x_val, y_val = (np.concatenate(x,axis=0) for x in [x_tr, y_tr, x_val, y_val])
-        #x_tr /= 128
-        #x_val /=128
+        x_tr = []
+        y_tr = []
+        for t in train:
+            x_tr.append(t[0])
+            y_tr.append(t[1])
+
+        x_val = []
+        y_val = []
+        for t in test:
+            x_val.append(t[0])
+            y_val.append(t[1])
+        y_val = np.hstack(y_val)
+        y_tr = np.hstack(y_tr)
+        x_tr, x_val = (np.concatenate(x,axis=0) for x in [x_tr, x_val])
+        def or1(x):
+            out =  0 if x==0 else 1
+            return out
+
+        y2t = np.hstack([or1(y_tr[i]) for i in range(y_tr.shape[0]) ])
+        y2v = np.hstack([or1(y_val[i]) for i in range(y_val.shape[0]) ])
+        import pdb; pdb.set_trace()  # XXX BREAKPOINT
+
+
         sub = 'subject' if s else 'repetition'
         loc = 'notransfer_'+sub+'_'+abc[i]
         out_shape = to_categorical(train.labels).shape[-1]
         print('beginning ' +loc )
-        lstm_size=64
+        lstm_size=52
         inputs = Input((52,8))
-        #encoded = Bidirectional(LSTM(lstm_size*2, dropout=drop, recurrent_dropout=drop, return_sequences=True))(inputs)
-        #encoded2, h1, b1, h2, b2 = Bidirectional(LSTM(lstm_size, dropout=drop, recurrent_dropout=rec_drop, return_state=True, return_sequences=False))(encoded)
-        #decoded = RepeatVector(52)(encoded2)
-        #decoded = Bidirectional(LSTM(lstm_size, dropout=drop, recurrent_dropout=rec_drop, return_state=False, return_sequences=True))(decoded, initial_state=[h1,b1,h2,b2])
-        #encoded = Bidirectional(LSTM(lstm_size*2, dropout=drop, recurrent_dropout=drop, return_sequences=True))(decoded)
-        #dec_out = TimeDistributed(Dense(8), name = "decoder")(decoded)
-        x, s1, s2, s3, s4 = Bidirectional(LSTM(lstm_size, dropout = drop, recurrent_dropout=rec_drop, return_sequences=True, return_state=True, bias_initializer='ones'))(inputs)
-        x = PReLU()(x)
-        #x = Dense(500)(encoded2)
-        #x = PReLU()(x)
-        #x = Dense(1000)(x)
-        #x = PReLU()(x)
-        #x = Dense(1000)(x)
-        #x = PReLU()(x)
-        x = Bidirectional(LSTM(lstm_size, dropout = drop, recurrent_dropout=rec_drop, return_sequences=False))(x, initial_state = [s1,s2,s3,s4])
-        x = PReLU()(x)
+        x, h1, b1, h2, b2 = Bidirectional(LSTM(lstm_size, dropout=drop, recurrent_dropout=drop, return_sequences=True, return_state=True))(inputs)
+
+        x = Bidirectional(LSTM(lstm_size, dropout=drop, recurrent_dropout=rec_drop, return_state=False, return_sequences=False))(x, initial_state=[h1,b1,h2,b2])
         outputs = Dense(out_shape, activation='softmax', name="classifier")(x)
-        #lstm = Model(inputs, [outputs, dec_out])
-        lstm = Model(inputs, outputs)
-        #if s:
-        #    plot_model(lstm, show_shapes=True, expand_nested=True, to_file="model.png")
+        out2 = Dense(1, activation='sigmoid', name = 'zero')(x)
+        lstm = Model(inputs, [outputs, out2])
 
-        #lstm.compile(optimizer=SGD(learning_rate=1e-2, momentum=0.9, nesterov=True, decay=1e-4),
-        #             loss={'classifier':'sparse_categorical_crossentropy','decoder':'mse'}, metrics=['accuracy'])
-        #lstm.compile(optimizer=SGD(learning_rate=1e-3, momentum=0.9, nesterov=True, decay=1e-4), loss='sparse_categorical_crossentropy', metrics=['accuracy'])
-        lstm.compile(optimizer=Adam(lr=0.0005), loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+        lstm.compile(optimizer=SGD(learning_rate=1e-3, momentum=0.9, nesterov=True, decay=1e-4),
+                     loss={'classifier':'sparse_categorical_crossentropy','zero':'binary_crossentropy'}, metrics=['accuracy'])
 
-        callb = [EarlyStopping(patience=1000, monitor='val_loss'), ModelCheckpoint("models/lstm_{}.h5".format(loc),monitor='val_loss', save_best_only=True)]
+        callb = [EarlyStopping(patience=1000, monitor='val_loss'), ModelCheckpoint("models/gru_{}.h5".format(loc),monitor='val_classifier_loss', save_best_only=True), clr]
 
-        #history = lstm.fit(x_tr, {'decoder':x_tr, 'classifier':y_tr},
-        #                   epochs=500, batch_size=batch,
-        #                   validation_data=(x_val, {'decoder':x_val, 'classifier':y_val}),
-        #                   shuffle = False, workers=12, use_multiprocessing=True)
         print(len(train))
-        hl.append(lstm.fit(train, epochs=500,  callbacks=callb, validation_data=test,
-                           shuffle=False, workers=12, use_multiprocessing=True,
-                           max_queue_size=40
+        hl.append(lstm.fit(x_tr, {'classifier':y_tr, 'zero':y2t}, epochs=100,  callbacks=callb, validation_data=(x_val,{'classifier':y_val, 'zero':y2v}),
+                           shuffle=True,  batch_size=batch,
                           # , steps_per_epoch=len(test)
                            ))
+
 
         results[loc] = lstm.evaluate(test)
         #lstm.save("models/lstm_{}.h5".format(loc))

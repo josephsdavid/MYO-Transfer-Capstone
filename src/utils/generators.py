@@ -59,11 +59,6 @@ class PreTrainGenerator(PreTrainLoader, tf.keras.utils.Sequence):
         return self.emg[indexes,:,:],  self.labels[indexes]
 
 
-
-
-
-
-
 class NinaGenerator(NinaLoader, tf.keras.utils.Sequence):
     def __init__(self, path: str, excercises: list,
             process_fns: list,
@@ -100,7 +95,7 @@ class NinaGenerator(NinaLoader, tf.keras.utils.Sequence):
                 (False, True):np.where(np.isin(self.subject, v_subjects, invert=True)),
                 (True, True):np.where(np.isin(self.subject, v_subjects))
                 }
-                
+
         print("number in    rep 0: {}".format(self.emg[np.where(self.rep==0)].shape[0]))
 
         print("number in label 0 : {}".format(self.emg[np.where(self.labels==0)].shape[0]))
@@ -193,7 +188,7 @@ class NinaGeneratorConv(NinaGenerator):
         if self.scale:
             out = scale(out)
         if self.shape_option == 1:
-            
+
             out= out.reshape(out.shape[0], 52, 1, 8)
             out= out.reshape(out.shape[0], 2, 1, 26, 8)
         elif self.shape_option ==2:
