@@ -7,7 +7,7 @@
 import tensorflow as tf
 import numpy as np
 import utils as u
-# from utils import NinaGenerator
+from utils import NinaGenerator
 import callbacks as cb
 from tensorflow.keras.layers import Input, Dense, LSTM, Bidirectional, PReLU, RepeatVector, TimeDistributed, Flatten
 from tensorflow.keras.optimizers import RMSprop, Adam, SGD
@@ -34,10 +34,12 @@ session = InteractiveSession(config=config)
 batch = 200
 
 s = True
-train = u.NinaGenerator("../data/ninaPro", ['b'], [u.butter_highpass_filter],
+train = NinaGenerator("../data/ninaPro", ['b'], [u.butter_highpass_filter],
+        [u.add_noise_snr], validation=False, by_subject = s, batch_size=batch, scale = False, sample_0=False)
+train2 = NinaGenerator("../data/ninaPro", ['b'], [u.butter_highpass_filter],
         [u.add_noise_snr], validation=False, by_subject = s, batch_size=batch, scale = False, sample_0=True)
-
-test = u.NinaGenerator("../data/ninaPro", ['b'], [u.butter_highpass_filter],
+#%%
+test = NinaGenerator("../data/ninaPro", ['b'], [u.butter_highpass_filter],
         None, validation=True, by_subject = s, batch_size=batch, scale = False)
 
 #%%
