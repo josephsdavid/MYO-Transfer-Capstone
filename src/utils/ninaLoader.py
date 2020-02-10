@@ -5,10 +5,23 @@ import abc
 import argparse
 import matplotlib.pyplot as plt
 
+
 from .helpers import read_file_validation, pad_along_axis
 from .augmentors import window_roll, roll_labels, add_noise
 from .loaders import Loader
 from .preprocessors import butter_highpass_filter, scale
+
+
+def mode0(x):
+    values, counts = np.unique(x, return_counts=True)
+    m = counts.argmax()
+    return values[m]
+
+def mode(arr):
+    res =  [mode0(arr[i]) for i in range(arr.shape[0])]
+    return np.asarray(res)
+
+
 
 # we will argparse the generator
 #parser = argparse.ArgumentParser(description='Config loader...')
@@ -81,9 +94,12 @@ class NinaLoader(Loader):
         print(f"[Step 3 ==> moveaxis] Shape of reps: {np.shape(self.rep.copy())}")
         print(f"[Step 3 ==> moveaxis] Shape of subjects: {np.shape(self.subject.copy())}")
         self.emg = np.moveaxis(np.concatenate(self.emg,axis=0),2,1)
-        self.labels = np.moveaxis(np.concatenate(self.labels,axis=0),2,1).mean(axis=1).round()[:,0]
-        self.rep = np.moveaxis(np.concatenate(self.rep,axis=0),2,1).mean(axis=1).round()[:,0]
-        self.subject = np.moveaxis(np.concatenate(self.subject,axis=0),2,1).mean(axis=1)[:,0]
+
+        # hack, turns them into a square array with [...,-1] then for i in axis
+        # 0 takes the mode of that thing, still faster than scipy mode lol
+        self.labels = mode(np.moveaxis(np.concatenate(self.labels,axis=0),2,1)[...,-1])
+        self.rep = mode(np.moveaxis(np.concatenate(self.rep,axis=0),2,1)[...,-1])
+        self.subject = mode(np.moveaxis(np.concatenate(self.subject,axis=0),2,1)[...,-1])
         #if VERBOSE :
         self.emg = self.emg.astype(np.float16)
         print(f"[Step 4 ==> scale] Shape of emg: {np.shape(self.emg)}")
