@@ -133,3 +133,5 @@ tmux.conf
 
 data/*
 !data/*.sh
+
+cachedir/*

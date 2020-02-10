@@ -24,7 +24,7 @@ import matplotlib.pyplot as plt
 ## https://github.com/tensorflow/tensorflow/issues/24496
 from tensorflow.compat.v1 import ConfigProto
 from tensorflow.compat.v1 import InteractiveSession
-
+#%%
 config = ConfigProto()
 config.gpu_options.allow_growth = True
 session = InteractiveSession(config=config)
@@ -54,16 +54,14 @@ optim = SGD(momentum=0.9, nesterov=True)
 
 
 model = Sequential()
-model.add(TimeDistributed(Conv1D(filters=20, kernel_size=7, activation='relu'), input_shape=(None,26,8)))
-model.add(TimeDistributed(Conv1D(filters=64, kernel_size=5, activation='relu')))
-model.add(TimeDistributed(Conv1D(filters=64, kernel_size=5, activation='relu')))
-model.add(TimeDistributed(Conv1D(filters=64, kernel_size=5, activation='relu')))
-model.add(TimeDistributed(Dropout(0.5)))
+model.add(TimeDistributed(Conv1D(filters=20, kernel_size=5, activation='relu'), input_shape=(None,26,8)))
+model.add(TimeDistributed(Conv1D(filters=64, kernel_size=3, activation='relu')))
+model.add(TimeDistributed(Conv1D(filters=64, kernel_size=3, activation='relu')))
+model.add(TimeDistributed(Conv1D(filters=64, kernel_size=3, activation='relu')))
 model.add(TimeDistributed(MaxPooling1D(pool_size=2)))
 model.add(TimeDistributed(Flatten()))
 model.add(LSTM(52,dropout=.2, return_sequences=True))
 model.add(LSTM(52, dropout=.2,return_sequences=False))
-model.add(Dropout(0.5))
 model.add(Dense(100, activation='relu'))
 model.add(Dense(18, activation='softmax'))
 model.compile(loss='sparse_categorical_crossentropy', 

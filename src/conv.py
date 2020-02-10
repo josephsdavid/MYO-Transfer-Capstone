@@ -56,50 +56,52 @@ optim = SGD(momentum=0.9, nesterov=True)
 #%%
 
 
-inputs = Input((52,8))
-c_layer = Conv1D(filters=20, kernel_size=7, activation='relu')(inputs)
-c_layer = Conv1D(filters=64, kernel_size=5, activation='relu')(c_layer)
-c_layer = Conv1D(filters=64, kernel_size=5, activation='relu')(c_layer)
-c_layer = Conv1D(filters=64, kernel_size=5, activation='relu')(c_layer)
-do1 = Dropout(0.5)(c_layer)
-mp1 = MaxPooling1D(pool_size=2)(do1)
-fl1 = Flatten()(mp1)
-do2 = Dropout(0.5)(fl1)
-dense1 = Dense(100, activation='relu')(do2)
-outputs = Dense(18, activation='softmax')(dense1)
-model = Model(inputs, outputs)
-model.compile(loss='sparse_categorical_crossentropy', 
-            optimizer='adam', metrics=['accuracy'])
+# inputs = Input((52,8))
+# c_layer = Conv1D(filters=64, kernel_size=7, activation='relu')(inputs)
+# c_layer = Conv1D(filters=128, kernel_size=5, activation='relu')(c_layer)
+# c_layer = Conv1D(filters=128, kernel_size=5, activation='relu')(c_layer)
+# c_layer = Conv1D(filters=128, kernel_size=3, activation='relu')(c_layer)
+# c_layer = Conv1D(filters=128, kernel_size=3, activation='relu')(c_layer)
+# do1 = Dropout(0.5)(c_layer)
+# mp1 = MaxPooling1D(pool_size=2)(do1)
+# fl1 = Flatten()(mp1)
+# dense1 = Dense(100, activation='relu')(fl1)
+# do2 = Dropout(0.5)(dense1)
+# outputs = Dense(18, activation='softmax')(do2)
+# model = Model(inputs, outputs)
+# model.compile(loss='sparse_categorical_crossentropy', 
+#             optimizer='adam', metrics=['accuracy'])
 
-#%%
-model.summary()
+# #%%
+# model.summary()
 
 
-# %%
-history = model.fit(train, epochs=50, #callbacks=[clr ],
-        shuffle = False)
+# # %%
+# history = model.fit(train, epochs=50, #callbacks=[clr ],
+#         shuffle = False)
 
 # %%
 
 def evaluate_model(_train, _test):
     verbose, epochs = 1, 15
     inputs = Input((52,8))
-    c_layer = Conv1D(filters=20, kernel_size=7, activation='relu')(inputs)
-    c_layer = Conv1D(filters=64, kernel_size=5, activation='relu')(c_layer)
-    c_layer = Conv1D(filters=64, kernel_size=5, activation='relu')(c_layer)
-    c_layer = Conv1D(filters=64, kernel_size=5, activation='relu')(c_layer)
+    c_layer = Conv1D(filters=64, kernel_size=7, activation='relu')(inputs)
+    c_layer = Conv1D(filters=128, kernel_size=5, activation='relu')(c_layer)
+    c_layer = Conv1D(filters=128, kernel_size=5, activation='relu')(c_layer)
+    c_layer = Conv1D(filters=128, kernel_size=3, activation='relu')(c_layer)
+    c_layer = Conv1D(filters=128, kernel_size=3, activation='relu')(c_layer)
     do1 = Dropout(0.5)(c_layer)
     mp1 = MaxPooling1D(pool_size=2)(do1)
     fl1 = Flatten()(mp1)
-    do2 = Dropout(0.5)(fl1)
-    dense1 = Dense(100, activation='relu')(do2)
-    outputs = Dense(18, activation='softmax')(dense1)
+    dense1 = Dense(100, activation='relu')(fl1)
+    do2 = Dropout(0.5)(dense1)
+    outputs = Dense(18, activation='softmax')(do2)
     model = Model(inputs, outputs)
     model.compile(loss='sparse_categorical_crossentropy', 
                 optimizer='adam', metrics=['accuracy'])
     model.fit(_train, epochs=epochs, #callbacks=[clr ],
-        shuffle = False, verbose=verbose)
-    _, accuracy = model.evaluate(test, verbose=verbose)
+        shuffle = False, validation_data=_test, verbose=verbose)
+    _, accuracy = model.evaluate(_test, verbose=verbose)
     return accuracy
 
 # summarize scores

@@ -30,14 +30,14 @@ config.gpu_options.allow_growth = True
 session = InteractiveSession(config=config)
 ## END CUDA FIX
 #%%
-batch = 200
+batch = 800
 
-s = True
+s = False
 train = u.NinaGeneratorConv("../data/ninaPro", ['b'], [u.butter_highpass_filter],
-        [u.add_noise_snr], validation=False, by_subject = s, batch_size=batch, scale = False, sample_0=False)
+        [u.add_noise_snr], validation=False, by_subject = s, batch_size=batch, scale = True, sample_0=True)
 
 test = u.NinaGeneratorConv("../data/ninaPro", ['b'], [u.butter_highpass_filter],
-        None, validation=True, by_subject = s, batch_size=batch, scale = False, sample_0=False)
+        None, validation=True, by_subject = s, batch_size=batch, scale = True, sample_0=False)
 
 
 
@@ -57,29 +57,29 @@ optim = SGD(momentum=0.9, nesterov=True)
 # of identical shape.
 
 seq = Sequential()
-seq.add(ConvLSTM2D(filters=12, kernel_size=(1, 5),data_format='channels_last',
+seq.add(ConvLSTM2D(filters=32, kernel_size=(1, 5),data_format='channels_last',
                    input_shape=(None, 1, 26, 8),
                    padding='same', return_sequences=True))
 seq.add(BatchNormalization())
 
-seq.add(ConvLSTM2D(filters=24, kernel_size=(1, 3),data_format='channels_last',
+seq.add(ConvLSTM2D(filters=64, kernel_size=(1, 3),data_format='channels_last',
                    padding='same', return_sequences=True))
 seq.add(BatchNormalization())
-seq.add(ConvLSTM2D(filters=24, kernel_size=(1, 3),data_format='channels_last',
+seq.add(ConvLSTM2D(filters=64, kernel_size=(1, 3),data_format='channels_last',
                    padding='same', return_sequences=False))
 seq.add(Flatten())
 seq.add(Dense(512, activation='relu'))
 seq.add(Dropout(0.5))
 seq.add(Dense(18, activation='softmax'))
 seq.compile(loss='sparse_categorical_crossentropy', 
-            optimizer='adam', metrics=['accuracy'])
+            optimizer=optim, metrics=['accuracy'])
 
 #%%
 seq.summary()
 
 
 # %%
-history = seq.fit(train, epochs=50, #callbacks=[clr ],
+history = seq.fit(train, epochs=50, callbacks=[clr ],
         validation_data=test, shuffle = False)
 
 # %%# %%
