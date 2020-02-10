@@ -15,8 +15,10 @@ def butter_highpass_filter(data, cutoff=2, fs=200, order=3):
     y = signal.lfilter(b, a, data)
     return y
 
-
+## TODO: either allow for true scaling transformer to be trained
+## and resused on validation/test data. Or make new function for this
+## Fix addresses issue of array containing +/- values.
 def scale(arr3d):
     for i in range(arr3d.shape[0]):
-        arr3d[i,:,:] /= arr3d[i,:,:].max(axis=0)
+        arr3d[i,:,:] /= np.abs(arr3d[i,:,:]).max(axis=0)
     return arr3d
