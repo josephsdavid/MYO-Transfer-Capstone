@@ -1,7 +1,7 @@
 import numpy as np
 import sys
 import tensorflow as tf
-from tensorflow.keras.layers import Input, Dense, Lambda, Flatten, Reshape, Activation, Dropout, Add, TimeDistributed, Multiply, Conv1D, Conv2D, MaxPooling1D, AveragePooling1D
+from tensorflow.keras.layers import Input, Dense, Lambda, Flatten, Reshape, Activation, Dropout, Add, TimeDistributed, Multiply, Conv1D, Conv2D, MaxPooling1D, AveragePooling1D, BatchNormalization
 from tensorflow.keras.models import Model, Sequential, load_model
 from tensorflow.keras import backend as K
 from tensorflow.keras import metrics
@@ -60,18 +60,25 @@ class WaveNet:
         inp = Input(shape = self.input_shape)
         skips = []
         x = Conv1D(self.filters, 2, dilation_rate=1, padding='causal', name = 'dilate_1')(inp)
+        x = BatchNormalization()(x)
         for i in range(1, self.dilation + 1):
             x, skip = self.residual_block(x, i)
             skips.append(skip)
         x = Add(name='skips')(skips)
         x = Activation('relu')(x)
         x = Conv1D(self.filters, 3, strides=1, padding='same', name = 'conv_5ms', activation='relu')(x)
+        x = BatchNormalization()(x)
         x = AveragePooling1D(3, padding='same', name='downsample')(x)
+        x=Dropout(0.5)(x)
         x=Conv1D(self.filters, 3, padding='same', activation='relu', name='upsample')(x)
         x = Conv1D(self.output_shape[0], 3, padding='same', activation='relu', name='target')(x)
+        x = BatchNormalization()(x)
         x = AveragePooling1D(3, padding='same', name = 'downsample_2')(x)
+        x=Dropout(0.5)(x)
         x = Conv1D(self.output_shape[0], self.input_shape[0] //10, padding='same', name = 'final')(x)
+        x = BatchNormalization()(x)
         x = AveragePooling1D(self.input_shape[0] // 10, name = 'final_pool')(x)
+        x=Dropout(0.5)(x)
         x = Reshape(self.output_shape)(x)
         out = Activation(self.out_act)(x)
         mod = Model(inp, out)

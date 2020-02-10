@@ -12,10 +12,10 @@ from tensorflow.keras.layers import Embedding, Activation, PReLU
 from tensorflow.keras.models import Model
 from tensorflow.keras.utils import to_categorical
 import os
+
 os.environ['CUDA_VISIBLE_DEVICES'] = "0"
 
-
-batch = 300
+batch = 3000
 train = u.NinaGenerator("../data/ninaPro", ['c'], [u.butter_highpass_filter],
                         [u.add_noise_snr], validation=False, by_subject = True, batch_size=batch,
                         scale = False, rectify=False)
