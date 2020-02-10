@@ -150,7 +150,7 @@ class NinaLoader(Loader):
         reps = []
         subjects = []
         for i in range(1,11):
-            print(f"Starting load of {i}/10 .mat files")
+            # print(f"Starting load of {i}/10 .mat files")
             path = self.path + "/" + "s" + str(i) + "/S" + str(i) + "_E" + str(trial) + "_A1.mat"
             fileData, l, r, s = self._load_file(path, options)
             data.append(fileData)
