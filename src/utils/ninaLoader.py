@@ -1,4 +1,5 @@
 import tensorflow.keras as keras
+import multiprocessing
 import numpy as np
 import scipy.io
 import abc
@@ -14,11 +15,14 @@ from .preprocessors import butter_highpass_filter, scale
 
 def mode0(x):
     values, counts = np.unique(x, return_counts=True)
+
     m = counts.argmax()
     return values[m]
 
 def mode(arr):
-    res =  [mode0(arr[i]) for i in range(arr.shape[0])]
+    inn = [arr[i] for i in range(arr.shape[0])]
+    with multiprocessing.Pool(None) as p:
+        res = p.map(mode0, inn)
     return np.asarray(res)
 
 
