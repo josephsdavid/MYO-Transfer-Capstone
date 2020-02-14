@@ -43,3 +43,58 @@ def add_noise(x, y, snr=25):
     return x, y
 
 
+def shift_electrodes(examples, labels):
+    index_normal_class = [1, 2, 6, 2]  # The normal activation of the electrodes.
+    class_mean = []
+    # For the classes that are relatively invariant to the highest canals activation, we get on average for a
+    # subject the most active canals for those classes
+    for classe in range(3, 7):
+        X_example = []
+        Y_example = []
+        for k in range(len(examples)):
+            X_example.append(examples[k])
+            Y_example.append(labels[k])
+
+        cwt_add = []
+        for j in range(len(X_example)):
+            if Y_example[j] == classe:
+                if cwt_add == []:
+                    cwt_add = np.array(X_example[j][0])
+                else:
+                    cwt_add += np.array(X_example[j][0])
+        class_mean.append(np.argmax(np.sum(np.array(cwt_add), axis=0)))
+
+    # We check how many we have to shift for each channels to get back to the normal activation
+    new_cwt_emplacement_left = ((np.array(class_mean) - np.array(index_normal_class)) % 10)
+    new_cwt_emplacement_right = ((np.array(index_normal_class) - np.array(class_mean)) % 10)
+
+    shifts_array = []
+    for valueA, valueB in zip(new_cwt_emplacement_left, new_cwt_emplacement_right):
+        if valueA < valueB:
+            # We want to shift toward the left (the start of the array)
+            orientation = -1
+            shifts_array.append(orientation*valueA)
+        else:
+            # We want to shift toward the right (the end of the array)
+            orientation = 1
+            shifts_array.append(orientation*valueB)
+
+    # We get the mean amount of shift and round it up to get a discrete number representing how much we have to shift
+    # if we consider all the canals
+    # Do the shifting only if the absolute mean is greater or equal to 0.5
+    final_shifting = np.mean(np.array(shifts_array))
+    if abs(final_shifting) >= 0.5:
+        final_shifting = int(np.round(final_shifting))
+    else:
+        final_shifting = 0
+
+    # Build the dataset of the candiate with the circular shift taken into account.
+    X_example = []
+    Y_example = []
+    for k in range(len(examples)):
+        sub_ensemble_example = []
+        for example in examples[k]:
+            sub_ensemble_example.append(np.roll(np.array(example), final_shifting))
+        X_example.append(sub_ensemble_example)
+        Y_example.append(labels[k])
+    return X_example, Y_example

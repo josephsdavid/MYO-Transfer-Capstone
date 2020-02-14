@@ -126,6 +126,9 @@ class NinaLoader(Loader):
         rep = res['rerepetition'][:self.maxlen].copy()
         emg = res['emg'][:self.maxlen,:8].copy()
         lab = res['restimulus'][:self.maxlen].copy()
+        #lab = res['stimulus'][:self.maxlen].copy()
+        #import pdb; pdb.set_trace()  # XXX BREAKPOINT
+
 
         #plt.plot(rep[0:400])
         #plt.show()
