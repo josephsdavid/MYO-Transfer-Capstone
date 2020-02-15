@@ -1,8 +1,8 @@
 import utils as u
 import numpy as np
-from optimizers import Ranger
+from optimizers import Ranger, Yogi, Lookahead
 from activations import Mish
-from tensorflow.keras.layers import Dense, Input, SimpleRNN, PReLU, Add, BatchNormalization, RepeatVector, Flatten
+from tensorflow.keras.layers import Dense, Input, SimpleRNN, PReLU, Add, BatchNormalization, RepeatVector, Flatten, TimeDistributed
 from tensorflow.keras.initializers import Constant
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import RMSprop, SGD
@@ -82,11 +82,11 @@ class NinaMA(u.NinaGenerator):
 import pdb; pdb.set_trace()  # XXX BREAKPOINT
 
 train = NinaMA("../data/ninaPro", ['b'], [u.butter_highpass_filter],
-                        [u.add_noise_snr], validation=False, by_subject = False, batch_size=batch,
-                        scale = False, rectify=True, sample_0=False, step=5, n=20)
+                        [u.add_noise_random], validation=False, by_subject = False, batch_size=batch,
+                        scale = False, rectify=True, sample_0=False, step=5, n=1)
 test = NinaMA("../data/ninaPro", ['b'], [u.butter_highpass_filter],
                        None, validation=True, by_subject = False, batch_size=batch,
-                       scale = False, rectify =True, sample_0=False, step=5, n=20)
+                       scale = False, rectify =True, sample_0=False, step=5, n=1)
 
 n_time = train[0][0].shape[1]
 print("n_timesteps{}".format(n_time))
@@ -96,7 +96,7 @@ neg = Constant(value=-1)
 
 
 inputs = Input((n_time, 8))
-x = Dense(128)(inputs)
+x = (Dense(128))(inputs)
 x, h = SimpleRNN(20, activation=PReLU(), name='simple1',  return_state=True, return_sequences=True)(x)
 rnns = []
 rnns.append(x)
@@ -105,11 +105,81 @@ for i in range(3):
     rnns.append(x)
 out = Add()(rnns)
 out = Flatten()(out)
-#out = Dense(60, activation=PReLU())(out)
+out = Dense(60, activation=PReLU())(out)
 outputs = Dense(18, activation="softmax")(out)
 model = Model(inputs, outputs)
 model.summary()
-model.compile(Ranger(beta_1=0.95), loss="sparse_categorical_crossentropy", metrics=['accuracy'])
-model.fit(train, epochs=500, validation_data=test, shuffle=False, callbacks=[ModelCheckpoint("rnn.h5", monitor="val_loss", keep_best_only=True), ReduceLROnPlateau(patience=20, factor=0.5, verbose=1)])
+model.compile(Lookahead(RMSprop()), loss="sparse_categorical_crossentropy", metrics=['accuracy'])
+h1 = model.fit(train, epochs=500, validation_data=test, shuffle=False, callbacks=[ModelCheckpoint("rnn.h5", monitor="val_loss", keep_best_only=True), ReduceLROnPlateau(patience=20, factor=0.5, verbose=1)], use_multiprocessing=True, workers=12)
+
+plt.subplot(212)
+plt.plot(h1.history['accuracy'])
+plt.plot(h1.history['val_accuracy'])
+plt.title('model accuracy')
+plt.ylabel('accuracy')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper left')
+# summarize history for loss
+plt.subplot(211)
+plt.plot(h1.history['loss'])
+plt.plot(h1.history['val_loss'])
+plt.title('model loss')
+plt.ylabel('loss')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper left')
+F = plt.gcf()
+Size = F.get_size_inches()
+F.set_size_inches(Size[0]*2, Size[1]*2)
+plt.savefig("simple_lstm_training.png")
+
+train = NinaMA("../data/ninaPro", ['b'], [u.butter_highpass_filter],
+                        [u.add_noise_random], validation=False, by_subject = False, batch_size=batch,
+                        scale = False, rectify=True, sample_0=False, step=5, n=15)
+test = NinaMA("../data/ninaPro", ['b'], [u.butter_highpass_filter],
+                       None, validation=True, by_subject = False, batch_size=batch,
+                       scale = False, rectify =True, sample_0=False, step=5, n=15)
+
+n_time = train[0][0].shape[1]
+print("n_timesteps{}".format(n_time))
 
 
+neg = Constant(value=-1)
+
+
+inputs = Input((n_time, 8))
+x = (Dense(128))(inputs)
+x, h = SimpleRNN(20, activation=PReLU(), name='simple1',  return_state=True, return_sequences=True)(x)
+rnns = []
+rnns.append(x)
+for i in range(3):
+    x, h = SimpleRNN(20, activation=PReLU(), return_state=True, return_sequences=True)(x, initial_state=[h])
+    rnns.append(x)
+out = Add()(rnns)
+out = Flatten()(out)
+out = Dense(60, activation=PReLU())(out)
+outputs = Dense(18, activation="softmax")(out)
+model = Model(inputs, outputs)
+model.summary()
+model.compile(Lookahead(RMSprop()), loss="sparse_categorical_crossentropy", metrics=['accuracy'])
+h2 = model.fit(train, epochs=500, validation_data=test, shuffle=False, callbacks=[ModelCheckpoint("rnn2.h5", monitor="val_loss", keep_best_only=True), ReduceLROnPlateau(patience=20, factor=0.5, verbose=1)], use_multiprocessing=True, workers=12)
+
+
+plt.subplot(212)
+plt.plot(h2.history['accuracy'])
+plt.plot(h2.history['val_accuracy'])
+plt.title('model accuracy')
+plt.ylabel('accuracy')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper left')
+# summarize history for loss
+plt.subplot(211)
+plt.plot(h2.history['loss'])
+plt.plot(h2.history['val_loss'])
+plt.title('model loss')
+plt.ylabel('loss')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper left')
+F = plt.gcf()
+Size = F.get_size_inches()
+F.set_size_inches(Size[0]*2, Size[1]*2)
+plt.savefig("simple_lstm_training.png")

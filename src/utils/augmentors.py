@@ -1,4 +1,5 @@
 import numpy as np
+import random
 
 
 def roll_labels(x, y):
@@ -33,6 +34,10 @@ def add_noise_snr(signal, snr = 25):
     # make some white noise using this as std
     noise = np.random.normal(0, np.sqrt(noise_variance), signal.shape)
     return(signal + noise)
+
+def add_noise_random(signal):
+    num = random.randrange(1, 100)/2
+    return add_noise_snr(signal, num)
 
 def add_noise(x, y, snr=25):
     x2 = []
