@@ -10,7 +10,7 @@ from tensorflow.keras.optimizers import RMSprop, SGD
 from tensorflow.keras.utils import plot_model
 from tensorflow.keras.callbacks import ModelCheckpoint, ReduceLROnPlateau
 from tensorflow.keras import backend as K
-batch=2048
+batch=512
 
 def moving_average(data_set, periods=3):
     weights = np.ones(periods) / periods
@@ -192,8 +192,8 @@ out = Dense(60, activation=PReLU())(out)
 outputs = Dense(18, activation="softmax")(out)
 model = Model(inputs, outputs)
 model.summary()
-model.compile(Lookahead(Yogi()), loss="sparse_categorical_crossentropy", metrics=['accuracy'])
-h2 = model.fit(train, epochs=500, validation_data=test, shuffle=False, callbacks=[ModelCheckpoint("gru2.h5", monitor="val_loss", keep_best_only=True), ReduceLROnPlateau(patience=40, factor=0.5, verbose=1)], use_multiprocessing=True, workers=12, steps_per_epoch=len(train)//2)
+model.compile(Lookahead(RMSprop()), loss="sparse_categorical_crossentropy", metrics=['accuracy'])
+h2 = model.fit(train, epochs=500, validation_data=test, shuffle=False, callbacks=[ModelCheckpoint("gru2.h5", monitor="val_loss", keep_best_only=True), ReduceLROnPlateau(patience=60, factor=0.5, verbose=1)], use_multiprocessing=True, workers=12, steps_per_epoch=len(train)//5)
 
 
 plt.subplot(212)
