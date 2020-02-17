@@ -110,6 +110,7 @@ class NinaLoader(Loader):
         print(f"[Step 4 ==> scale] Shape of labels: {np.shape(self.labels)}")
         print(f"[Step 3 ==> scale] Shape of reps: {np.shape(self.rep.copy())}")
         print(f"[Step 3 ==> scale] Shape of subjects: {np.shape(self.subject.copy())}")
+  #      self.process_data()
         #if scale:
         #    self.emg = scale(self.emg)
 
@@ -204,8 +205,9 @@ class NinaLoader(Loader):
         #self.subject =  [x[:min(self.max_size, maxlen)] for x in self.subject]
 
     def process_data(self):
-        for f in self.processors:
-            self.emg = [f(x) for x in self.emg]
+        if self.processors is not None:
+            for f in self.processors:
+                self.emg = [f(x) for x in self.emg]
 
     def augment_data(self, step, window_size):
         if self.augmentors is not None:

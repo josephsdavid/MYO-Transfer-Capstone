@@ -2,6 +2,7 @@ import utils as u
 import multiprocessing
 import numpy as np
 from optimizers import Ranger, Yogi, Lookahead
+from layers import Attention
 from activations import Mish
 from tensorflow.keras.layers import Dense, Input, GRU, PReLU, Add, BatchNormalization, RepeatVector, Flatten, TimeDistributed
 from tensorflow.keras.initializers import Constant
@@ -100,8 +101,7 @@ class NinaMA(u.NinaGenerator):
             out = np.abs(out)
         if self.scale:
             out = scale(out)
-        out = np.moveaxis(ma_batch(out, self.n), -1, 0)
-        return out,  self.labels[indexes]
+        return np.moveaxis(ma_batch(out, self.n), -1, 0),  self.labels[indexes]
 
 
 ''' begin of analysis in earnest '''
@@ -187,7 +187,7 @@ for i in range(3):
     x, h = GRU(20, activation=PReLU(), return_state=True, return_sequences=True)(x, initial_state=[h])
     rnns.append(x)
 out = Add()(rnns)
-out = Flatten()(out)
+out = Attention()(out)
 out = Dense(60, activation=PReLU())(out)
 outputs = Dense(18, activation="softmax")(out)
 model = Model(inputs, outputs)
