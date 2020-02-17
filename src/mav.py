@@ -4,6 +4,7 @@ import numpy as np
 from optimizers import Ranger, Yogi, Lookahead
 from layers import Attention
 from activations import Mish
+import tensorflow as tf
 from tensorflow.keras.layers import Dense, Input, GRU, PReLU, Add, BatchNormalization, RepeatVector, Flatten, TimeDistributed
 from tensorflow.keras.initializers import Constant
 from tensorflow.keras.models import Model
@@ -180,19 +181,38 @@ neg = Constant(value=-1)
 
 inputs = Input((n_time, 8))
 x = (Dense(128))(inputs)
-x, h = GRU(20, activation=PReLU(), name='simple1',  return_state=True, return_sequences=True)(x)
-rnns = []
-rnns.append(x)
+x, h = GRU(40, activation=PReLU(), name='res_a',  return_state=True, return_sequences=True)(x)
+l = []
+l.append(x)
+x1, h1 = GRU(40, activation=PReLU(), name='res_b',  return_state=True, return_sequences=True)(x, initial_state=[h])
+l.append(x1)
 for i in range(3):
-    x, h = GRU(20, activation=PReLU(), return_state=True, return_sequences=True)(x, initial_state=[h])
-    rnns.append(x)
-out = Add()(rnns)
-out = Attention()(out)
-out = Dense(60, activation=PReLU())(out)
+    xi, h1 = GRU(40, activation=PReLU(), name='res_{}'.format(i),  return_state=True, return_sequences=True)(Add()([l[-1], l[-2]]))
+    l.append(xi)
+xi = Add()([l[-1],l[-2]])
+#x, h = GRU(20, activation=PReLU(), name='simple1',  return_state=True, return_sequences=True)(x)
+#x1, h1 = GRU(20, activation=PReLU(), name='simple2',  return_state=True, return_sequences=True)(x, initial_state=[h])
+#x2, h2 = GRU(20, activation=PReLU(), name='simple3',  return_state=True, return_sequences=True)(Add()([x, x1]), initial_state=[h1])
+#x3, h3 = GRU(20, activation=PReLU(), name='simple4',  return_state=True, return_sequences=True)(Add()([x1, x2]), initial_state=[h2])
+#x4, h4 = GRU(20, activation=PReLU(), name='simple5',  return_state=True, return_sequences=True)(Add()([x2, x3]), initial_state=[h3])
+#x4 = Add()([x4, x3])
+#rnns = []
+#rnns.append(x)
+#for i in range(3):
+#    if i == 0:
+#        x, h = GRU(20, activation=PReLU(), return_state=True, return_sequences=True)(x, initial_state=[h])
+#    else:
+#        x, h = GRU(20, activation=PReLU, return_state=True, return_sequences=True)(Add()(rnns), initial_state=[h])
+#    rnns.append(x)
+out = Attention()(xi)
+#out = Dense(60, activation=PReLU())(out)
 outputs = Dense(18, activation="softmax")(out)
 model = Model(inputs, outputs)
 model.summary()
+
+tf.keras.utils.plot_model(model, to_file="attn.png")
 model.compile(Lookahead(RMSprop()), loss="sparse_categorical_crossentropy", metrics=['accuracy'])
+
 h2 = model.fit(train, epochs=500, validation_data=test, shuffle=False, callbacks=[ModelCheckpoint("gru2.h5", monitor="val_loss", keep_best_only=True), ReduceLROnPlateau(patience=60, factor=0.5, verbose=1)], use_multiprocessing=True, workers=12, steps_per_epoch=len(train)//5)
 
 
