@@ -93,7 +93,7 @@ class NinaMA(u.NinaGenerator):
     def __getitem__(self, index):
         'generate a single batch'
         indexes = self.indexes[index*self.batch_size:(index+1)*self.batch_size]
-        out = self.emg[indexes,:,:]
+        out = self.emg[indexes,:,:].copy()
         if not self.super_augment:
             if self.augmentors is not None:
                 for f in self.augmentors:

@@ -141,7 +141,7 @@ class NinaGenerator(NinaLoader, tf.keras.utils.Sequence):
     def __getitem__(self, index):
         'generate a single batch'
         indexes = self.indexes[index*self.batch_size:(index+1)*self.batch_size]
-        out = self.emg[indexes,:,:]
+        out = self.emg[indexes,:,:].copy()
         if self.augmentors is not None:
             for f in self.augmentors:
                 for i in range(out.shape[0]):
@@ -178,7 +178,7 @@ class NinaGeneratorConv(NinaGenerator):
     def __getitem__(self, index):
         'generate a single batch'
         indexes = self.indexes[index*self.batch_size:(index+1)*self.batch_size]
-        out = self.emg[indexes,:,:]
+        out = self.emg[indexes,:,:].copy()
         if self.augmentors is not None:
             for f in self.augmentors:
                 for i in range(out.shape[0]):
