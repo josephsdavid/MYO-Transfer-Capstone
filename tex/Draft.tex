@@ -1,3 +1,5 @@
+%Note that subject splitting may not be of utmost exigence until we can fit within subjects.
+
 % This is samplepaper.tex, a sample paper demonstrating the
 % LLNCS class package for the SMU Data Science Review Journal;
 %
@@ -20,15 +22,16 @@
 % them are downsampled resulting in fuzzy images.
 \usepackage{booktabs} % Better horizontal rules in tables
 \usepackage{multirow} % Better combined rows in tables
+\usepackage{amsmath}
 \usepackage{array}
 \usepackage{hyperref}
 
 % The title of the paper
 % This is shite
-\title{Standards for Deep Learning with Electromyographic (EMG) Data}
+\title{Recurrent Neural Networks for Fast Electromyographic Control}
 
 % The complete list of authors with their affiliations
-\author{
+\author{%
 David Josephs\inst{1} \and
 Carson Drake\inst{1} \and
 Che' Cobb\inst{1} \and
@@ -161,24 +164,75 @@ In this paper, we propose a novel recurrent model, which classifies 53 gestures.
 
 All discussed in context of sEMG and EMG (obviously discuss generalization between the two)
  \subsection{Recurrent Neural Networks}
+ In this research we utilize a special class of neural network known as a \textit{recurrent neural network} (RNN). Before we discuss a recurrent neural network, let us first formalize our definition of a standard, feedforward deep neural network (DNN). A DNN is a network of neurons (small learners which learn simple, nonlinear functions), which are composed and trained in a way such that they learn a function which maps one set of data (for example, an image or a time series) to another set of data (for example, a classification label). Formally, this can be expressed as:
 
- \cite{rnn_fun}
+ \begin{equation}
+ y(x) = g \left(\sum_{i=0}^d W_{k_i} x_{k_i}\right)
+ \end{equation}
+
+ This can be read as follows: given data with $d$ dimensions, the neural network sums up the product of a set of \textit{linear weights} ($W$) and the data at dimension $d$. It then multiplies this by a nonlinear function, $g$. This nonlinearity allows the neural network to build incredibly powerful functional representations of the relationship between $x$ and $y$.
+ 
+ Although a DNN can learn powerful relationships, it is somewhat unintuitve for order-dependent data, such as sequences or time series. This is where an RNN becomes incredibly useful. An RNN not only learns an observation-by-observation functional mapping, but can also map sets of observations (for example, windows of 8-channel electromyographic signal) to labels. They can also map sets of observations to new sets of observations, which is especially important in Natural Language Generation and time series forecasting, however that is beyond the scope of this paper. 
+ An RNN accomplishes this in the following manner. 
+ First, instead of inputting a single observation, observations are fed in in a while loop. 
+ This is not  quite enough to learn long term dependencies within the time windows however. 
+ In order to do this, during the while loop of $n$ timesteps, the RNN must also record \emph{state}, that is the RNN must have some sort of memory of previous observations. 
+ To do this, the RNN learns a functional mapping which is dependent on its own previous states. This can be expressed mathematically as follows. First, let us define the weights which the RNN uses to update its state, $W_s$:
+
+ \begin{equation}\label{eq:ws}
+	 W_s = \left(  I - \left(\Delta T\right) A\right)^{-1}
+ \end{equation}
+  
+ Where $I$ is the identity, $\Delta T$ is is the discrete change in time between observations in the time window, and $A$ is a linear, block-circulant matrix. We can then perform a linear transformation on \autoref{eq:ws} to get the weights for the input signal, $W_x$, and bias $\theta$:
+
+ \begin{align}
+	 W_x = \left(\Delta T\right) W_s  C \\
+	 \theta = \left(\Delta T\right) W_s \phi
+ \end{align}
+ 
+ Where C is another block-circulant, linear transformation matrix, and $phi$ is a learned vector of biases for the RNN (similar to the intercept in regression). This allows us to define the state of the function at timestep $n$ as:
+
+ \begin{equation}\label{eq:almost}
+	 \vec{s}\left[ n \right] = W_s \vec{s} \left[ n-1 \right] + W_x \vec{x} \left[ n \right] + \vec{\theta_s}
+ \end{equation}
+
+ However, this definition of an RNN has an issue: the state term ($W_s\vec{s}\left[ n-1 \right]$) will grow or shrink without bound, leading to a highly unstable model which in all likelihood fails to converge. To bound it while preserving all of the information, we perform a nonlinear transformation: the hyperbolic tangent. We define a new term, $\vec{r}$, which represents the recurrent portion of an RNN:
+
+ \begin{align}
+	 \vec{r}\left[ n \right] = \tanh \left(\vec{s} \left[ n \right]\right) \\
+	 W_r = \left(\Delta T\right) W_s  B \\
+ \end{align}
+
+ Where $W_r$ represents the recurrent weights of the model, and B is a block circulant linear transformation matrix. We can then rewrite \autoref{eq:almost} as the classic RNN equation:
+
+ \begin{equation}\label{eq:rnn}
+	 \vec{s}\left[ n \right] = W_r \vec{r} \left[ n-1 \right] + W_x \vec{x} \left[ n \right] + \vec{\theta_s}
+ \end{equation}
+
+ While the simple recurrent neural network can learn powerful functional mappings of time-dependent data, it suffers from difficulties due to training issues. If a single eigenvalue of $W_r$ lies outside of of the range $\left(0, 1\right)$, the gradient used to train the RNN will either explode or decay exponentially, causing the RNN to stop learning \cite{rnn_fun}.
+
+In order to combat this, the Long Short Term Memory (LSTM) is introduced. The LSTM 
+
+ Both of these derivations are based off of the comprehensive work done in \cite{rnn_fun}
+
+ \subsection{Attention}
+
 
 
  \subsection{Deep Transfer Learning}
- Maybe ignore, i dont think its a big contribution of ours, I think it takes away from the rest of what we are doing but that is opinion - David
+% Maybe ignore, i dont think its a big contribution of ours, I think it takes away from the rest of what we are doing but that is opinion - David
  \subsection{General evaluation}
- include table of parameters of recent work, highlighting window size, number of layers and cells total
+% include table of parameters of recent work, highlighting window size, number of layers and cells total
 \section{Training Procedures}
-Discuss model training procedures, preprocessing procedures, aug procedures, evaluation procedure in great detail, potentially with a great diagram explaining it all
+%Discuss model training procedures, preprocessing procedures, aug procedures, evaluation procedure in great detail, potentially with a great diagram explaining it all
  \section{Novel RNN based model}
- * Talk about architecure
- * LSTM vs GRU vs RNN appropriateness, number of parameters
+% * Talk about architecure
+% * LSTM vs GRU vs RNN appropriateness, number of parameters
  \section{results}
  \subsection{Novel RNN}
- Figure of all the different accuracies with and without transfer learning, discussion of power of results (anything over 70\% accuracy with intra-subject evaluation on the 17 class subset of nina is an excellent result in general, combined with practical utility even better, ignore what i said about transfer learning, all the other papers, we are highlighted in bold
+% Figure of all the different accuracies with and without transfer learning, discussion of power of results (anything over 70\% accuracy with intra-subject evaluation on the 17 class subset of nina is an excellent result in general, combined with practical utility even better, ignore what i said about transfer learning, all the other papers, we are highlighted in bold
 \section{Conclusion} 
-Note that subject splitting may not be of utmost exigence until we can fit within subjects.
+%Note that subject splitting may not be of utmost exigence until we can fit within subjects.
 
  \bibliographystyle{splncs04}
  \bibliography{samplebib}
