@@ -125,7 +125,7 @@ n_class =train[0][1].shape[-1]
 
 
 def build_model(hp):
-    lr = hp.Float("learning_rate", 1e-5, 10, sampling='log')
+    lr = hp.Float("learning_rate", 1e-5, 10, sampling='log', default=1e-3)
     wd = hp.Float("decay", 0., 0.5, step=0.05, default=0.)
     sp = hp.Int("sync", 2, 10, step=1, default=6)
     wp = hp.Float("warm", 0.1, 0.3, step=0.05, default=0.1)
