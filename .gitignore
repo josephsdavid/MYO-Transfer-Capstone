@@ -5,7 +5,9 @@ capstone/
 ninaPro/
 *.h5
 *.json
-#result/
+src/result/att_tune/
+src/result/blstm_tuning
+src/result/best_history.obj
 #result
 #data/
 # for davids health

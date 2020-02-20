@@ -1,18 +1,12 @@
 import utils as u
 import multiprocessing
 import numpy as np
-from optimizers import Ranger, Yogi, Lookahead
 import callbacks as cb
-from layers import Attention
-from activations import Mish, sparsemax, SparsemaxLoss
 import tensorflow as tf
-from tensorflow.keras.layers import Dense, Input, GRU, PReLU, Add, BatchNormalization, RepeatVector, Flatten, TimeDistributed, Subtract, Multiply, Average, Maximum
 from tensorflow.keras.initializers import Constant
-from tensorflow.keras.models import Model
-from tensorflow.keras.optimizers import RMSprop, SGD
-from tensorflow.keras.utils import plot_model, to_categorical
 from tensorflow.keras.callbacks import ModelCheckpoint, ReduceLROnPlateau
-from tensorflow.keras import backend as K
+from tensorflow.keras.models import Model
+from tensorflow.keras.utils import plot_model, to_categorical
 from builders import build_att_gru
 batch=512
 
@@ -127,7 +121,6 @@ test = NinaMA("../data/ninaPro", ['b'], [u.butter_highpass_filter],
 
 
 n_time = train[0][0].shape[1]
-
 n_class =train[0][1].shape[-1]
 
 print("n_timesteps{}".format(n_time))

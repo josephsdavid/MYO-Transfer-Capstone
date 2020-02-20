@@ -143,6 +143,7 @@ tuner = kt.Hyperband(build_model, objective = 'val_accuracy', max_epochs=100, hy
 
 tuner.search_space_summary()
 
+import pdb; pdb.set_trace()  # XXX BREAKPOINT
 
 tuner.search(train, validation_data = test,  callbacks = [stopper], shuffle=False)
 
