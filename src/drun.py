@@ -34,6 +34,7 @@ drop=0.2
 results = {}
 hl = []
 abc = ['b','a','c']
+
 for i in range(len(abc)):
     for s in subject:
         import pdb; pdb.set_trace()  # XXX BREAKPOINT
@@ -55,7 +56,7 @@ for i in range(len(abc)):
                 None, validation=True, by_subject = s, batch_size=batch,
                 scale = True, rectify = False, sample_0=False)
 
-
+        
         x_tr = []
         y_tr = []
         for t in train:
@@ -77,7 +78,11 @@ for i in range(len(abc)):
 
         bin_tr=[]
         bin_val=[]
-        for w in np.unique(y_tr):
+
+        classes = np.unique(y_tr)
+        n_classes = classes.shape[0]
+
+        for w in classes:
             print(w)
             bin_tr.append(np.hstack([or1(y_tr[k],w) for k in range(y_tr.shape[0])]))
             bin_val.append(np.hstack([or1(y_val[k],w) for k in range(y_val.shape[0])]))
@@ -100,12 +105,13 @@ for i in range(len(abc)):
 
         x = Bidirectional(LSTM(lstm_size, dropout=drop, recurrent_dropout=rec_drop, return_state=False, return_sequences=False))(x, initial_state=[h1,b1,h2,b2])
         outlist = []
-        for w in np.unique(y_tr):
+        for w in classes:
+            _x = Dense(100, activation='relu', name = f'Pre-{str(w)}')(x)
             outlist.append(
-                Dense(1, activation='sigmoid', name = str(w))(x)
+                Dense(1, activation='sigmoid', name = str(w))(_x)
             )
-
-        output = Concatenate(name='classifier')(outlist)
+        _output = Dense(100, activation='relu', name='Pre-classifier')(x)
+        output = Dense(n_classes, name='classifier')(_output)
         outlist.append(output)
 
         lstm = Model(inputs, outlist)
