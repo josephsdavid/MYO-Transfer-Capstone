@@ -30,6 +30,10 @@ We will walk through the purpose of the code in this directory, and how to use i
 		* add_noise
 		* add_noise_snr
 		* add_noise_random
+* Builders:
+	* Builders for models are stored here
+		* Attention based models
+		* Convolutional models
 
 * result
 	* results of various tunings and slurm output her
@@ -41,8 +45,8 @@ We will walk through the purpose of the code in this directory, and how to use i
 The files in this directory are as follows:
 * att_tuner.py
 	* keras tuner hyperband search optimizing ranger for the attention model
-* builders.py
-	* Functions to build models used (with docstrings)
+* builder_funs.py
+	* Functions to build models used (DEPRECATED)
 * conv-rnn.py
 	* simple conv-rnn model
 * conv.py
@@ -82,7 +86,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import utils as u
 import callbacks as cb
-import builders as b
+import builders.attention as b
 
 
 def make_data(exercise, by_subject):

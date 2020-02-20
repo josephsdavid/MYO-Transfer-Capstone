@@ -7,7 +7,7 @@ from tensorflow.keras.initializers import Constant
 from tensorflow.keras.callbacks import ModelCheckpoint, ReduceLROnPlateau
 from tensorflow.keras.models import Model
 from tensorflow.keras.utils import plot_model, to_categorical
-from builders import build_att_gru
+from builders.attention import build_att_gru
 batch=512
 
 

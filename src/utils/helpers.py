@@ -15,3 +15,17 @@ def pad_along_axis(array: np.ndarray, target_length, axis=0):
     npad[axis] = (0, pad_size)
     b = np.pad(array, pad_width=npad, mode='constant', constant_values=0)
     return b
+
+
+def save_model(model, id):
+    json_file = model.to_json()
+    with open(f"{id}.json", "w") as f:
+        f.write(json_file)
+    weights = model.save_weights(f"{id}.h5")
+
+
+def read_model(id):
+    from tensorflow.keras.models import model_from_json
+    model = model_from_json(f"{id}.json")
+    model.load_weights(f"{id}.h5")
+    return model

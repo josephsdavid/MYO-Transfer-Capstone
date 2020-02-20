@@ -7,11 +7,11 @@ tf.autograph.set_verbosity(0)
 import multiprocessing
 import numpy as np
 from tensorflow.keras.utils import plot_model, to_categorical
-from tensorflow.keras.callbacks import ModelCheckpoint, ReduceLROnPlateau, EarlyStopping
+from tensorflow.keras.callbacks import ModelCheckpoint, ReduceLROnPlateau, EarlyStopping, TerminateOnNaN
 from tensorflow.keras import backend as K
 import callbacks as cb
 import utils as u
-import builders as b
+import builders.attention as b
 import kerastuner as kt
 batch=512
 
@@ -144,7 +144,6 @@ tuner = kt.Hyperband(build_model, objective = 'val_accuracy', max_epochs=100, hy
 tuner.search_space_summary()
 
 import pdb; pdb.set_trace()  # XXX BREAKPOINT
-
 tuner.search(train, validation_data = test,  callbacks = [stopper], shuffle=False)
 
 best = tuner.get_best_hyperparameters(1)[0]
@@ -152,8 +151,9 @@ print(best.values)
 import json
 with open("result/best_att_pars.json","w") as f:
 	json.dump(best.values, f)
+
 model = tuner.hypermodel.build(best)
-model.save("result/best_att.h5")
+u.save_model(model,"restult/best_att")
 
 
 
