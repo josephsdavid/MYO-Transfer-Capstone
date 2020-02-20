@@ -13,7 +13,7 @@ import callbacks as cb
 import utils as u
 from optimizers import Ranger
 from activations import Mish
-import builders
+from builders.attention import build_simple_att
 batch=512
 
 
@@ -28,7 +28,7 @@ test = u.NinaMA("../data/ninaPro", ['b'], [u.butter_highpass_filter],
 n_time = train[0][0].shape[1]
 n_class =train[0][1].shape[-1]
 
-model = builders.build_simple_att(n_time, n_class, drop=[0,0,0], dense=[50,50,50], activation=Mish())
+model = build_simple_att(n_time, n_class, drop=[0,0,0], dense=[50,50,50], activation=Mish())
 model.compile(Ranger(), loss='categorical_crossentropy', metrics=['accuracy'])
 print(model.summary())
 
