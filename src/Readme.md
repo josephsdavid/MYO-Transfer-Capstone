@@ -35,6 +35,8 @@ We will walk through the purpose of the code in this directory, and how to use i
 	* results of various tunings and slurm output her
 * history
 	* history objects and cleaned up slurm output, as well as history plots (please)
+* old
+	* old stuff, useful as a reference 
 
 The files in this directory are as follows:
 * att_tuner.py
