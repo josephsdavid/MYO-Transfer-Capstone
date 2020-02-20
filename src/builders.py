@@ -318,3 +318,20 @@ def build_convlstm(n_time, n_classes,
     outputs = Dense(n_classes, activation='softmax')(x)
     return Model(inputs, outputs)
 
+
+
+'''
+simple_attention
+
+a simple attention model
+'''
+
+def build_simple_att(n_time, n_class, dense = [500,500,2000], activation='relu'):
+    inputs = Input((n_time, 8))
+    x = inputs
+    x = Dense(128, activation=activation)(x)
+    x = Attention()(x)
+    for d in dense:
+        x = Dense(d, activation=activation)(x)
+    outputs = Dense(n_class, activation='softmax')(x)
+    return Model(inputs, outputs)
