@@ -259,7 +259,7 @@ class NinaMA(NinaGenerator):
                 self.rep = np.concatenate( rs, axis=0)
                 self.subject = np.concatenate( ss, axis=0)
                 self.on_epoch_end()
-        self.labels = to_categorical(self.labels)
+        self.labels = tf.keras.utils.to_categorical(self.labels)
 
     def __getitem__(self, index):
         'generate a single batch'
