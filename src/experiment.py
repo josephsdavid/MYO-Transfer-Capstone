@@ -31,7 +31,7 @@ neg = Constant(value=-1)
 
 model=build_att_gru(n_time, n_class, learning_rate=0.01)
 tf.keras.utils.plot_model(model, to_file="attn.png", show_shapes=True, expand_nested=True)
-model.compile(Ranger(), loss='categorical_crossentropy', metrics=['accuracy'])
+#model.compile(Ranger(), loss='categorical_crossentropy', metrics=['accuracy'])
 class_weights = {i:1/(n_class) if i==0 else 1 for i in range(1, n_class+1)}
 h2 = model.fit(train, epochs=100, validation_data=test, shuffle=False, callbacks=[ModelCheckpoint("gru2.h5", monitor="val_loss", keep_best_only=True), ReduceLROnPlateau(patience=20, factor=0.5, verbose=1)], use_multiprocessing=True, workers=12, class_weight=class_weights)
 
