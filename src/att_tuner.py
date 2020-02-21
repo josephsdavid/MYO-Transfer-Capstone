@@ -11,7 +11,7 @@ from tensorflow.keras.callbacks import ModelCheckpoint, ReduceLROnPlateau, Early
 from tensorflow.keras import backend as K
 import callbacks as cb
 import utils as u
-import builders.attentional as b
+import builders.recurrent as b
 import kerastuner as kt
 batch=512
 

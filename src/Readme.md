@@ -33,6 +33,7 @@ We will walk through the purpose of the code in this directory, and how to use i
 * Builders:
 	* Builders for models are stored here
 		* Attention based models
+		* Recurrent models
 		* Convolutional models
 
 * result
@@ -86,7 +87,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import utils as u
 import callbacks as cb
-import builders.attentional as b
+import builders.recurrent as b
 
 
 def make_data(exercise, by_subject):

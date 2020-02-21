@@ -4,6 +4,10 @@ from tensorflow.keras.layers import Dropout,  Multiply, Conv1D, AveragePooling1D
 from tensorflow.keras.layers import GlobalAveragePooling1D, Masking, PReLU
 from tensorflow.keras.layers import ConvLSTM2D
 
+'''
+convolutonal models live here
+'''
+
 class WaveNet:
     '''
     wavenet: build a wavenet model
