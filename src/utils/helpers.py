@@ -26,6 +26,6 @@ def save_model(model, id):
 
 def read_model(id):
     from tensorflow.keras.models import model_from_json
-    model = model_from_json(f"{id}.json")
-    model.load_weights(f"{id}.h5")
+    model = model_from_json("{}.json".format(id))
+    model.load_weights("{}.h5".format(id))
     return model

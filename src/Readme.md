@@ -86,7 +86,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import utils as u
 import callbacks as cb
-import builders.attention as b
+import builders.attentional as b
 
 
 def make_data(exercise, by_subject):
