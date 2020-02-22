@@ -56,7 +56,7 @@ for i in range(len(abc)):
                 None, validation=True, by_subject = s, batch_size=batch,
                 scale = True, rectify = False, sample_0=False)
 
-        
+
         x_tr = []
         y_tr = []
         for t in train:

@@ -13,6 +13,10 @@ import callbacks as cb
 import utils as u
 import builders.recurrent as b
 import kerastuner as kt
+'''
+the batch size: 512 for now, may change to smaller later
+scale learning rate with batch size
+'''
 batch=512
 
 

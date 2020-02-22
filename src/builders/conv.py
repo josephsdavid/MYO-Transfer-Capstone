@@ -5,7 +5,11 @@ from tensorflow.keras.layers import GlobalAveragePooling1D, Masking, PReLU
 from tensorflow.keras.layers import ConvLSTM2D
 
 '''
-convolutonal models live here
+Convolutional Models
+------------------------
+    Here we have a lovely collection of convolutional models.
+    Please use them!
+
 '''
 
 class WaveNet:
