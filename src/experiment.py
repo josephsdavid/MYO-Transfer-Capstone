@@ -11,6 +11,7 @@ from builders.recurrent import build_att_gru_norm, build_att_gru
 batch=512
 
 
+
 import pdb; pdb.set_trace()  # XXX BREAKPOINT
 
 
@@ -21,6 +22,7 @@ test = u.NinaMA("../data/ninaPro", ['b'], [u.butter_highpass_filter],
                        None, validation=True, by_subject = False, batch_size=batch,
                        scale = False, rectify =True, sample_0=False, step=5, n=15, window_size=52, super_augment=False)
 
+#cyclic = cb.CyclicLR(step_size=2*len(train), mode='triangular2')
 
 n_time = train[0][0].shape[1]
 n_class =train[0][1].shape[-1]
@@ -33,7 +35,9 @@ model=build_att_gru(n_time, n_class)
 tf.keras.utils.plot_model(model, to_file="attn.png", show_shapes=True, expand_nested=True)
 #model.compile(Ranger(), loss='categorical_crossentropy', metrics=['accuracy'])
 class_weights = {i:1/(n_class) if i==0 else 1 for i in range(1, n_class+1)}
-h2 = model.fit(train, epochs=100, validation_data=test, shuffle=False, callbacks=[ModelCheckpoint("gru2.h5", monitor="val_loss", keep_best_only=True), ReduceLROnPlateau(patience=20, factor=0.5, verbose=1)], use_multiprocessing=True, workers=12, class_weight=class_weights)
+h2 = model.fit(train, epochs=100, validation_data=test, shuffle=False,
+               callbacks=[ModelCheckpoint("gru2.h5", monitor="val_loss", keep_best_only=True)], use_multiprocessing=True, workers=12,
+               class_weight=class_weights)
 
 
 plt.subplot(212)

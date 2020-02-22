@@ -16,7 +16,7 @@ sample = []
 sample += [x_batch[150]]
 sample += [u.butter_highpass_filter(sample[-1])]
 sample += [np.abs(sample[-1])]
-sample += [u.ma(sample[-1], 15)]
+sample += [u.ma(sample[-1], 6)]
 paths = ['Raw sEMG', 'Highpass Filtered sEMG','Rectified Filtered sEMG', 'Smoothed Rectified sEMG']
 
 '''
@@ -53,15 +53,11 @@ matplotlib.use(b)
 #import pdb; pdb.set_trace()  # XXX BREAKPOINT
 #plt.show()
 
-'''
-this needs some labels, plotting probability of selection
-also look into maybe making 25 the most common
-'''
-matplotlib.use('pdf')
+# show augmentation
 from matplotlib import cm
 pre = sample[-1]
-rdict = {x/2:[(x/2)%25]*((x//2)%25) for x in range(100)}
-rlen = len(sum([[(x/2)%25]*((x//2)%25) for x in range(100)], []))
+rdict = {x/2:[(x/2)%30]*((x//2)%30) for x in range(100)}
+rlen = len(sum([[(x/2)%30]*((x//2)%30) for x in range(120)], []))
 rfix = list(rdict.values())
 rfix = list(set(sum(rfix, [])))
 cm_nums = [2*len(rdict[i])/rlen for i in list(rdict.keys())[::2]]
@@ -70,10 +66,10 @@ cm_nums = np.array(cm_nums)
 cm_nums /= cm_nums.max()
 c = cm.inferno(cm_nums)
 fig, ax = plt.subplots(figsize=(12,10))
-for i in range(48):
+for i in range(50):
     aug = u.add_noise_snr(pre, rfix[i])
     ax.plot(aug[:,1], label = str(i+1), color=c[i])
-sm = plt.cm.ScalarMappable(cmap=cm.inferno, norm=plt.Normalize(vmin=0, vmax=0.04))
+sm = plt.cm.ScalarMappable(cmap=cm.inferno, norm=plt.Normalize(vmin=0, vmax=0.033))
 plt.colorbar(sm)
 plt.savefig("fig/augmentation.pdf")
 matplotlib.use(b)
