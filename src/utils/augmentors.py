@@ -35,7 +35,7 @@ def add_noise_snr(signal, snr = 25):
     noise = np.random.normal(0, np.sqrt(noise_variance), signal.shape)
     return(signal + noise)
 
-rlist = sum([[x/2]*(x//2) for x in range(100)], [])
+rlist = sum([[(x/2)%25]*(x//2) for x in range(100)], [])
 def add_noise_random(signal):
     num = random.choice(rlist)
     return add_noise_snr(signal, num)

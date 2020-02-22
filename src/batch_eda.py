@@ -19,6 +19,12 @@ sample += [np.abs(sample[-1])]
 sample += [u.ma(sample[-1], 15)]
 paths = ['Raw sEMG', 'Highpass Filtered sEMG','Rectified Filtered sEMG', 'Smoothed Rectified sEMG']
 
+'''
+make it into a transition plot!
+samples[]:
+    [0][3]
+    [1][2]
+'''
 def plot_sample(sample):
     fig, ax = plt.subplots()
     for i in range(sample.shape[-1]):
@@ -33,4 +39,41 @@ for p, s in zip(paths, sample):
     f, ax = plot_sample(s)
     ax.set_title(p)
     f.savefig(f"fig/{p}.pdf")
+matplotlib.use(b)
+
+#rect = sample[2]
+#periods = range(3,16)
+#for p in range(len(periods)):
+#    fig = plt.figure()
+#    period = periods[p]
+#    s = u.ma(rect, period)
+#    for i in range(s.shape[-1]):
+#        plt.plot(s[:,i])
+#    plt.title(p+3)
+#import pdb; pdb.set_trace()  # XXX BREAKPOINT
+#plt.show()
+
+'''
+this needs some labels, plotting probability of selection
+also look into maybe making 25 the most common
+'''
+matplotlib.use('pdf')
+from matplotlib import cm
+pre = sample[-1]
+rdict = {x/2:[(x/2)%25]*((x//2)%25) for x in range(100)}
+rlen = len(sum([[(x/2)%25]*((x//2)%25) for x in range(100)], []))
+rfix = list(rdict.values())
+rfix = list(set(sum(rfix, [])))
+cm_nums = [2*len(rdict[i])/rlen for i in list(rdict.keys())[::2]]
+
+cm_nums = np.array(cm_nums)
+cm_nums /= cm_nums.max()
+c = cm.inferno(cm_nums)
+fig, ax = plt.subplots(figsize=(12,10))
+for i in range(48):
+    aug = u.add_noise_snr(pre, rfix[i])
+    ax.plot(aug[:,1], label = str(i+1), color=c[i])
+sm = plt.cm.ScalarMappable(cmap=cm.inferno, norm=plt.Normalize(vmin=0, vmax=0.04))
+plt.colorbar(sm)
+plt.savefig("fig/augmentation.pdf")
 matplotlib.use(b)
