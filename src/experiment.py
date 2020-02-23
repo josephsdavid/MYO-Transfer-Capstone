@@ -8,7 +8,7 @@ from tensorflow.keras.initializers import Constant
 from tensorflow.keras.callbacks import ModelCheckpoint, ReduceLROnPlateau
 from tensorflow.keras.models import Model
 from tensorflow.keras.utils import plot_model, to_categorical
-from tensorflow.keras.layers import Add, Input, Dense, GRU, PReLU, Dropout
+from tensorflow.keras.layers import Add, Input, Dense, GRU, PReLU, Dropout, TimeDistributed
 #from builders.recurrent import build_att_gru_norm, build_att_gru
 from activations import Mish
 from optimizers import Ranger
@@ -17,7 +17,7 @@ batch=512
 
 
 
-import pdb; pdb.set_trace()  # XXX BREAKPOINT
+#import pdb; pdb.set_trace()  # XXX BREAKPOINT
 
 
 
@@ -39,14 +39,14 @@ print("n_timesteps: {}".format(n_time))
 
 neg = Constant(value=-1)
 
-def gru(inn, nodes=40, **kwargs):
-    return GRU(nodes, activation='tanh',  return_state=True, return_sequences=True, reset_after=True, recurrent_activation='sigmoid', recurrent_dropout=0.1, dropout=0.1)(inn, **kwargs)
+def gru(inn, nodes=40, dropout=0,**kwargs):
+    return GRU(nodes, activation='tanh',  return_state=True, return_sequences=True, reset_after=True, recurrent_activation='sigmoid', recurrent_dropout=dropout)(inn, **kwargs)
 
 
-def block(inn, nodes=40,**kwargs):
-    val, state = gru(inn, nodes,**kwargs)
-    val2 = Attention()(val)
-    return val, state, val2
+def block(inn, nodes=40, dropout = 0,**kwargs):
+    val, state = gru(inn, nodes, dropout, **kwargs)
+    val2 = Attention()(Dropout(5*dropout)(val))
+    return val, Dropout(5*dropout)(state), val2
 
 
 def build_att_gru(n_time, n_classes, nodes=40, blocks=3,
@@ -67,14 +67,18 @@ def build_att_gru(n_time, n_classes, nodes=40, blocks=3,
         returns compiled model.
         requires by default one hot encoded Y data
     '''
-    inputs = Input((n_time, 8))
-    x = Dense(128, activation=Mish())(inputs)
-    x, h, a = block(x, nodes)
+    inputs = Input(shape = (n_time, 8))
+    d = 0.1
+    x = Dense(128)(inputs)
+    x = Dropout(5*d)(x)
+    x, h, a = block(x, nodes, dropout=d)
     attention=[a]
     for _ in range(blocks-1):
-        x, h, a = block(x, nodes, initial_state=h)
+        x = Dropout(5*d)(x)
+        x, h, a = block(x, nodes, dropout=d,initial_state=h)
         attention.append(a)
     out = Add()(attention)
+    out = Dropout(5*d)(out)
     outputs = Dense(n_classes, activation="softmax")(out)
     model = Model(inputs, outputs)
     model.compile(optimizer(**optim_args), loss=loss,  metrics=['accuracy'])
