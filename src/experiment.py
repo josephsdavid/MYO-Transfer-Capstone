@@ -7,7 +7,7 @@ from tensorflow.keras.initializers import Constant
 from tensorflow.keras.callbacks import ModelCheckpoint, ReduceLROnPlateau
 from tensorflow.keras.models import Model
 from tensorflow.keras.utils import plot_model, to_categorical
-from tensorflow.keras.layers import Add, Input, Dense, GRU
+from tensorflow.keras.layers import Add, Input, Dense, GRU, PReLU
 #from builders.recurrent import build_att_gru_norm, build_att_gru
 from activations import Mish
 from optimizers import Ranger
@@ -36,7 +36,7 @@ print("n_timesteps: {}".format(n_time))
 neg = Constant(value=-1)
 
 def gru(inn, nodes=40, **kwargs):
-    return GRU(nodes, activation=Mish(),  return_state=True, return_sequences=True, reset_after=True, recurrent_activation='sigmoid')(inn, **kwargs)
+    return GRU(nodes, activation=PReLU(),  return_state=True, return_sequences=True, reset_after=True, recurrent_activation='sigmoid')(inn, **kwargs)
 
 
 def block(inn, nodes=40,**kwargs):
@@ -64,7 +64,7 @@ def build_att_gru(n_time, n_classes, nodes=40, blocks=3,
         requires by default one hot encoded Y data
     '''
     inputs = Input((n_time, 8))
-    x = Dense(128)(inputs)
+    x = Dense(128, activation=PReLU())(inputs)
     x, h, a = block(x, nodes)
     attention=[a]
     for _ in range(blocks-1):
@@ -91,23 +91,23 @@ h2 = model.fit(train, epochs=100, validation_data=test, shuffle=False,
                class_weight=class_weights)
 
 
-#import matplotlib.pyplot as plt
-#plt.subplot(212)
-#plt.plot(h2.history['accuracy'])
-#plt.plot(h2.history['val_accuracy'])
-#plt.title('model accuracy')
-#plt.ylabel('accuracy')
-#plt.xlabel('epoch')
-#plt.legend(['train', 'test'], loc='upper left')
-## summarize history for loss
-#plt.subplot(211)
-#plt.plot(h2.history['loss'])
-#plt.plot(h2.history['val_loss'])
-#plt.title('model loss')
-#plt.ylabel('loss')
-#plt.xlabel('epoch')
-#plt.legend(['train', 'test'], loc='upper left')
-#F = plt.gcf()
-#Size = F.get_size_inches()
-#F.set_size_inches(Size[0]*2, Size[1]*2)
-#plt.savefig("lstm_untuned.png")
+import matplotlib.pyplot as plt
+plt.subplot(212)
+plt.plot(h2.history['accuracy'])
+plt.plot(h2.history['val_accuracy'])
+plt.title('model accuracy')
+plt.ylabel('accuracy')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper left')
+# summarize history for loss
+plt.subplot(211)
+plt.plot(h2.history['loss'])
+plt.plot(h2.history['val_loss'])
+plt.title('model loss')
+plt.ylabel('loss')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper left')
+F = plt.gcf()
+Size = F.get_size_inches()
+F.set_size_inches(Size[0]*2, Size[1]*2)
+plt.savefig("lstm_untuned.png")
