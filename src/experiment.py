@@ -2,12 +2,13 @@ import utils as u
 import multiprocessing
 import numpy as np
 import callbacks as cb
+import losses as l
 import tensorflow as tf
 from tensorflow.keras.initializers import Constant
 from tensorflow.keras.callbacks import ModelCheckpoint, ReduceLROnPlateau
 from tensorflow.keras.models import Model
 from tensorflow.keras.utils import plot_model, to_categorical
-from tensorflow.keras.layers import Add, Input, Dense, GRU
+from tensorflow.keras.layers import Add, Input, Dense, GRU, PReLU, Dropout
 #from builders.recurrent import build_att_gru_norm, build_att_gru
 from activations import Mish
 from optimizers import Ranger
@@ -17,6 +18,7 @@ batch=512
 
 
 import pdb; pdb.set_trace()  # XXX BREAKPOINT
+
 
 
 train = u.NinaMA("../data/ninaPro", ['b'], [u.butter_highpass_filter],
@@ -31,12 +33,14 @@ test = u.NinaMA("../data/ninaPro", ['b'], [u.butter_highpass_filter],
 n_time = train[0][0].shape[1]
 n_class =train[0][1].shape[-1]
 
+loss = l.focal_loss( gamma=4., alpha=8.)
+
 print("n_timesteps: {}".format(n_time))
 
 neg = Constant(value=-1)
 
 def gru(inn, nodes=40, **kwargs):
-    return GRU(nodes, activation=Mish(),  return_state=True, return_sequences=True, reset_after=True, recurrent_activation='sigmoid')(inn, **kwargs)
+    return GRU(nodes, activation='tanh',  return_state=True, return_sequences=True, reset_after=True, recurrent_activation='sigmoid', recurrent_dropout=0.1, dropout=0.1)(inn, **kwargs)
 
 
 def block(inn, nodes=40,**kwargs):
@@ -64,7 +68,7 @@ def build_att_gru(n_time, n_classes, nodes=40, blocks=3,
         requires by default one hot encoded Y data
     '''
     inputs = Input((n_time, 8))
-    x = Dense(128)(inputs)
+    x = Dense(128, activation=Mish())(inputs)
     x, h, a = block(x, nodes)
     attention=[a]
     for _ in range(blocks-1):
@@ -81,33 +85,32 @@ def build_att_gru(n_time, n_classes, nodes=40, blocks=3,
 
 
 
-model=build_att_gru(n_time, n_class)
+model=build_att_gru(n_time, n_class, loss = loss)
 tf.keras.utils.plot_model(model, to_file="attn.png", show_shapes=True, expand_nested=True)
 
 #model.compile(Ranger(), loss='categorical_crossentropy', metrics=['accuracy'])
-class_weights = {i:1/(n_class) if i==0 else 1 for i in range(1, n_class+1)}
 h2 = model.fit(train, epochs=100, validation_data=test, shuffle=False,
-               callbacks=[ModelCheckpoint("gru2.h5", monitor="val_loss", keep_best_only=True)], use_multiprocessing=True, workers=12,
-               class_weight=class_weights)
+               callbacks=[ModelCheckpoint("gru2.h5", monitor="val_loss", keep_best_only=True)], use_multiprocessing=True, workers=12
+               )
 
 
-#import matplotlib.pyplot as plt
-#plt.subplot(212)
-#plt.plot(h2.history['accuracy'])
-#plt.plot(h2.history['val_accuracy'])
-#plt.title('model accuracy')
-#plt.ylabel('accuracy')
-#plt.xlabel('epoch')
-#plt.legend(['train', 'test'], loc='upper left')
-## summarize history for loss
-#plt.subplot(211)
-#plt.plot(h2.history['loss'])
-#plt.plot(h2.history['val_loss'])
-#plt.title('model loss')
-#plt.ylabel('loss')
-#plt.xlabel('epoch')
-#plt.legend(['train', 'test'], loc='upper left')
-#F = plt.gcf()
-#Size = F.get_size_inches()
-#F.set_size_inches(Size[0]*2, Size[1]*2)
-#plt.savefig("lstm_untuned.png")
+import matplotlib.pyplot as plt
+plt.subplot(212)
+plt.plot(h2.history['accuracy'])
+plt.plot(h2.history['val_accuracy'])
+plt.title('model accuracy')
+plt.ylabel('accuracy')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper left')
+# summarize history for loss
+plt.subplot(211)
+plt.plot(h2.history['loss'])
+plt.plot(h2.history['val_loss'])
+plt.title('model loss')
+plt.ylabel('loss')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper left')
+F = plt.gcf()
+Size = F.get_size_inches()
+F.set_size_inches(Size[0]*2, Size[1]*2)
+plt.savefig("lstm_untuned.png")

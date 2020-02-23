@@ -104,6 +104,7 @@ class NinaLoader(Loader):
         self.labels = mode(np.moveaxis(np.concatenate(self.labels,axis=0),2,1)[...,-1])
         self.rep = mode(np.moveaxis(np.concatenate(self.rep,axis=0),2,1)[...,-1])
         self.subject = mode(np.moveaxis(np.concatenate(self.subject,axis=0),2,1)[...,-1])
+        self.circ = mode(np.moveaxis(np.concatenate(self.circ,axis=0),2,1)[...,-1])
         #if VERBOSE :
         self.emg = self.emg.astype(np.float16)
         print(f"[Step 4 ==> scale] Shape of emg: {np.shape(self.emg)}")
@@ -135,7 +136,9 @@ class NinaLoader(Loader):
         #plt.show()
 
         subject = np.repeat(res['subject'], lab.shape[0])
+        circ = np.repeat(res['circumference'], lab.shape[0])
         subject = subject.reshape(subject.shape[0],1)
+        circ = subject.reshape(circ.shape[0],1)
 
         data.append(emg)
         if features:
@@ -150,30 +153,33 @@ class NinaLoader(Loader):
                 data.append(newData)
 
         del res
-        return np.concatenate(data,axis=1), lab, rep, subject
+        return np.concatenate(data,axis=1), lab, rep, subject, circ
 
     def _load_by_trial_raw(self, trial=1, options=None):
         data = []
         labs = []
         reps = []
         subjects = []
+        circ = []
         for i in range(1,11):
             # print(f"Starting load of {i}/10 .mat files")
             path = self.path + "/" + "s" + str(i) + "/S" + str(i) + "_E" + str(trial) + "_A1.mat"
-            fileData, l, r, s = self._load_file(path, options)
+            fileData, l, r, s, c = self._load_file(path, options)
             data.append(fileData)
             labs.append(l)
             reps.append(r)
             subjects.append(s)
+            circ.append(c)
 
 
-        return data, labs, reps, subjects
+        return data, labs, reps, subjects, circ
 
     def _read_group_to_lists(self):
         res = []
         labels = []
         reps = []
         subjects = []
+        circs = []
         for e in self.excercises:
             # In the papers the exercises are lettered not numbered
             # Also watchout, the 'exercise' col in each .mat are
@@ -187,19 +193,20 @@ class NinaLoader(Loader):
                 e = 2
             elif e == 'c':
                 e = 3
-            exData, l ,r, s= self._load_by_trial_raw(trial=e)
+            exData, l ,r, s, c= self._load_by_trial_raw(trial=e)
             res+=exData
             labels+=l
             reps+=r
             subjects+=s
+            circs += c
             print(f"[Step 0] \nexData {np.shape(exData.copy())}\nlabels {np.shape(labels.copy())}")
-        return res, labels, reps, subjects
+        return res, labels, reps, subjects, circs
 
 
 
 
     def read_data(self):
-        self.emg, self.labels, self.rep, self.subject = self._read_group_to_lists()
+        self.emg, self.labels, self.rep, self.subject, self.circ = self._read_group_to_lists()
 	# fix this, they need to be the same shape as labels
         #self.rep =  [x[:min(self.max_size, maxlen)] for x in self.rep]
         #self.subject =  [x[:min(self.max_size, maxlen)] for x in self.subject]
@@ -223,6 +230,7 @@ class NinaLoader(Loader):
         self.labels = [window_roll(x, step, window_size) for x in self.labels]
         self.rep = [window_roll(x, step, window_size) for x in self.rep]
         self.subject = [window_roll(x, step, window_size) for x in self.subject]
+        self.circ = [window_roll(x, step, window_size) for x in self.circ]
 
 
 # x = NinaLoader("../../PreTrainingDataset", [pp.butter_highpass_filter], [aa.add_noise])
