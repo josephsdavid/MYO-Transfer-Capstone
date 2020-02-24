@@ -17,7 +17,7 @@ from optimizers import Ranger
 from layers import Attention, LayerNormalization
 batch=512
 
-cosine = cb.CosineAnnealingScheduler(T_max=100, eta_max=1e-2, eta_min=1e-4)
+cosine = cb.CosineAnnealingScheduler(T_max=100, eta_max=1e-3, eta_min=1e-5, verbose=0, epoch_start=5)
 
 
 
@@ -25,15 +25,16 @@ cosine = cb.CosineAnnealingScheduler(T_max=100, eta_max=1e-2, eta_min=1e-4)
 
 
 
-train = u.NinaMA("../data/ninaPro", ['a','b','c'], [np.abs, u.butter_highpass_filter],
+train = u.NinaMA("../data/ninaPro", ['b','c'], [np.abs, u.butter_highpass_filter],
                         [u.add_noise_random], validation=False, by_subject = False, batch_size=batch,
                         scale = False, rectify=False, sample_0=False, step=5, n=15, window_size=52, super_augment=False)
-val = u.NinaMA("../data/ninaPro", ['a','b','c'], [np.abs, u.butter_highpass_filter],
+val = u.NinaMA("../data/ninaPro", ['b','c'], [np.abs, u.butter_highpass_filter],
                        None, validation=True, by_subject = False, batch_size=batch,
                        scale = False, rectify =False, sample_0=False, step=5, n=15, window_size=52, super_augment=False)
 
 X_test, y_test = val.test_data
 
+import pdb; pdb.set_trace()  # XXX BREAKPOINT
 
 #cyclic = cb.CyclicLR(step_size=2*len(train), mode='triangular2')
 
@@ -100,7 +101,7 @@ def build_att_gru(n_time, n_classes, nodes=40, blocks=3,
 
 
 
-model = br.build_att_gru(n_time, n_class, loss = loss)
+#model = br.build_att_gru(n_time, n_class, loss = loss)
 
 #tf.keras.utils.plot_model(model, to_file="attn.png", show_shapes=True, expand_nested=True)
 
@@ -127,8 +128,8 @@ def build_simple_att(n_time, n_class, dense = [50,50,50], drop=[0.1, 0.1, 0.1], 
         model.load_weights(f"{model_id}.h5")
     return model
 
-#model = build_simple_att(n_time, n_class, dense = [500,750, 1000], drop = [0.1,0.1, 0.1])
-model.compile(Ranger(), loss=loss, metrics=['accuracy'])
+model = build_simple_att(n_time, n_class, dense = [500,750, 1000], drop = [0.1,0.25, 0.5])
+model.compile(Ranger(learning_rate=0.001), loss=loss, metrics=['accuracy'])
 print(model.summary())
 #model.compile(Ranger(), loss='categorical_crossentropy', metrics=['accuracy'])
 h2 = model.fit(train, epochs=20, validation_data=val, shuffle=False,

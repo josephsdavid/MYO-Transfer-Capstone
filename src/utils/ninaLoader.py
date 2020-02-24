@@ -26,6 +26,17 @@ def mode(arr):
         res = p.map(mode0, inn)
     return np.asarray(res)
 
+'''
+first_appearance: get the first unique item of an array!
+'''
+def first0(x):
+    return np.unique(x)[0]
+def first_appearance(arr):
+    inn = [arr[i] for i in range(arr.shape[0])]
+    with multiprocessing.Pool(None) as p:
+        res = p.map(first0, inn)
+    return np.asarray(res)
+
 
 
 # we will argparse the generator
@@ -98,14 +109,32 @@ class NinaLoader(Loader):
         print(f"[Step 3 ==> moveaxis] Shape of labels: {np.shape(self.labels)}")
         print(f"[Step 3 ==> moveaxis] Shape of reps: {np.shape(self.rep.copy())}")
         print(f"[Step 3 ==> moveaxis] Shape of subjects: {np.shape(self.subject.copy())}")
-        self.emg = np.moveaxis(np.concatenate(self.emg,axis=0),2,1)
 
         # hack, turns them into a square array with [...,-1] then for i in axis
         # 0 takes the mode of that thing, still faster than scipy mode lol
-        self.labels = mode(np.moveaxis(np.concatenate(self.labels,axis=0),2,1)[...,-1])
-        self.rep = mode(np.moveaxis(np.concatenate(self.rep,axis=0),2,1)[...,-1])
-        self.subject = mode(np.moveaxis(np.concatenate(self.subject,axis=0),2,1)[...,-1])
-        self.circ = mode(np.moveaxis(np.concatenate(self.circ,axis=0),2,1)[...,-1])
+        # no data leaks!
+
+        self.emg = np.moveaxis(np.concatenate(self.emg,axis=0),2,1)
+        # update mode to be np.unique since we are getting rid of the stuff
+
+        self.labels = np.moveaxis(np.concatenate(self.labels,axis=0),2,1)[...,-1]
+        self.rep = np.moveaxis(np.concatenate(self.rep,axis=0),2,1)[...,-1]
+        self.subject = np.moveaxis(np.concatenate(self.subject,axis=0),2,1)[...,-1]
+
+        good_obs = np.array([i for i in range(self.rep.shape[0]) if np.unique(self.rep[i]).shape[0] ==  1])
+
+        self.emg=self.emg[good_obs,:,:]
+        self.labels=self.labels[good_obs,:]
+        self.rep=self.rep[good_obs,:]
+        self.subject=self.subject[good_obs,:]
+        self.labels=first_appearance(self.labels)
+        self.rep=first_appearance(self.rep)
+        self.subject=first_appearance(self.subject)
+
+        #self.labels = first_appearance(np.moveaxis(np.concatenate(self.labels,axis=0),2,1)[...,-1])
+        #self.rep = first_appearance(np.moveaxis(np.concatenate(self.rep,axis=0),2,1)[...,-1])
+        #self.subject = first_appearance(np.moveaxis(np.concatenate(self.subject,axis=0),2,1)[...,-1])
+        #self.circ = first_appearance(np.moveaxis(np.concatenate(self.circ,axis=0),2,1)[...,-1])
         #if VERBOSE :
         self.emg = self.emg.astype(np.float16)
         print(f"[Step 4 ==> scale] Shape of emg: {np.shape(self.emg)}")

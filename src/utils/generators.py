@@ -97,7 +97,8 @@ class NinaGenerator(NinaLoader, tf.keras.utils.Sequence):
             batch_size=400, shuffle=True,
             validation=False,
             by_subject=False,
-            sample_0=True, circ=False):
+            sample_0=True):
+        circ=False
 
         super(NinaGenerator, self).__init__(path, excercises,process_fns, augment_fns, scale, step, window_size)
         self.rectify=rectify
@@ -130,7 +131,6 @@ class NinaGenerator(NinaLoader, tf.keras.utils.Sequence):
             self.test_data = (self.emg[test_id][0,:], self.labels[test_id][0,:])
         self._indexer(case)
         if circ:
-            emg = [np.c_[self.emg[i,:,:], np.repeat(self.circ[i], 52)] for i in range(self.circ.shape[0])]
             self.emg = np.array(emg)
         print(self.emg.shape)
         self.on_epoch_end()
@@ -142,14 +142,12 @@ class NinaGenerator(NinaLoader, tf.keras.utils.Sequence):
         self.rep = self.rep[id]
         self.labels=self.labels[id]
         self.subject=self.subject[id]
-        self.circ=self.circ[id]
 
     def _deleter(self, loc):
         self.emg = np.delete(self.emg, loc, axis=0 )
         self.rep = np.delete(self.rep, loc, axis=0 )
         self.labels = np.delete(self.labels, loc, axis=0 )
         self.subject = np.delete(self.subject, loc, axis=0 )
-        self.circ = np.delete(self.circ, loc, axis=0 )
 
 
     def __len__(self):
@@ -235,7 +233,7 @@ class NinaMA(NinaGenerator):
         batch_size=400, shuffle=True,
         validation=False,
         by_subject=False,
-        sample_0=True, circ=False,
+        sample_0=True,
         n=5, super_augment = False):
         super().__init__(
         path,
@@ -249,7 +247,7 @@ class NinaMA(NinaGenerator):
         batch_size, shuffle,
         validation,
         by_subject,
-        sample_0, circ
+        sample_0
         )
         self.n = n
         self.super_augment = super_augment

@@ -7,8 +7,9 @@ class CosineAnnealingScheduler(Callback):
     """Cosine annealing scheduler.
     """
 
-    def __init__(self, T_max, eta_max, eta_min=0, verbose=0):
+    def __init__(self, T_max, eta_max, eta_min=0, verbose=0, epoch_start=80):
         super(CosineAnnealingScheduler, self).__init__()
+        self.epoch_start=epoch_start
         self.T_max = T_max
         self.eta_max = eta_max
         self.eta_min = eta_min
@@ -17,8 +18,11 @@ class CosineAnnealingScheduler(Callback):
     def on_epoch_begin(self, epoch, logs=None):
         if not hasattr(self.model.optimizer, 'learning_rate'):
             raise ValueError('Optimizer must have a "learning_rate" attribute.')
-        learning_rate = self.eta_min + (self.eta_max - self.eta_min) * (1 + math.cos(math.pi * epoch / self.T_max)) / 2
-        K.set_value(self.model.optimizer.learning_rate, learning_rate)
+        if epoch > self.epoch_start - 1:
+            learning_rate = self.eta_min + (self.eta_max - self.eta_min) * (1 + math.cos(math.pi * (epoch - self.epoch_start) / self.T_max)) / 2
+            K.set_value(self.model.optimizer.learning_rate, learning_rate)
+        else:
+            learning_rate=self.model.optimizer.learning_rate
         if self.verbose > 0:
             print('\nEpoch %05d: CosineAnnealingScheduler setting learning '
                   'rate to %s.' % (epoch + 1, learning_rate))
