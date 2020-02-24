@@ -86,30 +86,18 @@ class NinaGenerator(NinaLoader, tf.keras.utils.Sequence):
             #ids2=tuple(ids[0][::18], )
             self._deleter(ids[:-13000])
         v_subjects = np.array(np.unique(self.subject)[3:5])
-        v_reps = np.array(np.unique(self.rep)[-2:])
-        print("v_subjects: {}".format(v_subjects))
-        print("v_reps: {}".format(v_reps))
+        v_reps = np.array(np.unique(self.rep)[1::2])
         case_dict = {
                 (False, False):np.where(np.isin(self.rep, v_reps, invert=True)),
-                (True, False):np.where(np.isin(self.rep, v_reps)),
+                (True, False):np.where(np.isin(self.rep, v_reps[:-1])),
                 (False, True):np.where(np.isin(self.subject, v_subjects, invert=True)),
                 (True, True):np.where(np.isin(self.subject, v_subjects))
                 }
 
-        print("number in    rep 0: {}".format(self.emg[np.where(self.rep==0)].shape[0]))
-
-        print("number in label 0 : {}".format(self.emg[np.where(self.labels==0)].shape[0]))
-        print("number in label 1 : {}".format(self.emg[np.where(self.labels==1)].shape[0]))
-        print("number in label 2 : {}".format(self.emg[np.where(self.labels==2)].shape[0]))
-        print("number in label 3 : {}".format(self.emg[np.where(self.labels==3)].shape[0]))
-        print("number in label 4 : {}".format(self.emg[np.where(self.labels==4)].shape[0]))
-        print("number in label 5 : {}".format(self.emg[np.where(self.labels==5)].shape[0]))
-
-        print("number in label 6 : {}".format(self.emg[np.where(self.labels==6)].shape[0]))
-        # print(1/18label1 :[(validation, by_subject)]
-
-        # fix!!
         case = case_dict[(validation, by_subject)]
+        test_id = np.where(np.isin(self.rep, v_reps[-1])),
+        if validation:
+            self.test_data = (self.emg[test_id][0,:], self.labels[test_id][0,:])
         self._indexer(case)
         if circ:
             emg = [np.c_[self.emg[i,:,:], np.repeat(self.circ[i], 52)] for i in range(self.circ.shape[0])]

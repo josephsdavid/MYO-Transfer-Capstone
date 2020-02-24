@@ -24,9 +24,12 @@ batch=512
 train = u.NinaMA("../data/ninaPro", ['b'], [u.butter_highpass_filter],
                         [u.add_noise_random], validation=False, by_subject = False, batch_size=batch,
                         scale = False, rectify=True, sample_0=False, step=5, n=15, window_size=52, super_augment=False)
-test = u.NinaMA("../data/ninaPro", ['b'], [u.butter_highpass_filter],
+val = u.NinaMA("../data/ninaPro", ['b'], [u.butter_highpass_filter],
                        None, validation=True, by_subject = False, batch_size=batch,
                        scale = False, rectify =True, sample_0=False, step=5, n=15, window_size=52, super_augment=False)
+
+X_test, y_test = val.test_data
+
 
 #cyclic = cb.CyclicLR(step_size=2*len(train), mode='triangular2')
 
@@ -69,7 +72,7 @@ def build_att_gru(n_time, n_classes, nodes=40, blocks=3,
     '''
     inputs = Input(shape = (n_time, 8))
     d = 0.1
-    x = Dense(128)(inputs)
+    x = Dense(128, activation=Mish())(inputs)
     x = Dropout(5*d)(x)
     x, h, a = block(x, nodes, dropout=d)
     attention=[a]
@@ -93,10 +96,11 @@ model=build_att_gru(n_time, n_class, loss = loss)
 tf.keras.utils.plot_model(model, to_file="attn.png", show_shapes=True, expand_nested=True)
 
 #model.compile(Ranger(), loss='categorical_crossentropy', metrics=['accuracy'])
-h2 = model.fit(train, epochs=100, validation_data=test, shuffle=False,
+h2 = model.fit(train, epochs=100, validation_data=val, shuffle=False,
                callbacks=[ModelCheckpoint("gru2.h5", monitor="val_loss", keep_best_only=True)], use_multiprocessing=True, workers=12
                )
 
+print(model.evaluate(X_test, tf.keras.utils.to_categorical(y_test)))
 
 import matplotlib.pyplot as plt
 plt.subplot(212)
@@ -105,7 +109,7 @@ plt.plot(h2.history['val_accuracy'])
 plt.title('model accuracy')
 plt.ylabel('accuracy')
 plt.xlabel('epoch')
-plt.legend(['train', 'test'], loc='upper left')
+plt.legend(['train', 'val'], loc='upper left')
 # summarize history for loss
 plt.subplot(211)
 plt.plot(h2.history['loss'])
