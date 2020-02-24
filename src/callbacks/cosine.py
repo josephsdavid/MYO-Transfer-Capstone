@@ -1,6 +1,6 @@
 import math
-from keras.callbacks import Callback
-from keras import backend as K
+from tensorflow.keras.callbacks import Callback
+from tensorflow.keras import backend as K
 
 
 class CosineAnnealingScheduler(Callback):
@@ -15,15 +15,15 @@ class CosineAnnealingScheduler(Callback):
         self.verbose = verbose
 
     def on_epoch_begin(self, epoch, logs=None):
-        if not hasattr(self.model.optimizer, 'lr'):
-            raise ValueError('Optimizer must have a "lr" attribute.')
-        lr = self.eta_min + (self.eta_max - self.eta_min) * (1 + math.cos(math.pi * epoch / self.T_max)) / 2
-        K.set_value(self.model.optimizer.lr, lr)
+        if not hasattr(self.model.optimizer, 'learning_rate'):
+            raise ValueError('Optimizer must have a "learning_rate" attribute.')
+        learning_rate = self.eta_min + (self.eta_max - self.eta_min) * (1 + math.cos(math.pi * epoch / self.T_max)) / 2
+        K.set_value(self.model.optimizer.learning_rate, learning_rate)
         if self.verbose > 0:
             print('\nEpoch %05d: CosineAnnealingScheduler setting learning '
-                  'rate to %s.' % (epoch + 1, lr))
+                  'rate to %s.' % (epoch + 1, learning_rate))
 
     def on_epoch_end(self, epoch, logs=None):
         logs = logs or {}
-        logs['lr'] = K.get_value(self.model.optimizer.lr)
+        logs['learning_rate'] = K.get_value(self.model.optimizer.learning_rate)
 
