@@ -10,13 +10,24 @@ def scale(arr3d):
     return arr3d
 
 
+def moving_average(data_set, periods=3):
+    weights = np.ones(periods) / periods
+    return np.convolve(data_set, weights, mode='valid')
+
+def ma(window, n):
+    return np.vstack([moving_average(window[:,i], n) for i in range(window.shape[-1])]).T
+
+def ma_batch(batch, n):
+        return np.dstack([ma(batch[i,:,:], n) for i in range(batch.shape[0])])
+
 class PreValGenerator(PreValidationLoader, tf.keras.utils.Sequence):
     def __init__(self, path: str, process_fns: list, augment_fns: list, scale=False,
-                 batch_size=400, shuffle=True, step=5, window_size=52):
+                 batch_size=400, shuffle=True, step=5, window_size=52, n = 0):
         # python is so fucking cool
         super(PreValGenerator, self).__init__(path, process_fns, augment_fns, scale, step, window_size)
         self.batch_size = batch_size
         self.shuffle =shuffle
+        self.n = n
         self.on_epoch_end()
 
     def __len__(self):
@@ -31,17 +42,26 @@ class PreValGenerator(PreValidationLoader, tf.keras.utils.Sequence):
     def __getitem__(self, index):
         'generate a single batch'
         indexes = self.indexes[index*self.batch_size:(index+1)*self.batch_size]
-        return self.emg[indexes,:,:],  self.labels[indexes]
+        out = self.emg[indexes,:,:].copy()
+        if self.augmentors is not None:
+            for f in self.augmentors:
+                for i in range(out.shape[0]):
+                    out[i,:,:]=f(out[i,:,:])
+        if self.n != 0:
+            return np.moveaxis(ma_batch(out, self.n), -1, 0),  self.labels[indexes,:]
+        else:
+            return out,  self.labels[indexes]
 
 
 
 class PreTrainGenerator(PreTrainLoader, tf.keras.utils.Sequence):
     def __init__(self, path: str, process_fns: list, augment_fns: list, scale=False,
-                 batch_size=400, shuffle=True, step=5, window_size=52):
+                 batch_size=400, shuffle=True, step=5, window_size=52, n):
         # python is so fucking cool
         super(PreTrainGenerator, self).__init__(path, process_fns, augment_fns, scale, step, window_size)
         self.batch_size = batch_size
         self.shuffle =shuffle
+        self.n = n
         self.on_epoch_end()
 
     def __len__(self):
@@ -56,7 +76,15 @@ class PreTrainGenerator(PreTrainLoader, tf.keras.utils.Sequence):
     def __getitem__(self, index):
         'generate a single batch'
         indexes = self.indexes[index*self.batch_size:(index+1)*self.batch_size]
-        return self.emg[indexes,:,:],  self.labels[indexes]
+        out = self.emg[indexes,:,:].copy()
+        if self.augmentors is not None:
+            for f in self.augmentors:
+                for i in range(out.shape[0]):
+                    out[i,:,:]=f(out[i,:,:])
+        if self.n != 0:
+            return np.moveaxis(ma_batch(out, self.n), -1, 0),  self.labels[indexes,:]
+        else:
+            return out,  self.labels[indexes]
 
 
 class NinaGenerator(NinaLoader, tf.keras.utils.Sequence):
@@ -193,16 +221,6 @@ class NinaGeneratorConv(NinaGenerator):
 
 
 
-
-def moving_average(data_set, periods=3):
-    weights = np.ones(periods) / periods
-    return np.convolve(data_set, weights, mode='valid')
-
-def ma(window, n):
-    return np.vstack([moving_average(window[:,i], n) for i in range(window.shape[-1])]).T
-
-def ma_batch(batch, n):
-        return np.dstack([ma(batch[i,:,:], n) for i in range(batch.shape[0])])
 
 class NinaMA(NinaGenerator):
     def __init__(self,

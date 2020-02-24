@@ -63,8 +63,8 @@ class PreValidationLoader(Loader):
             self.emg = [f(x) for x in self.emg]
 
     def augment_data(self, step, window_size):
-        for f in self.augmentors:
-            self.emg, self.labels = f(self.emg, self.labels)
+        #for f in self.augmentors:
+        #    self.emg, self.labels = f(self.emg, self.labels)
 
         self.emg = [window_roll(x, step, window_size) for x in self.emg]
         self.labels = roll_labels(self.emg, self.labels)
@@ -110,8 +110,9 @@ class PreTrainLoader(Loader):
             self.emg = [f(x) for x in self.emg]
 
     def augment_data(self, step, window_size):
-        for f in self.augmentors:
-            self.emg, self.labels = f(self.emg, self.labels)
+        pass
+        #for f in self.augmentors:
+        #    self.emg, self.labels = f(self.emg, self.labels)
 
         self.emg = [window_roll(x, step, window_size) for x in self.emg]
         self.labels = roll_labels(self.emg, self.labels)
