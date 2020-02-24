@@ -11,6 +11,7 @@ from .helpers import read_file_validation, pad_along_axis
 from .augmentors import window_roll, roll_labels, add_noise
 from .loaders import Loader
 from .preprocessors import butter_highpass_filter, scale
+from .label_dict import label_dict
 
 
 def mode0(x):
@@ -118,7 +119,7 @@ class NinaLoader(Loader):
     # features can be an array if we need to pass back additional
     # features with the emg data. could help recycle this
     # loader if we want to group by rerepetition later on.
-    def _load_file(self, path, features=None):
+    def _load_file(self, path, ex,features=None):
         res = scipy.io.loadmat(path)
         data = []
         # Might need to start clipping emg segments here... RAM is
@@ -126,8 +127,9 @@ class NinaLoader(Loader):
         self.maxlen = res['emg'].shape[0]
         #print(res['emg'][np.where(res['restimulus']==0)].shape[0]//52)
         rep = res['rerepetition'][:self.maxlen].copy()
-        emg = res['emg'][:self.maxlen,:8].copy()
+        emg = res['emg'][:self.maxlen,:].copy()
         lab = res['restimulus'][:self.maxlen].copy()
+        lab = np.array([[label_dict[ex][lab[i][0]]] for i in range(lab.shape[0])])
         #lab = res['stimulus'][:self.maxlen].copy()
         #import pdb; pdb.set_trace()  # XXX BREAKPOINT
 
@@ -164,7 +166,7 @@ class NinaLoader(Loader):
         for i in range(1,11):
             # print(f"Starting load of {i}/10 .mat files")
             path = self.path + "/" + "s" + str(i) + "/S" + str(i) + "_E" + str(trial) + "_A1.mat"
-            fileData, l, r, s, c = self._load_file(path, options)
+            fileData, l, r, s, c = self._load_file(path, ex = trial, features=options)
             data.append(fileData)
             labs.append(l)
             reps.append(r)

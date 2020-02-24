@@ -86,7 +86,9 @@ class NinaGenerator(NinaLoader, tf.keras.utils.Sequence):
             #ids2=tuple(ids[0][::18], )
             self._deleter(ids[:-13000])
         v_subjects = np.array(np.unique(self.subject)[3:5])
-        v_reps = np.array(np.unique(self.rep)[1::2])
+        v_reps = np.array(np.unique(self.rep)[3::2])
+        print(f"v_reps: {v_reps[:-1]}")
+        print(f"test: {v_reps[-1]}")
         case_dict = {
                 (False, False):np.where(np.isin(self.rep, v_reps, invert=True)),
                 (True, False):np.where(np.isin(self.rep, v_reps[:-1])),
@@ -253,6 +255,8 @@ class NinaMA(NinaGenerator):
                 self.subject = np.concatenate( ss, axis=0)
                 self.on_epoch_end()
         self.labels = tf.keras.utils.to_categorical(self.labels)
+        if validation:
+            self.test_data = (ma_batch(self.test_data[0], n), tf.keras.utils.to_categorical(self.test_data[1]))
 
     def __getitem__(self, index):
         'generate a single batch'
