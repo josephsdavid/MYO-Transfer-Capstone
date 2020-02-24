@@ -36,7 +36,7 @@ def build_att_gru(n_time, n_classes, nodes=40, blocks=3,
         returns compiled model.
         requires by default one hot encoded Y data
     '''
-    inputs = Input((n_time, 8))
+    inputs = Input((n_time, 16))
     x = Dense(128)(inputs)
     x, h, a = block(x, nodes)
     attention=[a]
@@ -47,7 +47,6 @@ def build_att_gru(n_time, n_classes, nodes=40, blocks=3,
     outputs = Dense(n_classes, activation="softmax")(out)
     model = Model(inputs, outputs)
     model.compile(optimizer(**optim_args), loss=loss,  metrics=['accuracy'])
-    print(model.summary())
     if model_id is not None:
         model.load_weights(f"{model_id}.h5")
     return model
@@ -79,7 +78,7 @@ def build_att_gru_dropout(n_time, n_classes, nodes=40, blocks=3,
         returns compiled model.
         requires by default one hot encoded Y data
     '''
-    inputs = Input((n_time, 8))
+    inputs = Input((n_time, 16))
     x = Dense(128)(inputs)
     x, h, a = block(x, nodes)
     attention=[a]
@@ -91,7 +90,6 @@ def build_att_gru_dropout(n_time, n_classes, nodes=40, blocks=3,
     outputs = Dense(n_classes, activation="softmax")(out)
     model = Model(inputs, outputs)
     model.compile(optimizer(**optim_args), loss=loss,  metrics=['accuracy'])
-    print(model.summary())
     if model_id is not None:
         model.load_weights(f"{model_id}.h5")
     return model
@@ -125,7 +123,7 @@ def build_att_gru_norm(n_time, n_classes, nodes=40, blocks=3,
         returns compiled model.
         requires by default one hot encoded Y data
     '''
-    inputs = Input((n_time, 8))
+    inputs = Input((n_time, 16))
     x = Dense(128)(inputs)
     x, h, a = normblock(x, nodes)
     attention=[a]
@@ -136,7 +134,6 @@ def build_att_gru_norm(n_time, n_classes, nodes=40, blocks=3,
     outputs = Dense(n_classes, activation="softmax")(out)
     model = Model(inputs, outputs)
     model.compile(optimizer(**optim_args), loss=loss,  metrics=['accuracy'])
-    print(model.summary())
     if model_id is not None:
         model.load_weights(f"{model_id}.h5")
     return model

@@ -136,7 +136,7 @@ def build_fcnn_lstm(n_time, n_classes, n_cells=8):
     outputs:
         non compiled model
     '''
-    ip = Input(shape=(n_time,8))
+    ip = Input(shape=(n_time,16))
 
     x = Masking()(ip)
     x = LSTM(n_cells, recurrent_dropout=0.8)(x)
@@ -187,7 +187,7 @@ def build_conv_rnn(n_time, n_classes, filters=[20, 64, 64, 64],
     outputs:
         not compiled model
     '''
-    inputs = Input((n_time, 8))
+    inputs = Input((n_time, 16))
     x = inputs
     for f, k in zip(filters, kernels):
         x = TimeDistributed(Conv1D(filters=f, kernel_size=k, activation='relu'))(x)
@@ -217,7 +217,7 @@ def build_cnn(n_time, n_classes, filters=[20, 64, 64, 64],
     outputs:
         not compiled model
     '''
-    inputs = Input((n_time, 8))
+    inputs = Input((n_time, 16))
     x = inputs
     for f, k in zip(filters, kernels):
         x = Conv1D(filters=f, kernel_size=k, activation='relu')(x)
@@ -244,7 +244,7 @@ def build_convlstm(n_time, n_classes,
         kernels: list of tuple kernels
         dense: size of dense layer
     '''
-    inputs = Input((None, 1, n_time, 8))
+    inputs = Input((None, 1, n_time, 16))
     x = inputs
     i = 1
     for f,k in zip(filters, kernels):

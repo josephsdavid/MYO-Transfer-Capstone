@@ -18,7 +18,7 @@ def build_simple_att(n_time, n_class, dense = [50,50,50], drop=[0.1, 0.1, 0.1], 
         dense = [50,50,50], list of dense node sizes
         drop = [0.1, 0.1, 0.1] list of dropout
     '''
-    inputs = Input((n_time, 8))
+    inputs = Input((n_time, 16))
     x = inputs
     x = Dense(128, activation=Mish())(x)
     x = Attention()(x)

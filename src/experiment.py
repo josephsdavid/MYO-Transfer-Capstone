@@ -10,12 +10,14 @@ from tensorflow.keras.callbacks import ModelCheckpoint, ReduceLROnPlateau
 from tensorflow.keras.models import Model
 from tensorflow.keras.utils import plot_model, to_categorical
 from tensorflow.keras.layers import Add, Input, Dense, GRU, PReLU, Dropout, TimeDistributed, Conv1D
-#from builders.recurrent import build_att_gru_norm, build_att_gru
+import builders.recurrent as br
 import builders.attentional as ba
 from activations import Mish
 from optimizers import Ranger
 from layers import Attention, LayerNormalization
 batch=512
+
+cosine = cb.CosineAnnealingScheduler(T_max=100, eta_max=1e-2, eta_min=1e-4)
 
 
 
@@ -31,7 +33,6 @@ val = u.NinaMA("../data/ninaPro", ['a','b','c'], [np.abs, u.butter_highpass_filt
                        scale = False, rectify =False, sample_0=False, step=5, n=15, window_size=52, super_augment=False)
 
 X_test, y_test = val.test_data
-import pdb; pdb.set_trace()  # XXX BREAKPOINT
 
 
 #cyclic = cb.CyclicLR(step_size=2*len(train), mode='triangular2')
@@ -39,7 +40,7 @@ import pdb; pdb.set_trace()  # XXX BREAKPOINT
 n_time = train[0][0].shape[1]
 n_class =train[0][1].shape[-1]
 
-loss = l.focal_loss( gamma=4., alpha=8.)
+loss = l.focal_loss( gamma=4.)
 
 print("n_timesteps: {}".format(n_time))
 
@@ -99,7 +100,7 @@ def build_att_gru(n_time, n_classes, nodes=40, blocks=3,
 
 
 
-#model=build_att_gru(n_time, n_class, loss = loss)
+model = br.build_att_gru(n_time, n_class, loss = loss)
 
 #tf.keras.utils.plot_model(model, to_file="attn.png", show_shapes=True, expand_nested=True)
 
@@ -126,15 +127,15 @@ def build_simple_att(n_time, n_class, dense = [50,50,50], drop=[0.1, 0.1, 0.1], 
         model.load_weights(f"{model_id}.h5")
     return model
 
-model = build_simple_att(n_time, n_class, dense = [500,750, 2000], drop = [0.1,0.1, 0.1])
+#model = build_simple_att(n_time, n_class, dense = [500,750, 1000], drop = [0.1,0.1, 0.1])
 model.compile(Ranger(), loss=loss, metrics=['accuracy'])
 print(model.summary())
-import pdb; pdb.set_trace()  # XXX BREAKPOINT
 #model.compile(Ranger(), loss='categorical_crossentropy', metrics=['accuracy'])
-h2 = model.fit(train, epochs=100, validation_data=val, shuffle=False,
-               callbacks=[ModelCheckpoint("simple.h5", monitor="val_loss", keep_best_only=True, save_weights_only=True)], use_multiprocessing=True, workers=12
+h2 = model.fit(train, epochs=20, validation_data=val, shuffle=False,
+               callbacks=[ModelCheckpoint("att_gru_small.h5", monitor="val_loss", keep_best_only=True, save_weights_only=True), cosine], use_multiprocessing=True, workers=12
                )
 
+import pdb; pdb.set_trace()  # XXX BREAKPOINT
 print(model.evaluate(X_test, y_test))
 
 import matplotlib.pyplot as plt
@@ -156,4 +157,4 @@ plt.legend(['train', 'test'], loc='upper left')
 F = plt.gcf()
 Size = F.get_size_inches()
 F.set_size_inches(Size[0]*2, Size[1]*2)
-plt.savefig("lstm_untuned.png")
+plt.savefig("agru.png")
