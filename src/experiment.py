@@ -101,8 +101,8 @@ def build_att_gru(n_time, n_classes, nodes=40, blocks=3,
 
 
 
-#model = build_att_gru(n_time, n_class, nodes=128,loss = loss)
-model = bc.build_cnn(n_time, n_class, filters=[20, 64, 64, 64, 64, 64])
+model = br.build_att_gru(n_time, n_class, nodes=40,loss = loss)
+#model = bc.build_cnn(n_time, n_class, filters=[20, 64, 64, 64, 64, 64])
 
 #tf.keras.utils.plot_model(model, to_file="attn.png", show_shapes=True, expand_nested=True)
 
@@ -130,8 +130,8 @@ def build_simple_att(n_time, n_class, dense = [50,50,50], drop=[0.1, 0.1, 0.1], 
     return model
 
 #model = build_simple_att(n_time, n_class, dense = [500,750, 1000], drop = [0.1,0.25, 0.5])
-cosine = cb.CosineAnnealingScheduler(T_max=100, eta_max=1e-2, eta_min=1e-4, verbose=0, epoch_start=5)
-model.compile(Ranger(learning_rate=0.01), loss=loss, metrics=['accuracy'])
+cosine = cb.CosineAnnealingScheduler(T_max=100, eta_max=5e-4, eta_min=1e-5, verbose=0, epoch_start=5)
+model.compile(Ranger(learning_rate=5e-4), loss=loss, metrics=['accuracy'])
 print(model.summary())
 #model.compile(Ranger(), loss='categorical_crossentropy', metrics=['accuracy'])
 h2 = model.fit(train, epochs=20, validation_data=val, shuffle=False,

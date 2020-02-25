@@ -302,4 +302,27 @@ class NinaMA(NinaGenerator):
         return np.moveaxis(ma_batch(out, self.n), -1, 0),  self.labels[indexes,:]
 
 
+class TestGen(tf.keras.utils.Sequence):
+    def __init__(self, X, y, batch_size, shuffle = False):
+        self.X = X
+        self.y = y
+        self.batch_size = batch_size
+        self.shuffle = shuffle
+        self.on_epoch_end()
+
+    def __len__(self):
+        'number of batches per epoch'
+        return int(np.floor(self.X.shape[0]/self.batch_size))
+
+    def on_epoch_end(self):
+        self.indexes=np.arange(self.X.shape[0])
+        if self.shuffle:
+            np.random.shuffle(self.indexes)
+
+    def __getitem__(self, index):
+        'generate a single batch'
+        indexes = self.indexes[index*self.batch_size:(index+1)*self.batch_size]
+        out = self.X[indexes,:,:].copy()
+        return out,  self.y[indexes]
+
 
