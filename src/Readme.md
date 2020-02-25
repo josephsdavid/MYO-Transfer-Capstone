@@ -10,6 +10,8 @@ We will walk through the purpose of the code in this directory, and how to use i
 * callbacks
 	* Custom Callbacks are stored here:
 		* Cyclic Learning Rate
+		* Flat and cosine annealing lr
+		* useless junk
 * layers
 	* custom layers are stored here:
 		* Temporal attention
@@ -35,6 +37,9 @@ We will walk through the purpose of the code in this directory, and how to use i
 		* Attention based models
 		* Recurrent models
 		* Convolutional models
+* Losses:
+	* Custom loss functions
+		* Focal loss!!! The hero!
 
 * result
 	* results of various tunings and slurm output her
@@ -88,14 +93,15 @@ import numpy as np
 import utils as u
 import callbacks as cb
 import builders.recurrent as b
+import losses as l
 
 
-def make_data(exercise, by_subject):
-	train = u.NinaMA("../data/ninaPro", [exercise], [u.butter_highpass_filter],
+def make_data(exercise, by_subject, batch):
+	train = u.NinaMA("../data/ninaPro", exercise, [u.butter_highpass_filter],
                         [u.add_noise_random], validation=False, by_subject = by_subject, batch_size=batch,
                         scale = False, rectify=True, sample_0=False, step=5, n=15, window_size=52, super_augment=False)
 
-	test = u.NinaMA("../data/ninaPro", [exercise], [u.butter_highpass_filter],
+	test = u.NinaMA("../data/ninaPro", exercise, [u.butter_highpass_filter],
                         [u.add_noise_random], validation=True, by_subject = by_subject, batch_size=batch,
                         scale = False, rectify=True, sample_0=False, step=5, n=15, window_size=52, super_augment=False)
 
@@ -124,13 +130,13 @@ def plot_history(history, save_path):
 	F.set_size_inches(Size[0]*2, Size[1]*2)
 	plt.savefig("{}.png".format(save_path))
 
-exercises = ['a','b','c']
+exercises = [['a','b','c'],['b','c'],['a'],['b'],['c']]
 subjects = [False, True]
 batch = 512
 
 for ex in exercises:
 	for sub in subjects:
-		train, test, string = make_data(ex, sub)
+		train, test, string = make_data(ex, sub, batch)
 		path = "attention_lstm_{}".format(string)
 
 		# for loss.sh
@@ -139,16 +145,16 @@ for ex in exercises:
 		n_time = train[0][0].shape[1]
 		n_class = np.unique(train.labels).shape[0]
 		
+		loss = l.focal_loss(gamma = 4., alpha = 6.)
 		model = b.build_att_gru(n_time, n_class)
 		
-		class_weights = {i:1/(n_class) if i==0 else 1 for i in range(1, n_class+1)}
 
 		history = model.fit(train, validation_data=test, epochs=100, shuflle=False,
 				workers=12, use_multiprocessing=True,
 				callbacks=[
 					ModelCheckpoint("{}.h5".format(path), monitor="val_loss", keep_best_only=True),
-					ReduceLROnPlateau(patience=20, factor=0.5, verbose=1)],
-				class_weight=class_weights)
+					ReduceLROnPlateau(patience=20, factor=0.5, verbose=1)])
+				
 
 		plot_history(history, "history/{}".format(path))
 

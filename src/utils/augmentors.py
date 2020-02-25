@@ -104,3 +104,13 @@ def shift_electrodes(examples, labels):
         X_example.append(sub_ensemble_example)
         Y_example.append(labels[k])
     return X_example, Y_example
+
+
+def shift_chance(x,value):
+    out = np.roll(x,random.randrange(-15, 16), axis=-1) if random.random() < value else x
+    return out
+def shift_maybe(arr, chance_value=0.5):
+    return np.array([shift_chance(arr[i,:], chance_value) for i in range(arr.shape[0])])
+
+def shift_random(arr):
+    return shift_chance(arr, 0.9)

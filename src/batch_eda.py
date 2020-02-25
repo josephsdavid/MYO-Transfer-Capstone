@@ -30,15 +30,15 @@ def plot_sample(sample):
     for i in range(sample.shape[-1]):
         ax.plot(sample[:,i], label = str(i+1))
     ax.legend(bbox_to_anchor=(1.1, 1.05), fancybox=True, shadow=True)
-    #matplotlib.use('pdf')
+    #matplotlib.use('agg')
     #fig.savefig(path)
     return fig, ax
 
-matplotlib.use('pdf')
+matplotlib.use('agg')
 for p, s in zip(paths, sample):
     f, ax = plot_sample(s)
     ax.set_title(p)
-    f.savefig(f"fig/{p}.pdf")
+    f.savefig(f"fig/{p}.png")
 matplotlib.use(b)
 
 #rect = sample[2]
@@ -71,5 +71,5 @@ for i in range(50):
     ax.plot(aug[:,1], label = str(i+1), color=c[i])
 sm = plt.cm.ScalarMappable(cmap=cm.inferno, norm=plt.Normalize(vmin=0, vmax=0.033))
 plt.colorbar(sm)
-plt.savefig("fig/augmentation.pdf")
+plt.savefig("fig/augmentation.png")
 matplotlib.use(b)

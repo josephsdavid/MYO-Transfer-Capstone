@@ -114,21 +114,30 @@ class NinaGenerator(NinaLoader, tf.keras.utils.Sequence):
             #print(ids[0].shape[0] - ids[0][::18].shape[0])
             #ids2=tuple(ids[0][::18], )
             self._deleter(ids[:-13000])
-        v_subjects = np.array(np.unique(self.subject)[3:5])
+        # 3 subjects or 1 repetition
+        v_subjects = np.array(np.unique(self.subject)[3:6])
         v_reps = np.array(np.unique(self.rep)[3::2])
-        print(f"v_reps: {v_reps[:-1]}")
-        print(f"test: {v_reps[-1]}")
+        # accepts a tuple (is_validation, by_subject)
         case_dict = {
                 (False, False):np.where(np.isin(self.rep, v_reps, invert=True)),
+            # last rep is for testing
                 (True, False):np.where(np.isin(self.rep, v_reps[:-1])),
                 (False, True):np.where(np.isin(self.subject, v_subjects, invert=True)),
-                (True, True):np.where(np.isin(self.subject, v_subjects))
+            # last subject is for testing
+                (True, True):np.where(np.isin(self.subject, v_subjects[:-1]))
                 }
 
+        # return the indices we want
         case = case_dict[(validation, by_subject)]
-        test_id = np.where(np.isin(self.rep, v_reps[-1])),
+        # construnct test data
         if validation:
-            self.test_data = (self.emg[test_id][0,:], self.labels[test_id][0,:])
+            if not by_subject:
+                test_id = np.where(np.isin(self.rep, v_reps[-1])),
+                self.test_data = (self.emg[test_id][0,:], self.labels[test_id][0,:])
+            else:
+                test_id = np.where(np.isin(self.subject, v_subjects[-1]))
+                self.test_data = (self.emg[test_id], self.labels[test_id])
+
         self._indexer(case)
         if circ:
             self.emg = np.array(emg)
@@ -272,7 +281,7 @@ class NinaMA(NinaGenerator):
                 self.on_epoch_end()
         self.labels = tf.keras.utils.to_categorical(self.labels)
         if validation:
-            self.test_data = (ma_batch(self.test_data[0], n), tf.keras.utils.to_categorical(self.test_data[1]))
+            self.test_data = (np.moveaxis(ma_batch(self.test_data[0], n), -1, 0), tf.keras.utils.to_categorical(self.test_data[1]))
 
     def __getitem__(self, index):
         'generate a single batch'

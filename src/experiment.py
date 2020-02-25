@@ -12,12 +12,12 @@ from tensorflow.keras.utils import plot_model, to_categorical
 from tensorflow.keras.layers import Add, Input, Dense, GRU, PReLU, Dropout, TimeDistributed, Conv1D
 import builders.recurrent as br
 import builders.attentional as ba
+import builders.conv as bc
 from activations import Mish
 from optimizers import Ranger
 from layers import Attention, LayerNormalization
 batch=512
 
-cosine = cb.CosineAnnealingScheduler(T_max=100, eta_max=1e-3, eta_min=1e-5, verbose=0, epoch_start=5)
 
 
 
@@ -101,7 +101,8 @@ def build_att_gru(n_time, n_classes, nodes=40, blocks=3,
 
 
 
-#model = br.build_att_gru(n_time, n_class, loss = loss)
+#model = build_att_gru(n_time, n_class, nodes=128,loss = loss)
+model = bc.build_cnn(n_time, n_class, filters=[20, 64, 64, 64, 64, 64])
 
 #tf.keras.utils.plot_model(model, to_file="attn.png", show_shapes=True, expand_nested=True)
 
@@ -128,8 +129,9 @@ def build_simple_att(n_time, n_class, dense = [50,50,50], drop=[0.1, 0.1, 0.1], 
         model.load_weights(f"{model_id}.h5")
     return model
 
-model = build_simple_att(n_time, n_class, dense = [500,750, 1000], drop = [0.1,0.25, 0.5])
-model.compile(Ranger(learning_rate=0.001), loss=loss, metrics=['accuracy'])
+#model = build_simple_att(n_time, n_class, dense = [500,750, 1000], drop = [0.1,0.25, 0.5])
+cosine = cb.CosineAnnealingScheduler(T_max=100, eta_max=1e-2, eta_min=1e-4, verbose=0, epoch_start=5)
+model.compile(Ranger(learning_rate=0.01), loss=loss, metrics=['accuracy'])
 print(model.summary())
 #model.compile(Ranger(), loss='categorical_crossentropy', metrics=['accuracy'])
 h2 = model.fit(train, epochs=20, validation_data=val, shuffle=False,
