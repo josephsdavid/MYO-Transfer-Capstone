@@ -8,15 +8,18 @@ from tensorflow.keras.callbacks import ModelCheckpoint
 
 batch = 512
 # load data
-train = u.NinaMA("../data/ninaPro", ['a','b','c'], [np.abs, u.butter_highpass_filter],
+train = u.NinaMA("../data/ninaPro", ['b','c'], [np.abs, u.butter_highpass_filter],
                         [u.add_noise_random], validation=False, by_subject = False, batch_size=batch,
                         scale = False, rectify=False, sample_0=False, step=5, n=15, window_size=52, super_augment=False)
-val = u.NinaMA("../data/ninaPro", ['a','b','c'], [np.abs, u.butter_highpass_filter],
+val = u.NinaMA("../data/ninaPro", ['b','c'], [np.abs, u.butter_highpass_filter],
                        None, validation=True, by_subject = False, batch_size=batch,
                        scale = False, rectify =False, sample_0=False, step=5, n=15, window_size=52, super_augment=False)
 
 # generate unseen test data from validation set hidden state:
 test = u.TestGen(*val.test_data, shuffle=False, batch_size=batch)
+zero_conditioner = u.TestGen(*val.test_data, shuffle=False, batch_size=batch, zeros=True)
+zero_validator = u.TestGen(*val.test_data, shuffle=False, batch_size=batch, zeros=False)
+import pdb; pdb.set_trace()  # XXX BREAKPOINT
 
 # needed to build the model
 n_time = train[0][0].shape[1]
@@ -54,12 +57,12 @@ adapt_kwargs = {
         ModelCheckpoint('two-stage-part 2.h5', monitor='val_loss', keep_best_only = True, save_weights_only = True),
         cb.CosineAnnealingScheduler(T_max = 100, eta_max = 1e-3, eta_min = 5e-5, epoch_start=5)
     ],
-    'validation_data':test
+    'validation_data':zero_validator
 }
 
 # fit with domain layer unfrozen everything else unfrozen
 # is this cheating?
-h2 = model.adapt(val, **adapt_kwargs)
+h2 = model.adapt(zero_conditioner, **adapt_kwargs)
 
 model.model.evaluate(test)
 

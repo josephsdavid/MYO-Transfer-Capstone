@@ -303,9 +303,20 @@ class NinaMA(NinaGenerator):
 
 
 class TestGen(tf.keras.utils.Sequence):
-    def __init__(self, X, y, batch_size, shuffle = False):
+    def __init__(self, X, y, batch_size, shuffle = False, zeros=None):
         self.X = X
         self.y = y
+        if zeros is not None:
+            if zeros:
+                import pdb; pdb.set_trace()  # XXX BREAKPOINT
+                ids = np.where(self.y.argmax(-1) == 0)
+                self.X = self.X[ids,:,:][-1,:,:,:]
+                self.y = self.y[ids,:][-1,:,:]
+            else:
+                ids = np.where(self.y.argmax(-1) != 0)
+                self.X = self.X[ids,:,:][-1,:,:,:]
+                self.y = self.y[ids,:][-1,:,:]
+
         self.batch_size = batch_size
         self.shuffle = shuffle
         self.on_epoch_end()

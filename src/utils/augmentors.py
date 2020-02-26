@@ -106,6 +106,11 @@ def shift_electrodes(examples, labels):
     return X_example, Y_example
 
 
+def DA_Scaling(X, sigma=0.1):
+    scalingFactor = np.random.normal(loc=1.0, scale=sigma, size=(1,X.shape[1])) # shape=(1,3)
+    myNoise = np.matmul(np.ones((X.shape[0],1)), scalingFactor)
+    return X*myNoise
+
 def shift_chance(x,value):
     out = np.roll(x,random.randrange(-15, 16), axis=-1) if random.random() < value else x
     return out
