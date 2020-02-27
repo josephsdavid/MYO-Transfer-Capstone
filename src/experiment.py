@@ -11,7 +11,6 @@ from tensorflow.keras.models import Model
 from tensorflow.keras.utils import plot_model, to_categorical
 from tensorflow.keras.layers import Add, Input, Dense, GRU, PReLU, Dropout, TimeDistributed, Conv1D, Flatten, MaxPooling1D, LSTM
 import builders.recurrent as br
-from trainers import ImportanceTraining
 import builders.attentional as ba
 import builders.conv as bc
 from activations import Mish
