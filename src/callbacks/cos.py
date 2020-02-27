@@ -4,13 +4,17 @@ import math
 
 
 x = np.arange(1000)
-mi = 5
-ma = 500
-gamma = 0.85
-t = 10
-out = np.zeros(1000)
+mi = 1e-5
+ma = 1e-3
+gamma = 0.9
+rep = 50
+t = 50
+out = np.zeros(1050)
 for i in range(x.shape[0]):
-    out[i] = mi + (ma-mi)*(1+math.cos(math.pi*x[i]/t))/2
+    if i>4:
+        out[i] = mi + (ma-mi)*(1+math.cos(math.pi*x[i%(rep+5)]/t))/2
+    else:
+        out[i] = ma
     if out[i] == mi:
         ma *= gamma
 plt.plot(out)

@@ -25,9 +25,9 @@ class CosineAnnealingScheduler(Callback):
                 learning_rate = self.eta_min + (self.eta_max*self.gamma - self.eta_min) * (1 + math.cos(math.pi * (epoch - self.epoch_start) / self.T_max)) / 2
                 K.set_value(self.model.optimizer.learning_rate, learning_rate)
             else:
-                learning_rate = self.eta_min + (self.eta_max*self.gamma - self.eta_min) * (1 + math.cos(math.pi * ((epoch  % self.restart_epochs) - self.epoch_start) / self.T_max)) / 2
+                learning_rate = self.eta_min + (self.eta_max*self.gamma - self.eta_min) * (1 + math.cos(math.pi * ((epoch  % (self.restart_epochs+self.epoch_start)) - self.epoch_start) / self.T_max)) / 2
                 K.set_value(self.model.optimizer.learning_rate, learning_rate)
-            if learning_rate==self.eta_min:
+            if learning_rate>=self.eta_min:
                 self.eta_max *= self.gamma
 
         else:
