@@ -9,14 +9,15 @@ from tensorflow.keras.initializers import Constant
 from tensorflow.keras.callbacks import ModelCheckpoint, ReduceLROnPlateau, EarlyStopping
 from tensorflow.keras.models import Model
 from tensorflow.keras.utils import plot_model, to_categorical
-from tensorflow.keras.layers import Add, Input, Dense, GRU, PReLU, Dropout, TimeDistributed, Conv1D
+from tensorflow.keras.layers import Add, Input, Dense, GRU, PReLU, Dropout, TimeDistributed, Conv1D, Flatten, MaxPooling1D, LSTM
 import builders.recurrent as br
+from trainers import ImportanceTraining
 import builders.attentional as ba
 import builders.conv as bc
 from activations import Mish
 from optimizers import Ranger
 from layers import Attention, LayerNormalization
-batch=512
+batch=128
 
 
 
@@ -117,7 +118,7 @@ def build_simple_att(n_time, n_class, dense = [50,50,50], drop=[0.1, 0.1, 0.1], 
     inputs = Input((n_time, 16))
     x = inputs
     x = Dense(128, activation=Mish())(x)
-    x = Attention()(x)
+    x, a = Attention(return_attention=True)(x)
     for d, dr in zip(dense, drop):
         x = Dropout(dr)(x)
         x = Dense(d, activation=Mish())(x)
@@ -125,18 +126,63 @@ def build_simple_att(n_time, n_class, dense = [50,50,50], drop=[0.1, 0.1, 0.1], 
     model = Model(inputs, outputs)
     if model_id is not None:
         model.load_weights(f"{model_id}.h5")
-    return model
+    return model, Model(inputs, a)
 
-#model = build_simple_att(n_time, n_class, [256, 512, 1024])
-model = build_att_gru(n_time, n_class, nodes=128)
-tf.keras.utils.plot_model(model, to_file="att_gru_drop.png", show_shapes=True, expand_nested=True)
-cosine = cb.CosineAnnealingScheduler(T_max=100, eta_max=1e-2, eta_min=5e-5, verbose=0, epoch_start=10)
-model.compile(Ranger(), loss=loss, metrics=['accuracy'])
+
+
+
+def build_conv_rnn(n_time, n_classes, filters = [20,64,64,64], kernels=[7,5,5,5], lstm=[52,52]):
+    '''
+    build_conv_rnn
+    ----------------
+    builds a conv_rnn
+    args:
+        n_time: timesteps,
+        n_classesL num classes
+        filters: list of filters to use
+        kernels=list of kernels to use
+        lstm: list of lstm sizes
+    outputs:
+        not compiled model
+    '''
+    inputs = Input((n_time, 16))
+    x = inputs
+    for f, k in zip(filters, kernels):
+        x = (Conv1D(filters=f, kernel_size=k, activation=Mish()))(x)
+    x = (Dropout(0))(x)
+    x = (MaxPooling1D())(x)
+    #x = TimeDistributed(Flatten())(x)
+    x, h, b = LSTM(lstm[0], activation=Mish(), return_sequences=True, return_state=True)(x)
+    a1, s1 = Attention(return_attention=True)(x)
+    x, h , b= LSTM(lstm[0], activation=Mish(), return_sequences=True, return_state=True)(x, initial_state=[h,b])
+    a2, s2 = Attention(return_attention=True)(x)
+    #for l in range(len(lstm)):
+    #    seq = True if (l != len(lstm)-1) else False
+    #    x = GRU(lstm[l], dropout=0.2, return_sequences=True)(x)
+    x = Add()([a1,a2])
+    a = Add()([s1,s2])
+    x = Dense(100, activation=Mish())(x)
+    outputs = Dense(n_classes, activation='softmax')(x)
+    return Model(inputs, outputs), Model(inputs, a)
+
+
+
+
+
+
+
+
+
+#model, att = build_conv_rnn(n_time, n_class)
+#model = build_att_gru(n_time, n_class, nodes=128)
+model, attn = build_simple_att(n_time, n_class, [256, 512, 1024], drop = [0.5, 0.5, 0.5])
+tf.keras.utils.plot_model(model, to_file="att_simp.png", show_shapes=True, expand_nested=True)
+cosine = cb.CosineAnnealingScheduler(T_max=50, eta_max=1e-3, eta_min=1e-5, verbose=1, epoch_start=5, gamma=0.9)
+model.compile(Ranger(learning_rate=1e-3), loss=loss, metrics=['accuracy'])
 print(model.summary())
 #model.compile(Ranger(), loss='categorical_crossentropy', metrics=['accuracy'])
-stopper = EarlyStopping(monitor = "val_loss", patience=20)
-h2 = model.fit(train, epochs=100, validation_data=val, shuffle=False,
-               callbacks=[ModelCheckpoint("att_forward_small.h5", monitor="val_loss", keep_best_only=True, save_weights_only=True), cosine, stopper], use_multiprocessing=True, workers=12
+h2 = model.fit(train, epochs=1050, validation_data=val, shuffle=False,
+               callbacks=[ModelCheckpoint("att_forward_small.h5", monitor="val_loss", keep_best_only=True, save_weights_only=True), cosine], use_multiprocessing=True, workers=12
                )
 
 import pdb; pdb.set_trace()  # XXX BREAKPOINT
