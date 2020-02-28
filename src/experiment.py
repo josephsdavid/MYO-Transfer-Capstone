@@ -6,7 +6,7 @@ import losses as l
 import tensorflow as tf
 import numpy as np
 from tensorflow.keras.initializers import Constant
-from tensorflow.keras.callbacks import ModelCheckpoint, ReduceLROnPlateau, EarlyStopping
+from tensorflow.keras.callbacks import ModelCheckpoint, ReduceLROnPlateau, EarlyStopping, TensorBoard
 from tensorflow.keras.models import Model
 from tensorflow.keras.utils import plot_model, to_categorical
 from tensorflow.keras.layers import Add, Input, Dense, GRU, PReLU, Dropout, TimeDistributed, Conv1D, Flatten, MaxPooling1D, LSTM
@@ -176,12 +176,14 @@ def build_conv_rnn(n_time, n_classes, filters = [20,64,64,64], kernels=[7,5,5,5]
 #model = build_att_gru(n_time, n_class, nodes=128)
 model, attn = build_simple_att(n_time, n_class, [256, 512, 1024], drop = [0.5, 0.5, 0.5])
 tf.keras.utils.plot_model(model, to_file="att_simp.png", show_shapes=True, expand_nested=True)
-cosine = cb.CosineAnnealingScheduler(T_max=50, eta_max=1e-3, eta_min=1e-5, verbose=1, epoch_start=5, gamma=0.9)
+cosine = cb.CosineAnnealingScheduler(T_max=50, eta_max=1e-3, eta_min=1e-5, verbose=1, epoch_start=10, restart_epochs=50, expansion=2)
 model.compile(Ranger(learning_rate=1e-3), loss=loss, metrics=['accuracy'])
 print(model.summary())
 #model.compile(Ranger(), loss='categorical_crossentropy', metrics=['accuracy'])
-h2 = model.fit(train, epochs=1050, validation_data=val, shuffle=False,
-               callbacks=[ModelCheckpoint("att_forward_small.h5", monitor="val_loss", keep_best_only=True, save_weights_only=True), cosine], use_multiprocessing=True, workers=12
+import pdb; pdb.set_trace()  # XXX BREAKPOINT
+h2 = model.fit(train, epochs=160, validation_data=val, shuffle=False,
+               callbacks=[ModelCheckpoint("att_forward_small.h5", monitor="val_loss", keep_best_only=True, save_weights_only=True),
+                          cosine], use_multiprocessing=True, workers=12
                )
 
 import pdb; pdb.set_trace()  # XXX BREAKPOINT

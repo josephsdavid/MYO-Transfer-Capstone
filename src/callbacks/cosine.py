@@ -7,9 +7,10 @@ class CosineAnnealingScheduler(Callback):
     """Cosine annealing scheduler.
     """
 
-    def __init__(self, T_max, eta_max, eta_min=0, verbose=0, epoch_start=80, restart_epochs=None, gamma=1):
+    def __init__(self, T_max, eta_max, eta_min=0, verbose=0, epoch_start=80, restart_epochs=None, gamma=1, expansion=1):
         super(CosineAnnealingScheduler, self).__init__()
         self.epoch_start=epoch_start
+        self.expansion=expansion
         self.T_max = T_max
         self.eta_max = eta_max
         self.eta_min = eta_min
@@ -29,6 +30,7 @@ class CosineAnnealingScheduler(Callback):
                 K.set_value(self.model.optimizer.learning_rate, learning_rate)
             if learning_rate<=self.eta_min:
                 self.eta_max *= self.gamma
+                self.T_max *=self.expansion
 
         else:
             learning_rate=self.model.optimizer.learning_rate

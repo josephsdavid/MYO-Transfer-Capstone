@@ -3,8 +3,10 @@ importance-sampling/
 nina/
 lstm_tuning/
 capstone/
+src/board/
 ninaPro/
 *.h5
+*.mp4
 *.json
 src/result/att_tune/
 src/result/blstm_tuning
