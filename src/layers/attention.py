@@ -6,7 +6,6 @@ import tensorflow as tf
 
 def dot_product(x, kernel):
     return tf.tensordot(x, kernel, axes=1)
-    #return K.squeeze(K.dot(x, K.expand_dims(kernel)), axis=1)
 
 class Attention(Layer):
     def __init__(self,
@@ -27,19 +26,10 @@ class Attention(Layer):
         Just put it on top of an RNN Layer (GRU/LSTM/SimpleRNN) with return_sequences=True.
         The dimensions are inferred based on the output shape of the RNN.
         Note: The layer has been tested with Keras 1.x
-        Example:
-
-            # 1
-            model.add(LSTM(64, return_sequences=True))
-            model.add(Attention())
-            # next add a Dense layer (for classification/regression) or whatever...
-            # 2 - Get the attention scores
-            hidden = LSTM(64, return_sequences=True)(words)
-            sentence, word_scores = Attention(return_attention=True)(hidden)
         """
         self.supports_masking = True
         self.return_attention = return_attention
-        self.init = initializers.get('glorot_uniform')
+        self.init = initializers.get('zeros')
 
         self.W_regularizer = regularizers.get(W_regularizer)
         self.b_regularizer = regularizers.get(b_regularizer)

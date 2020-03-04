@@ -7,6 +7,7 @@ src/board/
 ninaPro/
 *.h5
 *.mp4
+*.gif
 *.json
 src/result/att_tune/
 src/result/blstm_tuning

@@ -127,10 +127,10 @@ class NinaLoader(Loader):
         self.labels=self.labels[good_obs,:]
         self.rep=self.rep[good_obs,:]
         self.subject=self.subject[good_obs,:]
+
         self.labels=first_appearance(self.labels)
         self.rep=first_appearance(self.rep)
         self.subject=first_appearance(self.subject)
-
         #self.labels = first_appearance(np.moveaxis(np.concatenate(self.labels,axis=0),2,1)[...,-1])
         #self.rep = first_appearance(np.moveaxis(np.concatenate(self.rep,axis=0),2,1)[...,-1])
         #self.subject = first_appearance(np.moveaxis(np.concatenate(self.subject,axis=0),2,1)[...,-1])
