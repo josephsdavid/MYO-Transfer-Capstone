@@ -1,4 +1,5 @@
 import tensorflow as tf
+import multiprocessing
 import matplotlib.pyplot as plt
 import numpy as np
 from .loaders import *
@@ -113,7 +114,7 @@ class NinaGenerator(NinaLoader, tf.keras.utils.Sequence):
             #print(ids - ids2)
             #print(ids[0].shape[0] - ids[0][::18].shape[0])
             #ids2=tuple(ids[0][::18], )
-            self._deleter(ids[:-13000])
+            self._deleter(ids[:-50000])
         # 3 subjects or 1 repetition
         v_subjects = np.array(np.unique(self.subject)[3:6])
         v_reps = np.array(np.unique(self.rep)[3::2])
@@ -268,6 +269,7 @@ class NinaMA(NinaGenerator):
                 ss = [self.subject]
                 for f in self.augmentors:
                     inn = [self.emg[i,:,:] for i in range(self.emg.shape[0]) if self.labels[i] != 0]
+                    print(len(inn))
                     ls.append(self.labels[np.where(self.labels != 0)])
                     rs.append(self.rep[np.where(self.labels != 0)])
                     ss.append(self.subject[np.where(self.labels != 0)])
