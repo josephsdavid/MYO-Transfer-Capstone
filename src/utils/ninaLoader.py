@@ -115,6 +115,7 @@ class NinaLoader(Loader):
         # no data leaks!
 
         self.emg = np.moveaxis(np.concatenate(self.emg,axis=0),2,1)
+        self.imu = np.moveaxis(np.concatenate(self.imu,axis=0),2,1)
         # update mode to be np.unique since we are getting rid of the stuff
 
         self.labels = np.moveaxis(np.concatenate(self.labels,axis=0),2,1)[...,-1]
@@ -124,6 +125,7 @@ class NinaLoader(Loader):
         good_obs = np.array([i for i in range(self.rep.shape[0]) if np.unique(self.rep[i]).shape[0] ==  1])
 
         self.emg=self.emg[good_obs,:,:]
+        self.imu=self.imu[good_obs,:,:]
         self.labels=self.labels[good_obs,:]
         self.rep=self.rep[good_obs,:]
         self.subject=self.subject[good_obs,:]
@@ -137,6 +139,7 @@ class NinaLoader(Loader):
         #self.circ = first_appearance(np.moveaxis(np.concatenate(self.circ,axis=0),2,1)[...,-1])
         #if VERBOSE :
         self.emg = self.emg.astype(np.float16)
+        self.imu = self.imu.astype(np.float16)
         print(f"[Step 4 ==> scale] Shape of emg: {np.shape(self.emg)}")
         print(f"[Step 4 ==> scale] Shape of labels: {np.shape(self.labels)}")
         print(f"[Step 3 ==> scale] Shape of reps: {np.shape(self.rep.copy())}")
@@ -155,6 +158,7 @@ class NinaLoader(Loader):
         # struggling to keep up with massive sizes
         self.maxlen = res['emg'].shape[0]
         #print(res['emg'][np.where(res['restimulus']==0)].shape[0]//52)
+        imu = res['acc'][:self.maxlen,:].copy()
         rep = res['rerepetition'][:self.maxlen].copy()
         emg = res['emg'][:self.maxlen,:].copy()
         lab = res['restimulus'][:self.maxlen].copy()
@@ -184,7 +188,7 @@ class NinaLoader(Loader):
                 data.append(newData)
 
         del res
-        return np.concatenate(data,axis=1), lab, rep, subject, circ
+        return np.concatenate(data,axis=1), lab, rep, subject, circ, imu
 
     def _load_by_trial_raw(self, trial=1, options=None):
         data = []
@@ -192,10 +196,12 @@ class NinaLoader(Loader):
         reps = []
         subjects = []
         circ = []
+        imu = []
         for i in range(1,11):
             # print(f"Starting load of {i}/10 .mat files")
             path = self.path + "/" + "s" + str(i) + "/S" + str(i) + "_E" + str(trial) + "_A1.mat"
-            fileData, l, r, s, c = self._load_file(path, ex = trial, features=options)
+            fileData, l, r, s, c, ii = self._load_file(path, ex = trial, features=options)
+            imu.append(ii)
             data.append(fileData)
             labs.append(l)
             reps.append(r)
@@ -203,10 +209,11 @@ class NinaLoader(Loader):
             circ.append(c)
 
 
-        return data, labs, reps, subjects, circ
+        return data, labs, reps, subjects, circ, imu
 
     def _read_group_to_lists(self):
         res = []
+        imu = []
         labels = []
         reps = []
         subjects = []
@@ -224,20 +231,21 @@ class NinaLoader(Loader):
                 e = 2
             elif e == 'c':
                 e = 3
-            exData, l ,r, s, c= self._load_by_trial_raw(trial=e)
+            exData, l ,r, s, c, ii= self._load_by_trial_raw(trial=e)
+            imu += ii
             res+=exData
             labels+=l
             reps+=r
             subjects+=s
             circs += c
             print(f"[Step 0] \nexData {np.shape(exData.copy())}\nlabels {np.shape(labels.copy())}")
-        return res, labels, reps, subjects, circs
+        return res, labels, reps, subjects, circs, imu
 
 
 
 
     def read_data(self):
-        self.emg, self.labels, self.rep, self.subject, self.circ = self._read_group_to_lists()
+        self.emg, self.labels, self.rep, self.subject, self.circ, self.imu = self._read_group_to_lists()
 	# fix this, they need to be the same shape as labels
         #self.rep =  [x[:min(self.max_size, maxlen)] for x in self.rep]
         #self.subject =  [x[:min(self.max_size, maxlen)] for x in self.subject]
@@ -258,6 +266,7 @@ class NinaLoader(Loader):
             #self.subject, _ = f(self.emg, self.subject)
         self.flat = [self.emg, self.labels, self.rep, self.subject]
         self.emg = [window_roll(x, step, window_size) for x in self.emg]
+        self.imu = [window_roll(x, step, window_size) for x in self.imu]
         self.labels = [window_roll(x, step, window_size) for x in self.labels]
         self.rep = [window_roll(x, step, window_size) for x in self.rep]
         self.subject = [window_roll(x, step, window_size) for x in self.subject]

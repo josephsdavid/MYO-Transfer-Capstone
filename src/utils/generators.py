@@ -98,10 +98,12 @@ class NinaGenerator(NinaLoader, tf.keras.utils.Sequence):
             batch_size=400, shuffle=True,
             validation=False,
             by_subject=False,
-            sample_0=True):
+            sample_0=True, imu=False):
         circ=False
 
         super(NinaGenerator, self).__init__(path, excercises,process_fns, augment_fns, scale, step, window_size)
+        if imu:
+            self.emg = np.moveaxis(np.dstack([np.column_stack([i,j]) for i, j in zip(self.emg, self.imu)]),-1, 0)
         self.rectify=rectify
         self.scale=scale
         self.batch_size = batch_size
@@ -244,7 +246,7 @@ class NinaMA(NinaGenerator):
         validation=False,
         by_subject=False,
         sample_0=True,
-        n=5, super_augment = False):
+        n=5, super_augment = False, imu=False):
         super().__init__(
         path,
         excercises,
@@ -257,10 +259,11 @@ class NinaMA(NinaGenerator):
         batch_size, shuffle,
         validation,
         by_subject,
-        sample_0
+        sample_0, imu
         )
         self.n = n
         self.super_augment = super_augment
+
         if super_augment:
             if self.augmentors is not None:
                 o = [self.emg]
