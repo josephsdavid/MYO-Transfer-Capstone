@@ -1,0 +1,103 @@
+\begin{thebibliography}{10}
+\providecommand{\url}[1]{\texttt{#1}}
+\providecommand{\urlprefix}{URL }
+\providecommand{\doi}[1]{https://doi.org/#1}
+
+\bibitem{ottoblock}
+Myoelectric prosthetics,
+  \url{https://www.ottobockus.com/prosthetics/upper-limb-prosthetics/solution-overview/myoelectric-prosthetics/}
+
+\bibitem{graves}
+Akhmadeev, K., Houssein, A., Moussaoui, S., H{\o}gest{\o}l, E.A., Tutturen, I.,
+  Harbo, H.F., Bos-Haugen, S.D., Graves, J., Laplaud, D.A., Gourraud, P.A.:
+  Svm-based tool to detect patients with multiple sclerosis using a commercial
+  emg sensor. 2018 IEEE 10th Sensor Array and Multichannel Signal Processing
+  Workshop (SAM) pp. 376--379 (2018)
+
+\bibitem{atz_cnn}
+Atzori, M., Cognolato, M., Müller, H.: Deep learning with convolutional neural
+  networks applied to electromyography data: A resource for the classification
+  of movements for prosthetic hands. Frontiers in Neurorobotics  \textbf{10}
+  (Jul 2016). \doi{10.3389/fnbot.2016.00009}
+
+\bibitem{amputeedb}
+Atzori, M., Gijsberts, A., Castellini, C., Caputo, B., Hager, A.G.M., Elsig,
+  S., Giatsidis, G., Bassetto, F., M{\"u}ller, H.: Electromyography data for
+  non-invasive naturally-controlled robotic hand prostheses. Scientific data
+  \textbf{1}(1),  1--13 (2014)
+
+\bibitem{primary}
+{Côté-Allard}, U., {Fall}, C.L., {Drouin}, A., {Campeau-Lecours}, A.,
+  {Gosselin}, C., {Glette}, K., {Laviolette}, F., {Gosselin}, B.: Deep learning
+  for electromyographic hand gesture signal classification using transfer
+  learning. IEEE Transactions on Neural Systems and Rehabilitation Engineering
+  \textbf{27}(4),  760--771 (April 2019). \doi{10.1109/TNSRE.2019.2896269}
+
+\bibitem{dltsr}
+Fawaz, H.I., Forestier, G., Weber, J., Idoumghar, L., Muller, P.A.: Deep
+  learning for time series classification: a review. Data Mining and Knowledge
+  Discovery  \textbf{33}(4),  917–963 (Feb 2019).
+  \doi{10.1007/s10618-019-00619-1}
+
+\bibitem{myohandpro}
+Geethanjali, P.: Myoelectric control of prosthetic hands: state-of-the-art
+  review. Medical Devices: Evidence and Research  \textbf{Volume 9},  247–255
+  (2016). \doi{10.2147/mder.s91102}
+
+\bibitem{300ms}
+{Hudgins}, B., {Parker}, P., {Scott}, R.N.: A new strategy for multifunction
+  myoelectric control. IEEE Transactions on Biomedical Engineering
+  \textbf{40}(1),  82--94 (Jan 1993). \doi{10.1109/10.204774}
+
+\bibitem{rectif}
+Myers, L., Lowery, M., Omalley, M., Vaughan, C., Heneghan, C., Gibson, A.S.C.,
+  Harley, Y., Sreenivasan, R.: Rectification and non-linear pre-processing of
+  emg signals for cortico-muscular analysis. Journal of Neuroscience Methods
+  \textbf{124}(2),  157–165 (2003). \doi{10.1016/s0165-0270(03)00004-9}
+
+\bibitem{bddl}
+Phinyomark, A., Scheme, E.: Emg pattern recognition in the era of big data and
+  deep learning. Big Data and Cognitive Computing  \textbf{2}(3) (2018).
+  \doi{10.3390/bdcc2030021}, \url{https://www.mdpi.com/2504-2289/2/3/21}
+
+\bibitem{nina5}
+Pizzolato, S., Tagliapietra, L., Cognolato, M., Reggiani, M., Müller, H.,
+  Atzori, M.: Comparison of six electromyography acquisition setups on hand
+  movement classification tasks. PLOS ONE  \textbf{12},  e0186132 (10 2017).
+  \doi{10.1371/journal.pone.0186132}
+
+\bibitem{raffel2015feedforward}
+Raffel, C., Ellis, D.P.W.: Feed-forward networks with attention can solve some
+  long-term memory problems (2015)
+
+\bibitem{dlot}
+Rehman, M.Z.U., Waris, A., Gilani, S., Jochumsen, M., Niazi, I., Jamil, M.,
+  Farina, D., Kamavuako, E.: Multiday emg-based classification of hand motions
+  with deep learning techniques. Sensors  \textbf{18}(8), ~2497 (Jan 2018).
+  \doi{10.3390/s18082497}
+
+\bibitem{ring_2018}
+RING, F.: LEARNING APPROACHES IN SIGNAL PROCESSING. PAN STANFORD Publishing
+  (2018)
+
+\bibitem{250ms}
+Smith, L.H., Hargrove, L.J., Lock, B.A., Kuiken, T.A.: Determining the optimal
+  window length for pattern recognition-based myoelectric control: Balancing
+  the competing effects of classification error and controller delay. IEEE
+  Transactions on Neural Systems and Rehabilitation Engineering
+  \textbf{19}(2),  186–192 (Apr 2011). \doi{10.1109/tnsre.2010.2100828},
+  \url{http://dx.doi.org/10.1109/TNSRE.2010.2100828}
+
+\bibitem{humancom}
+Tamura, H., Yan, M., Sakurai, K., Tanno, K.: Eog-semg human interface for
+  communication. Computational Intelligence and Neuroscience  \textbf{2016},
+  1–10 (2016). \doi{10.1155/2016/7354082}
+
+\bibitem{myo}
+Visconti, P., Gaetani, F., Zappatore, G., Primiceri, P.: Technical features and
+  functionalities of myo armband: An overview on related literature and
+  advanced applications of myoelectric armbands mainly focused on arm
+  prostheses. International Journal on Smart Sensing and Intelligent Systems
+  \textbf{11},  1--25 (06 2018). \doi{10.21307/ijssis-2018-005}
+
+\end{thebibliography}

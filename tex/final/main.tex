@@ -1,0 +1,78 @@
+% Use the llncs.cls formatting
+\documentclass{llncs}
+
+% Set the packages for use within the document. The following 
+% packages should be included.  Additional packages that do not
+% conflict with these packages or change the llncs class formatting
+% may be used.  Packages that do change the formatting are
+% not allowed.
+\usepackage{graphicx} % Used for displaying a sample figure. 
+% If possible, figure files should be included in EPS format. 
+% PDF format is also acceptable. JPEG  will work, but some of 
+% them are downsampled resulting in fuzzy images.
+\usepackage{pdfpages}
+\usepackage{float}
+\graphicspath{{./fig/}}
+\usepackage{booktabs} % Better horizontal rules in tables
+\usepackage{multirow} % Better combined rows in tables
+\usepackage{amsmath}
+\usepackage{array}
+\usepackage{hyperref}
+
+% The title of the papere remains a large amount of room for improvement.
+% This is shite
+\title{sEMG Gesture Recognition With a Simple Model of Attention}
+
+% The complete list of authors with their affiliations
+\author{%
+David Josephs\inst{1} \and
+Carson Drake\inst{1} \and
+Che' Cobb\inst{1} \and
+John Santerre\inst{1} %\and
+%Jennifer Graves %triple verify graves still part of the team
+}
+
+% The Institutes and emails associated with each author. All students
+% should use their MSDS affiliation or a generic SMU affiliation.
+% Advisors should use their appropriate affiliation. Note that advisors
+% are NOT referenced or otherwise denoted as advisors. Advisors
+% are simply co-authors on the paper.
+% Note that the emails for the MSDS affiliation, show how 
+% to list emails that have the same organization portion.
+\institute{%
+Master of Science in Data Science, Southern Methodist University,
+Dallas TX 75275 USA 
+\email{\{josephsd, drakec, cobbc\}@smu.edu} %\and
+%Springer Heidelberg, Tiergartenstr. 17, 69121 Heidelberg, Germany
+%\email{lncs@springer.com} \\
+%\url{http://www.springer.com/gp/computer-science/lncs} \and
+%ABC Institute, Rupert-Karls-University Heidelberg, Heidelberg, Germany\\
+%\email{\{abc,lncs\}@uni-heidelberg.de}
+}
+% Begin the document
+\begin{document}
+
+\maketitle              % typeset the title and author of the paper
+
+% Reset the footnote counter
+\setcounter{footnote}{0}
+
+\begin{abstract}
+This paper presents a novel method for fast classification of sEMG signals, using a simple model of attention. On a difficult, industry benchmark sEMG dataset, the proposed method yields excellent results, classifying 36 more gestures with about 20\% higher accuracy than the current standards in the field. These results have direct and immediate application in the fields of robotics, myoelctric control, and prosthetics.
+\end{abstract}
+
+\input{intro.tex}
+\input{emg.tex}
+\input{dl.tex}
+\input{process.tex}
+\input{model.tex}
+\input{results.tex}
+\input{conclusion.tex}
+
+% text here
+
+ \bibliographystyle{splncs04}
+ \bibliography{samplebib}
+%
+%% End the document
+\end{document}

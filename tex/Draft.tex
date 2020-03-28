@@ -28,7 +28,7 @@
 
 % The title of the paper
 % This is shite
-\title{Recurrent Neural Networks for Fast Electromyographic Control}
+\title{sEMG Gesture Recognition With a Simple Model of Attention}
 
 % The complete list of authors with their affiliations
 \author{%
@@ -46,7 +46,7 @@ Jennifer Graves %triple verify graves still part of the team
 % are simply co-authors on the paper.
 % Note that the emails for the MSDS affiliation, show how 
 % to list emails that have the same organization portion.
-\institute{
+\institute{%
 Master of Science in Data Science, Southern Methodist University,
 Dallas TX 75275 USA 
 \email{\{josephsd, drakec, cobbc\}@smu.edu} %\and
@@ -56,7 +56,6 @@ Dallas TX 75275 USA
 %ABC Institute, Rupert-Karls-University Heidelberg, Heidelberg, Germany\\
 %\email{\{abc,lncs\}@uni-heidelberg.de}
 }
-
 % Begin the document
 \begin{document}
 
@@ -67,7 +66,7 @@ Dallas TX 75275 USA
 % The abstract environment uses the \begin{} and \end{} constructs to 
 % denote the beginning and ending of the abstract contents.
 \begin{abstract} 
-In this paper, we present a simple, novel recurrent architecture which can quickly classify an extremely wide variety of gestures with high accuracy using cheap, low frequency sEMG sensors. We also present a set of standard procedures for training and evaluating deep learning models for EMG classification, proposing standards for data augmentation, partitioning, and evaluation.
+	Idk man
 %In this paper, we present a set of standard procedures for training and evaluating deep learning models for EMG classification. We evaluate the most popular and established preprocessing and augmentation procedures. Standards for window sizing, data partitioning, and %evaluation dataset
 %model evaluation are proposed. These standards are designed for reproducibility, generalizability (source model), bootstrapping (specialization), and transfer learning. We also highlight a novel recurrent architecture, and demonstrate its utility for live gesture prediction, with and without transfer learning.
 %%* training procedures 
@@ -109,6 +108,9 @@ Deep learning can be used to further improve the power and utility of the EMG an
 
 %Although deep learning is a powerful tool which can revolutionize the field of EMG study, there are several issues with the current state of research. First, the results of the latest research are difficult to compare and can be misleading, due to a lack of standards for model evaluation. Models are often evaluated on different subsets of the same dataset, making comparison impossible.  The results are also often misleading due to significant overfitting of the test subjects \cite{systematic}. 
 
+% DITCH LATENCY
+% RESTRUCTURE INTRO
+
 There are several factors which need to be considered in order to develop practically useful deep learning models for real time gesture prediction (myoelectric control)\footnote{Myoelectric control in this context means classifying a gesture well before it is completed, using myoelectrographic signals. These predictions need to be done fast enough for the user to feel that the gesture is being made as they decide to complete it.}. Arguably the most important of these is the amount of time before the model makes its first prediction (referred to as "prediction latency"). 
 The absolute largest prediction latency for a model to be considered useful for myoelectric control lies between 250 and 300 milliseconds  \cite{300ms}, \cite{250ms}. Many recent papers claim excellent gesture prediction results, however they require time samples (windows) between 0.5 and 1.5 seconds long \cite{rnn_1000}, \cite{rnn_128}. In this paper, all windows are 260 milliseconds in length, following the precedent set by Allard et al. \cite{primary}. This leaves 40 milliseconds for any transformations done on the window, as well as the amount of time it takes for the model to make a prediction.
 
@@ -119,8 +121,11 @@ It is also important to account for data collection. As the intention of this re
 
 The final two factors to consider with respect to model and experimental design are related to the evaluation and generalization of the model. A myoelectric control model needs to bear two qualities: robustness over time and generalizability from subject to subject. Over time, the armband will shift, the user will become fatigued, and actions will change. For a model to be useful for mass production in prosthetics and robotic arms, it will also need to work on new people. While it is possible to train a model on a new person, even on amputees, it is preferable for the model to work immediately \cite{amputeedb}.
 
-In this paper, we propose a novel recurrent model, which classifies 53 gestures. We train and evaluate the model on both a per repetition (robustness over time) and a per subject (generalizability) basis. With this, we also present a procedure for dealing with class imbalance in myoelectric data, a novel data augmentation technique, and a variety of preprocessing techniques. We also propose the usage of the 5th NinaPro MYO database as a standard benchmark dataset for myoelectric control \cite{nina5}. A common benchmark dataset will help current results be easily comparable, which is a large issue facing myoelectric control today. Our evaluation procedures will also help evaluate the issues brought up in \cite{systematic}, in which practical results do not match theoretical results due to overfitting.
-%Although deep learning is a powerful tool which can revolutionize the field of EMG study, there are several issues with the current state of research. First, the results of the latest research are difficult to compare and can be misleading, due to a lack of standards for model evaluation. Models are often evaluated on different subsets of the same dataset, making comparison impossible.  The results are also often misleading due to significant overfitting of the test subjects \cite{systematic}.
+
+% This is NEW! CHANGE ABOVE!^^6
+In this paper, we propose a novel attentional architecture for sEMG recognition and myoelectric control. We demonstrate the model's validity on the 53-class NinaPro DB5 \cite{nina5}. We also compare different techniques  for dealing with the inherent class imbalance in sEMG, a synthetic data based approach (augmentation), an undersampling based approach, and ,w
+
+We also present and discuss several methods for dealing with the class imWith this, we also present a procedure for dealing with class imbalance in myoelectric data, a novel data augmentation technique, and a variety of preprocessing techniques. We also propose the usage of the 5th NinaPro MYO database as a standard benchmark dataset for myoelectric control \cite{nina5}. A common benchmark dataset will help current results be easily comparable, which is a large issue facing myoelectric control today. Our evaluation procedures will also help evaluate the issues brought up in \cite{systematic}, in which practical results do not match theoretical results due to overfitting.  %Although deep learning is a powerful tool which can revolutionize the field of EMG study, there are several issues with the current state of research. First, the results of the latest research are difficult to compare and can be misleading, due to a lack of standards for model evaluation. Models are often evaluated on different subsets of the same dataset, making comparison impossible.  The results are also often misleading due to significant overfitting of the test subjects \cite{systematic}.
 
 %At a given window size an
 %
