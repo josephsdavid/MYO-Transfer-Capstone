@@ -26,6 +26,9 @@ Atzori, M., Gijsberts, A., Castellini, C., Caputo, B., Hager, A.G.M., Elsig,
   non-invasive naturally-controlled robotic hand prostheses. Scientific data
   \textbf{1}(1),  1--13 (2014)
 
+\bibitem{layernorm}
+Ba, J.L., Kiros, J.R., Hinton, G.E.: Layer normalization (2016)
+
 \bibitem{primary}
 {Côté-Allard}, U., {Fall}, C.L., {Drouin}, A., {Campeau-Lecours}, A.,
   {Gosselin}, C., {Glette}, K., {Laviolette}, F., {Gosselin}, B.: Deep learning
@@ -44,10 +47,32 @@ Geethanjali, P.: Myoelectric control of prosthetic hands: state-of-the-art
   review. Medical Devices: Evidence and Research  \textbf{Volume 9},  247–255
   (2016). \doi{10.2147/mder.s91102}
 
+\bibitem{dbn}
+Hinton, G.E., Osindero, S., Teh, Y.W.: A fast learning algorithm for deep
+  belief nets. Neural Computation  \textbf{18}(7),  1527–1554 (2006).
+  \doi{10.1162/neco.2006.18.7.1527}
+
 \bibitem{300ms}
 {Hudgins}, B., {Parker}, P., {Scott}, R.N.: A new strategy for multifunction
   myoelectric control. IEEE Transactions on Biomedical Engineering
   \textbf{40}(1),  82--94 (Jan 1993). \doi{10.1109/10.204774}
+
+\bibitem{break}
+Jastrzebski, S., Szymczak, M., Fort, S., Arpit, D., Tabor, J., Cho, K., Geras,
+  K.: The break-even point on optimization trajectories of deep neural networks
+  (2020)
+
+\bibitem{focal}
+Lin, T.Y., Goyal, P., Girshick, R., He, K., Dollár, P.: Focal loss for dense
+  object detection (2017)
+
+\bibitem{radam}
+Liu, L., Jiang, H., He, P., Chen, W., Liu, X., Gao, J., Han, J.: On the
+  variance of the adaptive learning rate and beyond (2019)
+
+\bibitem{mish}
+Misra, D.: Mish: A self regularized non-monotonic neural activation function
+  (2019)
 
 \bibitem{rectif}
 Myers, L., Lowery, M., Omalley, M., Vaughan, C., Heneghan, C., Gibson, A.S.C.,
@@ -80,6 +105,11 @@ Rehman, M.Z.U., Waris, A., Gilani, S., Jochumsen, M., Niazi, I., Jamil, M.,
 RING, F.: LEARNING APPROACHES IN SIGNAL PROCESSING. PAN STANFORD Publishing
   (2018)
 
+\bibitem{simao}
+Simão, M., Neto, P., Gibaru, O.: Emg-based online classification of gestures
+  with recurrent neural networks. Pattern Recognition Letters  \textbf{128},
+  45–51 (2019). \doi{10.1016/j.patrec.2019.07.021}
+
 \bibitem{250ms}
 Smith, L.H., Hargrove, L.J., Lock, B.A., Kuiken, T.A.: Determining the optimal
   window length for pattern recognition-based myoelectric control: Balancing
@@ -93,11 +123,19 @@ Tamura, H., Yan, M., Sakurai, K., Tanno, K.: Eog-semg human interface for
   communication. Computational Intelligence and Neuroscience  \textbf{2016},
   1–10 (2016). \doi{10.1155/2016/7354082}
 
+\bibitem{ranger1}
+Tong, Q., Liang, G., Bi, J.: Calibrating the adaptive learning rate to improve
+  convergence of adam (2019)
+
 \bibitem{myo}
 Visconti, P., Gaetani, F., Zappatore, G., Primiceri, P.: Technical features and
   functionalities of myo armband: An overview on related literature and
   advanced applications of myoelectric armbands mainly focused on arm
   prostheses. International Journal on Smart Sensing and Intelligent Systems
   \textbf{11},  1--25 (06 2018). \doi{10.21307/ijssis-2018-005}
+
+\bibitem{ranger2}
+Zhang, M.R., Lucas, J., Hinton, G., Ba, J.: Lookahead optimizer: k steps
+  forward, 1 step back (2019)
 
 \end{thebibliography}

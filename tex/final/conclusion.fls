@@ -1,5 +1,0 @@
-PWD /home/david/MYO-Transfer-Capstone/tex/final
-INPUT /nix/store/jv0gvwrwazjg6iid7gapmnkki8d000my-texlive-combined-full-2019/share/texmf/web2c/texmf.cnf
-INPUT /nix/store/jv0gvwrwazjg6iid7gapmnkki8d000my-texlive-combined-full-2019/share/texmf-var/web2c/pdftex/latex.fmt
-INPUT conclusion.tex
-OUTPUT conclusion.log

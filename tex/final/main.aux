@@ -47,38 +47,63 @@
 \@writefile{toc}{\contentsline {section}{\numberline {3}sEMG Classification}{4}{section.1.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Deep Learning}{4}{subsection.1.3.1}\protected@file@percent }
 \citation{raffel2015feedforward}
-\citation{primary}
 \@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces A simple model of temporal attention. }}{5}{figure.1.3}\protected@file@percent }
 \newlabel{fig:okokt}{{3}{5}{A simple model of temporal attention}{figure.1.3}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {4}Data Processing}{5}{section.1.4}\protected@file@percent }
+\citation{primary}
 \citation{rectif}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Data Processing}{6}{section.1.4}\protected@file@percent }
 \@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces One window of sEMG data. The amplitude represents unitless motor activity potential, while the x axis represents the passage of time}}{6}{figure.1.4}\protected@file@percent }
 \newlabel{fig:raw}{{4}{6}{One window of sEMG data. The amplitude represents unitless motor activity potential, while the x axis represents the passage of time}{figure.1.4}{}}
 \citation{humancom}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces One window of sEMG data. The amplitude represents unitless motor activity potential, while the x axis represents the passage of time. This data has been first rectified, then passed through a high pass filter, then passed through a 15-timestep moving average filter.}}{7}{figure.1.5}\protected@file@percent }
+\newlabel{fig:proc}{{5}{7}{One window of sEMG data. The amplitude represents unitless motor activity potential, while the x axis represents the passage of time. This data has been first rectified, then passed through a high pass filter, then passed through a 15-timestep moving average filter}{figure.1.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Data Augmentation}{7}{subsection.1.4.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Data augmentation scheme, highlighted on a single channel of a single sample. Brighter realizations are more likely than dim ones. }}{8}{figure.1.6}\protected@file@percent }
+\newlabel{fig:aug}{{6}{8}{Data augmentation scheme, highlighted on a single channel of a single sample. Brighter realizations are more likely than dim ones}{figure.1.6}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Modeling}{8}{section.1.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces The proposed architecture. Red arrows represent dropout connections.}}{9}{figure.1.7}\protected@file@percent }
+\newlabel{fig:mod}{{7}{9}{The proposed architecture. Red arrows represent dropout connections}{figure.1.7}{}}
+\citation{layernorm}
+\citation{dbn}
+\citation{mish}
+\citation{radam}
+\citation{ranger2}
+\citation{ranger1}
+\citation{break}
+\citation{focal}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Training}{10}{subsection.1.5.1}\protected@file@percent }
+\citation{simao}
+\@writefile{toc}{\contentsline {section}{\numberline {6}Results}{11}{section.1.6}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Results compared to other recent papers.}}{11}{table.1.1}\protected@file@percent }
+\newlabel{tab:1}{{1}{11}{Results compared to other recent papers}{table.1.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Confusion matrix of the classifications by the best performing model. }}{12}{figure.1.8}\protected@file@percent }
+\newlabel{fig:conmat}{{8}{12}{Confusion matrix of the classifications by the best performing model}{figure.1.8}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {7}Conclusions}{12}{section.1.7}\protected@file@percent }
 \bibstyle{splncs04}
 \bibdata{samplebib}
 \bibcite{ottoblock}{1}
 \bibcite{graves}{2}
 \bibcite{atz_cnn}{3}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Data Augmentation}{7}{subsection.1.4.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {5}Modeling}{7}{section.1.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {6}Results}{7}{section.1.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {7}Conclusions}{7}{section.1.7}\protected@file@percent }
 \bibcite{amputeedb}{4}
-\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces One window of sEMG data. The amplitude represents unitless motor activity potential, while the x axis represents the passage of time. This data has been first rectified, then passed through a high pass filter, then passed through a 15-timestep moving average filter.}}{8}{figure.1.5}\protected@file@percent }
-\newlabel{fig:proc}{{5}{8}{One window of sEMG data. The amplitude represents unitless motor activity potential, while the x axis represents the passage of time. This data has been first rectified, then passed through a high pass filter, then passed through a 15-timestep moving average filter}{figure.1.5}{}}
-\bibcite{primary}{5}
-\bibcite{dltsr}{6}
-\bibcite{myohandpro}{7}
-\bibcite{300ms}{8}
-\bibcite{rectif}{9}
-\bibcite{bddl}{10}
-\bibcite{nina5}{11}
-\bibcite{raffel2015feedforward}{12}
-\bibcite{dlot}{13}
-\bibcite{ring_2018}{14}
-\bibcite{250ms}{15}
-\bibcite{humancom}{16}
-\bibcite{myo}{17}
-\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Data augmentation scheme, highlighted on a single channel of a single sample. Brighter realizations are more likely than dim ones. }}{10}{figure.1.6}\protected@file@percent }
-\newlabel{fig:aug}{{6}{10}{Data augmentation scheme, highlighted on a single channel of a single sample. Brighter realizations are more likely than dim ones}{figure.1.6}{}}
+\bibcite{layernorm}{5}
+\bibcite{primary}{6}
+\bibcite{dltsr}{7}
+\bibcite{myohandpro}{8}
+\bibcite{dbn}{9}
+\bibcite{300ms}{10}
+\bibcite{break}{11}
+\bibcite{focal}{12}
+\bibcite{radam}{13}
+\bibcite{mish}{14}
+\bibcite{rectif}{15}
+\bibcite{bddl}{16}
+\bibcite{nina5}{17}
+\bibcite{raffel2015feedforward}{18}
+\bibcite{dlot}{19}
+\bibcite{ring_2018}{20}
+\bibcite{simao}{21}
+\bibcite{250ms}{22}
+\bibcite{humancom}{23}
+\bibcite{ranger1}{24}
+\bibcite{myo}{25}
+\bibcite{ranger2}{26}

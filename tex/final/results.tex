@@ -1,1 +1,37 @@
 \section{Results}
+
+All models were tested on all 53 classes of the NinaPro 5 database, with the fourth and fifth repetitions as a validation set and the final repetition as a test set. 
+
+% Please add the following required packages to your document preamble:
+% \usepackage{booktabs}
+\begin{table}[]
+\caption{Results compared to other recent papers.}
+\centering
+\label{tab:1}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lcccr@{}}
+\toprule
+Model                           & Window Size & Accuracy & Number of Gestures \\ \midrule
+Attentional Network, Focal Loss & 260 ms      & 87\%     & 53                 \\
+Attentional Network, Undersampling& 260 ms      & 83\%     & 53                 \\
+Allard et al, 2019              & 289 ms      & 68\%     & 17                \\
+Simao, 2019                     & 1.5 s       & 90\%     & 7                 \\ 
+Atzori, 2016                    & 150 ms      & 66\%     & 17                 \\ \bottomrule
+\end{tabular*}
+\end{table}
+
+\autoref{tab:1} makes the outcome of this study in relation to other papers in the field very clear. The addition of attention and focal loss resulted in extremely high accuracies, over a wide range of classes (from finger motions to functional grabbing motions and fine wrist motions). The only recent paper which performed better on the same dataset is mentioned in \cite{simao}, however these results are over only 7 classes using 1.5 second time windows, and therefore are only relevant as a reference to the difficulty of 53-class classification.  To further diagnose the successes and failures of this study, a confusion matrix is provided in \autoref{fig:conmat}
+
+
+
+\begin{figure}[H]
+\caption{%
+Confusion matrix of the classifications by the best performing model.
+}
+\label{fig:conmat}
+\begin{center}
+\includegraphics[scale=0.1]{conmat}
+\end{center}
+\end{figure}
+
+We can see clearly that the model performed excellently with rest, as well as with most of the fine finger and wrist motions (the upper left quarter of the confusion matrix). However, there were a few functional movements (bottom right quarter) where the model struggled slightly. Overall, the presence of red along the diagonal indicates that the model was able to classify the correct gesture the majority of the time, and with the broadness of the range of gesture, the model can be deployed in prosthetic limbs in order to significantly increase the quality of life of amputees.
+
