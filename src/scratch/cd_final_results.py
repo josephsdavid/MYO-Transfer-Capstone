@@ -100,16 +100,35 @@ np.array(ttl).mean()
 
 
 
-counts = sns.countplot(y, palette="pastel")
-counts.set(yscale="log")
-plt.title("Number of Occurences of Each Gesture (log Scale)")
-for item in counts.get_xticklabels():
-    item.set_rotation(45)
-plt.tight_layout()
-fig = matplotlib.pyplot.gcf()
-fig.set_size_inches(12, 5.5)
-plt.savefig("outputs/count_log.png", dpi=500, size=(12, 5))
+# counts = sns.countplot(y)
+# counts.set(yscale="log")
+# plt.title("Number of Occurences of Each Gesture (log Scale)")
+# for item in counts.get_xticklabels():
+#     item.set_rotation(45)
+# plt.tight_layout()
+# fig = matplotlib.pyplot.gcf()
+# fig.set_size_inches(12, 5.5)
+# plt.savefig("outputs/count_log.png", dpi=500, size=(12, 5))
 
+def makeCountPlot(y):
+    k,v = np.unique(y, return_counts=True)
+    bars = dict(zip(k,v))
+    with plt.style.context('bmh'):
+        fig, ax = plt.subplots(figsize=(12,5.5))
+        for _k,_v in bars.items():
+            ax.bar(x=_k,height=_v, alpha=0.6)
+        # for item in ax.get_xticklabels():
+        #     item.set_rotation(45)
+        # Rotate the tick labels and set their alignment.
+
+        plt.setp(ax.get_xticklabels(), rotation=45,ha="left", rotation_mode="anchor")
+        ax.set_xticks(k)
+        ax.set_xticklabels(k.astype('str'))
+        ax.set_yscale('log')
+        fig.tight_layout()
+    fig.set_size_inches(12, 5.5)
+    plt.savefig("outputs/count_log.png", dpi=500, size=(12, 5))
+makeCountPlot(y)
 lines=[]
 for k,b in baselines.items():
     line = [v for _,v in baselineMetrics(y,b).items()]
